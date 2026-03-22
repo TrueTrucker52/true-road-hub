@@ -108,13 +108,56 @@ const buildSparklinePath = (values: number[], width = 120, height = 36) => {
     .join(" ");
 };
 
-const SummarySparkline = ({ values, className }: { values: number[]; className: string }) => {
+type SparklinePoint = {
+  date: string;
+  value: number;
+  x: number;
+  y: number;
+};
+
+const buildSparklinePoints = (values: Array<{ date: string; value: number }>, width = 120, height = 36): SparklinePoint[] => {
+  if (!values.length) return [];
+
+  if (values.length === 1) {
+    return [{ date: values[0].date, value: values[0].value, x: width / 2, y: height / 2 }];
+  }
+
+  const onlyValues = values.map((point) => point.value);
+  const max = Math.max(...onlyValues);
+  const min = Math.min(...onlyValues);
+  const range = max - min || 1;
+
+  return values.map((point, index) => ({
+    date: point.date,
+    value: point.value,
+    x: (index / (values.length - 1)) * width,
+    y: height - ((point.value - min) / range) * height,
+  }));
+};
+
+const SummarySparkline = ({
+  data,
+  className,
+}: {
+  data: Array<{ date: string; value: number }>;
+  className: string;
+}) => {
+  const values = data.map((point) => point.value);
   const path = buildSparklinePath(values);
+  const points = buildSparklinePoints(data);
 
   return (
     <div className={`h-10 w-32 ${className}`} aria-hidden="true">
       <svg viewBox="0 0 120 36" className="h-full w-full overflow-visible" fill="none">
         <path d={path} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        {points.map((point) => (
+          <g key={`${point.date}-${point.value}`}>
+            <circle cx={point.x} cy={point.y} r="2.5" fill="currentColor" className="opacity-80" />
+            <circle cx={point.x} cy={point.y} r="6" fill="transparent">
+              <title>{`${point.date}: ${point.value.toLocaleString()} clicks`}</title>
+            </circle>
+          </g>
+        ))}
       </svg>
     </div>
   );
@@ -183,7 +226,10 @@ const AdminAnalytics = () => {
 
   const getPlacementTrend = (placement: Placement | null) => {
     if (!placement || !data?.placementSeries.length) return [];
-    return data.placementSeries.map((entry) => entry[placement]);
+    return data.placementSeries.map((entry) => ({
+      date: entry.date,
+      value: entry[placement],
+    }));
   };
 
   return (
@@ -413,7 +459,7 @@ const AdminAnalytics = () => {
                       </div>
                       {placementExtremes.topGainer ? (
                         <SummarySparkline
-                          values={getPlacementTrend(placementExtremes.topGainer.placement)}
+                          data={getPlacementTrend(placementExtremes.topGainer.placement)}
                           className="shrink-0 text-brand-red"
                         />
                       ) : null}
@@ -440,7 +486,7 @@ const AdminAnalytics = () => {
                       </div>
                       {placementExtremes.topDecliner ? (
                         <SummarySparkline
-                          values={getPlacementTrend(placementExtremes.topDecliner.placement)}
+                          data={getPlacementTrend(placementExtremes.topDecliner.placement)}
                           className="shrink-0 text-destructive"
                         />
                       ) : null}
