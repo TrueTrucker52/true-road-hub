@@ -16,6 +16,7 @@ type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
 type MediaKitPlacement = "brand_deals";
 type ContactSubmissionType = "general" | "brand_deal";
 type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
+type SponsorSourcePlatform = Platform | "direct";
 
 type AnalyticsResponse = {
   days: number;
@@ -36,6 +37,17 @@ type AnalyticsResponse = {
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
   contactSubmissionTotals: Array<{ submissionType: ContactSubmissionType; submissions: number }>;
   budgetTierTotals: Array<{ budgetTier: BudgetTier; inquiries: number }>;
+  sponsorConversionBySource: Array<{
+    platform: SponsorSourcePlatform;
+    downloads: number;
+    inquiries: number;
+    conversionRate: number;
+    previousDownloads: number;
+    previousInquiries: number;
+    previousConversionRate: number;
+    delta: number;
+    deltaPercent: number;
+  }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
     placement: Placement;
@@ -248,6 +260,11 @@ const AdminAnalytics = () => {
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
+    [data],
+  );
+
+  const sortedSponsorSourceConversion = useMemo(
+    () => [...(data?.sponsorConversionBySource ?? [])].sort((a, b) => b.conversionRate - a.conversionRate),
     [data],
   );
 
@@ -572,6 +589,45 @@ const AdminAnalytics = () => {
                       <p className="mt-2 text-sm text-muted-foreground">brand inquiries</p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-border bg-background/70 p-5">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Sponsor funnel conversion by source</p>
+                  <p className="mt-1 text-sm text-muted-foreground">See which referral platforms turn media kit interest into brand inquiries most effectively.</p>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+                  {sortedSponsorSourceConversion.map((item, index) => {
+                    const positive = item.delta >= 0;
+
+                    return (
+                      <div key={item.platform} className="rounded-2xl border border-border bg-muted/50 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                            {sponsorPlatformLabels[item.platform]}
+                          </p>
+                          {index === 0 && item.downloads > 0 ? (
+                            <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                              Best quality
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <p className="mt-3 font-display text-3xl text-foreground">{(item.conversionRate * 100).toFixed(1)}%</p>
+                        <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                          <p><span className="font-semibold text-foreground">{item.downloads.toLocaleString()}</span> downloads</p>
+                          <p><span className="font-semibold text-foreground">{item.inquiries.toLocaleString()}</span> inquiries</p>
+                          {comparePrevious ? (
+                            <p className={`inline-flex items-center gap-1 font-medium ${positive ? "text-brand-red" : "text-destructive"}`}>
+                              {positive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                              {positive ? "+" : ""}{(item.delta * 100).toFixed(1)} pts
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </CardContent>

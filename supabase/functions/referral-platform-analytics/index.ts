@@ -137,7 +137,7 @@ Deno.serve(async (req) => {
     const { data: previousMediaKitRows, error: previousMediaKitError } = comparePrevious
       ? await adminClient
           .from("media_kit_downloads")
-          .select("id")
+          .select("platform")
           .gte("downloaded_at", previousStartDate.toISOString())
           .lte("downloaded_at", previousEndDate.toISOString())
       : { data: [], error: null };
