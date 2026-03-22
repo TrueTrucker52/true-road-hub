@@ -5,13 +5,16 @@ const successMessages = {
   brand: /your email app should open next so you can send the sponsorship inquiry directly to george/i,
 };
 
+const openContactPageInTestMode = async (page: Parameters<(typeof test)["extend"]>[0] extends never ? never : any) => {
+  await page.goto("/contact?contactTestMode=1");
+  await expect(page.getByText(/test mode is on/i)).toBeVisible();
+};
+
 test.describe("Contact page preview test mode", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("shows stable submit confirmations for both contact flows in contact test mode", async ({ page }) => {
-    await page.goto("/contact?contactTestMode=1");
-
-    await expect(page.getByText(/test mode is on/i)).toBeVisible();
+  test("shows a stable submit confirmation for the general contact flow", async ({ page }) => {
+    await openContactPageInTestMode(page);
 
     await page.getByLabel("Full Name").fill("Alex Driver");
     await page.getByLabel("Email Address").fill("alex@example.com");
@@ -19,6 +22,11 @@ test.describe("Contact page preview test mode", () => {
     await page.getByRole("button", { name: "Send Message" }).click();
 
     await expect(page.getByText(successMessages.general)).toBeVisible();
+    await expect(page).toHaveURL(/contact\?contactTestMode=1/);
+  });
+
+  test("shows a stable submit confirmation for the sponsor inquiry flow", async ({ page }) => {
+    await openContactPageInTestMode(page);
 
     await page.getByLabel("Company Name").fill("Roadline Partners");
     await page.getByLabel("Contact Name").fill("Morgan Lee");
