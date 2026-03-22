@@ -1,3 +1,5 @@
+import { getReferralPlatform } from "@/lib/referral";
+
 export type ContactSubmissionType = "general" | "brand_deal";
 export type ContactSubmissionBudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 
@@ -19,6 +21,7 @@ export const trackContactSubmission = (
     body: JSON.stringify({
       submissionType,
       budgetTier: budgetTier ?? null,
+      platform: getReferralPlatform() ?? "direct",
       pagePath: `${window.location.pathname}${window.location.search}`,
       referrer: document.referrer || null,
       userAgent: navigator.userAgent,

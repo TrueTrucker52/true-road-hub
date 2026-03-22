@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: string
           page_path: string
+          platform: string | null
           referrer: string | null
           submission_type: string
           user_agent: string | null
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           id?: string
           page_path: string
+          platform?: string | null
           referrer?: string | null
           submission_type: string
           user_agent?: string | null
@@ -38,6 +40,7 @@ export type Database = {
           created_at?: string
           id?: string
           page_path?: string
+          platform?: string | null
           referrer?: string | null
           submission_type?: string
           user_agent?: string | null

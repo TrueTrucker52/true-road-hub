@@ -7,6 +7,7 @@ const corsHeaders = {
 
 const ALLOWED_SUBMISSION_TYPES = new Set(["general", "brand_deal"]);
 const ALLOWED_BUDGET_TIERS = new Set(["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "Over $10,000"]);
+const ALLOWED_PLATFORMS = new Set(["youtube", "tiktok", "facebook", "instagram", "direct"]);
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -34,6 +35,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const submissionType = typeof body?.submissionType === "string" ? body.submissionType.toLowerCase() : "";
     const budgetTier = typeof body?.budgetTier === "string" ? body.budgetTier : null;
+    const platform = typeof body?.platform === "string" ? body.platform.toLowerCase() : "direct";
     const pagePath = typeof body?.pagePath === "string" ? body.pagePath : "";
     const referrer = typeof body?.referrer === "string" ? body.referrer : null;
     const userAgent = typeof body?.userAgent === "string" ? body.userAgent : null;
@@ -41,6 +43,7 @@ Deno.serve(async (req) => {
     if (
       !ALLOWED_SUBMISSION_TYPES.has(submissionType)
       || !pagePath
+      || !ALLOWED_PLATFORMS.has(platform)
       || (budgetTier !== null && !ALLOWED_BUDGET_TIERS.has(budgetTier))
       || (submissionType !== "brand_deal" && budgetTier !== null)
     ) {
@@ -57,6 +60,7 @@ Deno.serve(async (req) => {
     const { error } = await supabase.from("contact_form_submissions").insert({
       submission_type: submissionType,
       budget_tier: submissionType === "brand_deal" ? budgetTier : null,
+      platform,
       page_path: pagePath,
       referrer,
       user_agent: userAgent,

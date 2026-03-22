@@ -130,14 +130,14 @@ Deno.serve(async (req) => {
 
     const { data: contactSubmissionRows, error: contactSubmissionsError } = await adminClient
       .from("contact_form_submissions")
-      .select("submission_type, budget_tier, created_at")
+      .select("submission_type, budget_tier, platform, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
     const { data: previousMediaKitRows, error: previousMediaKitError } = comparePrevious
       ? await adminClient
           .from("media_kit_downloads")
-          .select("id")
+          .select("platform")
           .gte("downloaded_at", previousStartDate.toISOString())
           .lte("downloaded_at", previousEndDate.toISOString())
       : { data: [], error: null };
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
     const { data: previousContactSubmissionRows, error: previousContactSubmissionsError } = comparePrevious
       ? await adminClient
           .from("contact_form_submissions")
-          .select("submission_type")
+          .select("submission_type, platform")
           .gte("created_at", previousStartDate.toISOString())
           .lte("created_at", previousEndDate.toISOString())
       : { data: [], error: null };
@@ -191,6 +191,20 @@ Deno.serve(async (req) => {
     const budgetTierTotals = Object.fromEntries(
       budgetTiers.map((tier) => [tier, 0]),
     ) as Record<BudgetTier, number>;
+    const sponsorConversionBySource = {
+      youtube: { downloads: 0, inquiries: 0 },
+      tiktok: { downloads: 0, inquiries: 0 },
+      facebook: { downloads: 0, inquiries: 0 },
+      instagram: { downloads: 0, inquiries: 0 },
+      direct: { downloads: 0, inquiries: 0 },
+    };
+    const previousSponsorConversionBySource = {
+      youtube: { downloads: 0, inquiries: 0 },
+      tiktok: { downloads: 0, inquiries: 0 },
+      facebook: { downloads: 0, inquiries: 0 },
+      instagram: { downloads: 0, inquiries: 0 },
+      direct: { downloads: 0, inquiries: 0 },
+    };
     const mediaKitTotals = {
       youtube: 0,
       tiktok: 0,
@@ -262,6 +276,7 @@ Deno.serve(async (req) => {
 
       current[platform] += 1;
       mediaKitTotals[platform] += 1;
+      sponsorConversionBySource[platform].downloads += 1;
 
       if (mediaKitPlacements.includes(placement)) {
         mediaKitPlacementTotals[placement] += 1;
@@ -275,6 +290,29 @@ Deno.serve(async (req) => {
       if (submissionType === "brand_deal" && row.budget_tier && budgetTiers.includes(row.budget_tier as BudgetTier)) {
         budgetTierTotals[row.budget_tier as BudgetTier] += 1;
       }
+
+      if (submissionType === "brand_deal") {
+        const platform = row.platform === "youtube" || row.platform === "tiktok" || row.platform === "facebook" || row.platform === "instagram"
+          ? row.platform
+          : "direct";
+        sponsorConversionBySource[platform].inquiries += 1;
+      }
+    }
+
+    for (const row of previousMediaKitRows ?? []) {
+      const platform = row.platform === "youtube" || row.platform === "tiktok" || row.platform === "facebook" || row.platform === "instagram"
+        ? row.platform
+        : "direct";
+      previousSponsorConversionBySource[platform].downloads += 1;
+    }
+
+    for (const row of previousContactSubmissionRows ?? []) {
+      if (row.submission_type !== "brand_deal") continue;
+
+      const platform = row.platform === "youtube" || row.platform === "tiktok" || row.platform === "facebook" || row.platform === "instagram"
+        ? row.platform
+        : "direct";
+      previousSponsorConversionBySource[platform].inquiries += 1;
     }
 
     const sponsorInquiryCount = contactSubmissionTotals.brand_deal;
@@ -351,6 +389,25 @@ Deno.serve(async (req) => {
         budgetTier: tier,
         inquiries: budgetTierTotals[tier],
       })),
+      sponsorConversionBySource: ["youtube", "tiktok", "facebook", "instagram", "direct"].map((platform) => {
+        const current = sponsorConversionBySource[platform as keyof typeof sponsorConversionBySource];
+        const previous = previousSponsorConversionBySource[platform as keyof typeof previousSponsorConversionBySource];
+        const conversionRate = current.downloads === 0 ? 0 : current.inquiries / current.downloads;
+        const previousConversionRate = previous.downloads === 0 ? 0 : previous.inquiries / previous.downloads;
+        const delta = conversionRate - previousConversionRate;
+
+        return {
+          platform,
+          downloads: current.downloads,
+          inquiries: current.inquiries,
+          conversionRate,
+          previousDownloads: previous.downloads,
+          previousInquiries: previous.inquiries,
+          previousConversionRate,
+          delta,
+          deltaPercent: previousConversionRate === 0 ? (conversionRate > 0 ? 1 : 0) : delta / previousConversionRate,
+        };
+      }),
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
       placementComparison: placements.map((placement) => {
         const current = placementTotals[placement];
