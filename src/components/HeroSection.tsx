@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/hero-bg.jpg";
-import { getReferralAwareIFTAUrl, getReferralDiscountCode } from "@/lib/referral";
+import { getReferralAwareIFTAUrl, getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
 const stats = [
   { value: "15+", label: "Years Experience" },
@@ -10,6 +10,7 @@ const stats = [
 
 const HeroSection = () => {
   const referralCode = getReferralDiscountCode();
+  const referralPlatform = getReferralPlatformLabel();
   const iftaUrl = getReferralAwareIFTAUrl();
 
   return (
@@ -39,8 +40,9 @@ const HeroSection = () => {
             </a>
           </div>
 
-          <p className="mt-4 inline-flex items-center rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground/80 animate-reveal animate-reveal-delay-4">
-            Use code {referralCode} for 20% off
+          <p className="mt-4 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground/80 animate-reveal animate-reveal-delay-4">
+            <span>Use code {referralCode} for 20% off</span>
+            <span className="text-primary-foreground/55">Offer unlocked from {referralPlatform}</span>
           </p>
 
           <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg animate-reveal animate-reveal-delay-4">
