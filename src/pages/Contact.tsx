@@ -11,6 +11,14 @@ const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 const buildMailtoLink = (subject: string, body: string) =>
   `mailto:george@true-trucker-ifta-pro.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
+const openMailtoWithDelay = (mailtoUrl: string) => {
+  window.requestAnimationFrame(() => {
+    window.setTimeout(() => {
+      window.location.href = mailtoUrl;
+    }, 700);
+  });
+};
+
 const Contact = () => {
   const [general, setGeneral] = useState({ name: "", email: "", message: "" });
   const [brand, setBrand] = useState({ company: "", contact: "", email: "", budget: "", details: "" });
@@ -73,9 +81,7 @@ const Contact = () => {
       `${trimmedGeneral.message}\n\nFrom: ${trimmedGeneral.name} (${trimmedGeneral.email})`,
     );
 
-    window.setTimeout(() => {
-      window.location.href = mailtoUrl;
-    }, 180);
+    openMailtoWithDelay(mailtoUrl);
   };
 
   const handleBrand = (e: React.FormEvent) => {
@@ -85,9 +91,7 @@ const Contact = () => {
 
     const mailtoUrl = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0AEmail: ${brand.email}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
 
-    window.setTimeout(() => {
-      window.location.href = mailtoUrl;
-    }, 180);
+    openMailtoWithDelay(mailtoUrl);
   };
 
   const inputClass = "w-full px-4 py-3 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-border";
