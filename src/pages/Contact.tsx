@@ -9,7 +9,18 @@ import { trackContactSubmission } from "@/lib/trackContactSubmission";
 const Contact = () => {
   const [general, setGeneral] = useState({ name: "", email: "", message: "" });
   const [brand, setBrand] = useState({ company: "", contact: "", email: "", budget: "", details: "" });
+  const [generalSubmissionConfirmed, setGeneralSubmissionConfirmed] = useState(false);
   const [brandSubmissionConfirmed, setBrandSubmissionConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (!generalSubmissionConfirmed) return;
+
+    const timeout = window.setTimeout(() => {
+      setGeneralSubmissionConfirmed(false);
+    }, 5000);
+
+    return () => window.clearTimeout(timeout);
+  }, [generalSubmissionConfirmed]);
 
   useEffect(() => {
     if (!brandSubmissionConfirmed) return;
@@ -24,7 +35,13 @@ const Contact = () => {
   const handleGeneral = (e: React.FormEvent) => {
     e.preventDefault();
     trackContactSubmission("general");
-    window.location.href = `mailto:george@true-trucker-ifta-pro.com?subject=General Contact from ${general.name}&body=${general.message}%0A%0AFrom: ${general.name} (${general.email})`;
+    setGeneralSubmissionConfirmed(true);
+
+    const mailtoUrl = `mailto:george@true-trucker-ifta-pro.com?subject=General Contact from ${general.name}&body=${general.message}%0A%0AFrom: ${general.name} (${general.email})`;
+
+    window.setTimeout(() => {
+      window.location.href = mailtoUrl;
+    }, 180);
   };
 
   const handleBrand = (e: React.FormEvent) => {
@@ -57,6 +74,14 @@ const Contact = () => {
             {/* General Contact */}
             <form onSubmit={handleGeneral} className="bg-muted/50 rounded-2xl p-8 space-y-5 animate-reveal animate-reveal-delay-2">
               <h2 className="font-display text-2xl font-bold mb-2">General Contact</h2>
+              {generalSubmissionConfirmed && (
+                <Alert className="border-brand-red/20 bg-background/90 text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-brand-red" />
+                  <AlertDescription>
+                    Tracking recorded. Your email app should open next so you can send your message directly to George.
+                  </AlertDescription>
+                </Alert>
+              )}
               <input type="text" placeholder="Name" required value={general.name} onChange={(e) => setGeneral({ ...general, name: e.target.value })} className={inputClass} />
               <input type="email" placeholder="Email" required value={general.email} onChange={(e) => setGeneral({ ...general, email: e.target.value })} className={inputClass} />
               <textarea placeholder="Message" required rows={5} value={general.message} onChange={(e) => setGeneral({ ...general, message: e.target.value })} className={inputClass + " resize-none"} />
