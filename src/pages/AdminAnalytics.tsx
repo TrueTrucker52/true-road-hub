@@ -17,6 +17,7 @@ type MediaKitPlacement = "brand_deals";
 type ContactSubmissionType = "general" | "brand_deal";
 type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 type SponsorSourcePlatform = Platform | "direct";
+const budgetTierValueOrder: BudgetTier[] = ["Over $10,000", "$5,000 - $10,000", "$1,000 - $5,000", "Under $1,000"];
 
 type AnalyticsResponse = {
   days: number;
@@ -41,6 +42,10 @@ type AnalyticsResponse = {
     platform: SponsorSourcePlatform;
     downloads: number;
     inquiries: number;
+    budgetBreakdown: Array<{
+      budgetTier: BudgetTier;
+      inquiries: number;
+    }>;
     conversionRate: number;
     previousDownloads: number;
     previousInquiries: number;
@@ -646,6 +651,9 @@ const AdminAnalytics = () => {
                 <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
                   {sortedSponsorSourceConversion.map((item, index) => {
                     const positive = item.delta >= 0;
+                    const sortedBudgetBreakdown = [...item.budgetBreakdown].sort(
+                      (a, b) => budgetTierValueOrder.indexOf(a.budgetTier) - budgetTierValueOrder.indexOf(b.budgetTier),
+                    );
 
                     return (
                       <div key={item.platform} className="rounded-2xl border border-border bg-muted/50 p-4">
@@ -669,6 +677,18 @@ const AdminAnalytics = () => {
                               {positive ? "+" : ""}{(item.delta * 100).toFixed(1)} pts
                             </p>
                           ) : null}
+                        </div>
+
+                        <div className="mt-4 border-t border-border pt-3">
+                          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Budget mix</p>
+                          <div className="mt-3 grid gap-2">
+                            {sortedBudgetBreakdown.map((budgetItem) => (
+                              <div key={`${item.platform}-${budgetItem.budgetTier}`} className="flex items-center justify-between gap-3 rounded-xl bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+                                <span>{budgetTierLabels[budgetItem.budgetTier]}</span>
+                                <span className="font-semibold text-foreground">{budgetItem.inquiries.toLocaleString()}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     );
