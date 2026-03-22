@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
@@ -111,6 +112,15 @@ const AdminAnalytics = () => {
     if (!data?.totals.length) return null;
     return [...data.totals].sort((a, b) => b.conversionRate - a.conversionRate)[0] ?? null;
   }, [data]);
+
+  const bestImprovingPlacement = useMemo(() => {
+    if (!comparePrevious || !data?.placementComparison.length) return null;
+
+    const winner = [...data.placementComparison].sort((a, b) => b.deltaPercent - a.deltaPercent)[0] ?? null;
+
+    if (!winner || winner.delta <= 0) return null;
+    return winner.placement;
+  }, [comparePrevious, data]);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -319,10 +329,18 @@ const AdminAnalytics = () => {
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 {(data?.placementComparison ?? []).map((item) => {
                   const positive = item.delta >= 0;
+                  const isBestImproving = comparePrevious && bestImprovingPlacement === item.placement;
 
                   return (
                     <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
-                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
+                        {isBestImproving ? (
+                          <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                            Best improving
+                          </Badge>
+                        ) : null}
+                      </div>
                       <p className="mt-3 font-display text-4xl text-foreground">{item.current.toLocaleString()}</p>
                       {comparePrevious ? (
                         <div className="mt-2 space-y-1 text-sm text-muted-foreground">
