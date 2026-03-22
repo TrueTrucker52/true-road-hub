@@ -24,6 +24,12 @@ const renderContactPage = () =>
     </MemoryRouter>,
   );
 
+const submitFormByButtonLabel = (label: string) => {
+  const form = screen.getByRole("button", { name: label }).closest("form");
+  expect(form).not.toBeNull();
+  fireEvent.submit(form as HTMLFormElement);
+};
+
 describe("Contact page forms", () => {
   beforeEach(() => {
     trackContactSubmissionMock.mockReset();
@@ -77,7 +83,7 @@ describe("Contact page forms", () => {
     fireEvent.change(screen.getByLabelText("Email Address"), {
       target: { value: "not-an-email" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send Message" }));
+    submitFormByButtonLabel("Send Message");
 
     expect(trackContactSubmissionMock).not.toHaveBeenCalled();
     expect(screen.getByText(/please complete all fields before sending your message/i)).toBeInTheDocument();
@@ -85,7 +91,7 @@ describe("Contact page forms", () => {
     fireEvent.change(screen.getByLabelText("Message"), {
       target: { value: "Need more information." },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send Message" }));
+    submitFormByButtonLabel("Send Message");
 
     expect(trackContactSubmissionMock).not.toHaveBeenCalled();
     expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
@@ -148,7 +154,7 @@ describe("Contact page forms", () => {
     fireEvent.change(screen.getByLabelText("Budget Range"), {
       target: { value: "$1,000 - $5,000" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Submit Brand Deal Inquiry" }));
+    submitFormByButtonLabel("Submit Brand Deal Inquiry");
 
     expect(trackContactSubmissionMock).not.toHaveBeenCalled();
     expect(screen.getByText(/please complete all fields before sending your inquiry/i)).toBeInTheDocument();
@@ -159,7 +165,7 @@ describe("Contact page forms", () => {
     fireEvent.change(screen.getByLabelText("Campaign Details"), {
       target: { value: "Owner-operator sponsorship test." },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Submit Brand Deal Inquiry" }));
+    submitFormByButtonLabel("Submit Brand Deal Inquiry");
 
     expect(trackContactSubmissionMock).not.toHaveBeenCalled();
     expect(screen.getByText(/please enter a valid contact email address/i)).toBeInTheDocument();
