@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       contact_form_submissions: {
         Row: {
+          budget_tier: string | null
           created_at: string
           id: string
           page_path: string
@@ -24,6 +25,7 @@ export type Database = {
           user_agent: string | null
         }
         Insert: {
+          budget_tier?: string | null
           created_at?: string
           id?: string
           page_path: string
@@ -32,6 +34,7 @@ export type Database = {
           user_agent?: string | null
         }
         Update: {
+          budget_tier?: string | null
           created_at?: string
           id?: string
           page_path?: string
