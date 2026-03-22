@@ -221,8 +221,19 @@ const AdminAnalytics = () => {
       return [...items].sort((a, b) => b.current - a.current);
     }
 
-    return [...items].sort((a, b) => b.deltaPercent - a.deltaPercent);
-  }, [comparePrevious, data]);
+    const sorted = [...items].sort((a, b) => b.deltaPercent - a.deltaPercent);
+    const pinnedPlacements = [placementExtremes.bestImprovingPlacement, placementExtremes.bestDecliningPlacement].filter(
+      (placement): placement is Placement => Boolean(placement),
+    );
+
+    const pinned = pinnedPlacements
+      .map((placement) => sorted.find((item) => item.placement === placement))
+      .filter((item): item is (typeof sorted)[number] => Boolean(item));
+
+    const remaining = sorted.filter((item) => !pinnedPlacements.includes(item.placement));
+
+    return [...pinned, ...remaining];
+  }, [comparePrevious, data, placementExtremes.bestDecliningPlacement, placementExtremes.bestImprovingPlacement]);
 
   const getPlacementTrend = (placement: Placement | null) => {
     if (!placement || !data?.placementSeries.length) return [];
@@ -500,9 +511,14 @@ const AdminAnalytics = () => {
                   const positive = item.delta >= 0;
                   const isBestImproving = comparePrevious && placementExtremes.bestImprovingPlacement === item.placement;
                   const isBestDeclining = comparePrevious && placementExtremes.bestDecliningPlacement === item.placement;
+                  const cardClassName = isBestImproving
+                    ? "rounded-2xl border border-brand-red/25 bg-brand-red/5 p-5 shadow-lg shadow-primary/10"
+                    : isBestDeclining
+                      ? "rounded-2xl border border-destructive/30 bg-destructive/5 p-5 shadow-lg shadow-destructive/10"
+                      : "rounded-2xl border border-border bg-muted/50 p-5";
 
                   return (
-                    <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
+                     <div key={item.placement} className={cardClassName}>
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
                         <div className="flex flex-wrap justify-end gap-2">
