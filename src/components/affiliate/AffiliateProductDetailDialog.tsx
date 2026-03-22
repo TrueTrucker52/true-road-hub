@@ -1,5 +1,6 @@
 import { CheckCircle2, Gauge, ShieldCheck } from "lucide-react";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,11 @@ const AffiliateProductDetailDialog = ({
           <div className="p-6 md:p-8">
             <DialogHeader className="space-y-4 text-left">
                 <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-brand-red/80">{badgeLabel}</p>
+              {product.comparisonBadge ? (
+                <Badge className="w-fit border-accent/30 bg-accent/12 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-accent-foreground hover:bg-accent/12">
+                  {product.comparisonBadge}
+                </Badge>
+              ) : null}
               <div className="flex flex-wrap items-center gap-3">
                 <DialogTitle className="font-display text-3xl leading-[1.02] text-primary-foreground md:text-4xl">
                   {product.name}

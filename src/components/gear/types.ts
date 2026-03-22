@@ -1,6 +1,7 @@
 export type Product = {
   affiliateUrl?: string;
   bestFor: string;
+  comparisonBadge?: string;
   description: [string, string];
   image: string;
   imageAlt: string;

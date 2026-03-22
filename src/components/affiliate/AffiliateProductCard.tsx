@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
 import AffiliateProductDetailDialog from "@/components/affiliate/AffiliateProductDetailDialog";
 import type { Product } from "@/components/gear/types";
@@ -34,6 +35,11 @@ const AffiliateProductCard = ({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-brand-red/80">{badgeLabel}</p>
+            {product.comparisonBadge ? (
+              <Badge className="mt-3 border-accent/30 bg-accent/12 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-accent-foreground hover:bg-accent/12">
+                {product.comparisonBadge}
+              </Badge>
+            ) : null}
             <h4 className="mt-2 text-2xl font-bold leading-tight text-primary-foreground">{product.name}</h4>
           </div>
           <div className="shrink-0 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-sm font-semibold text-accent-foreground">
