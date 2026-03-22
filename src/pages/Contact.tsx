@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trackContactSubmission } from "@/lib/trackContactSubmission";
@@ -7,6 +9,17 @@ import { trackContactSubmission } from "@/lib/trackContactSubmission";
 const Contact = () => {
   const [general, setGeneral] = useState({ name: "", email: "", message: "" });
   const [brand, setBrand] = useState({ company: "", contact: "", email: "", budget: "", details: "" });
+  const [brandSubmissionConfirmed, setBrandSubmissionConfirmed] = useState(false);
+
+  useEffect(() => {
+    if (!brandSubmissionConfirmed) return;
+
+    const timeout = window.setTimeout(() => {
+      setBrandSubmissionConfirmed(false);
+    }, 5000);
+
+    return () => window.clearTimeout(timeout);
+  }, [brandSubmissionConfirmed]);
 
   const handleGeneral = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +30,13 @@ const Contact = () => {
   const handleBrand = (e: React.FormEvent) => {
     e.preventDefault();
     trackContactSubmission("brand_deal", brand.budget as "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000" | "Under $1,000");
-    window.location.href = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
+    setBrandSubmissionConfirmed(true);
+
+    const mailtoUrl = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0AEmail: ${brand.email}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
+
+    window.setTimeout(() => {
+      window.location.href = mailtoUrl;
+    }, 180);
   };
 
   const inputClass = "w-full px-4 py-3 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-border";
@@ -47,6 +66,14 @@ const Contact = () => {
             {/* Brand Deal */}
             <form onSubmit={handleBrand} className="bg-muted/50 rounded-2xl p-8 space-y-5 animate-reveal animate-reveal-delay-3">
               <h2 className="font-display text-2xl font-bold mb-2">Brand Deal Inquiry</h2>
+              {brandSubmissionConfirmed && (
+                <Alert className="border-brand-red/20 bg-background/90 text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-brand-red" />
+                  <AlertDescription>
+                    Tracking recorded. Your email app should open next so you can send the sponsorship inquiry directly to George.
+                  </AlertDescription>
+                </Alert>
+              )}
               <input type="text" placeholder="Company Name" required value={brand.company} onChange={(e) => setBrand({ ...brand, company: e.target.value })} className={inputClass} />
               <input type="text" placeholder="Contact Name" required value={brand.contact} onChange={(e) => setBrand({ ...brand, contact: e.target.value })} className={inputClass} />
               <input type="email" placeholder="Email" required value={brand.email} onChange={(e) => setBrand({ ...brand, email: e.target.value })} className={inputClass} />
