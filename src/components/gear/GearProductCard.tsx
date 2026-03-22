@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
+import GearProductDetailDialog from "@/components/gear/GearProductDetailDialog";
 import type { Product } from "@/components/gear/types";
 
 type GearProductCardProps = {
@@ -35,6 +36,8 @@ const GearProductCard = ({ product }: GearProductCardProps) => (
           <p key={line}>{line}</p>
         ))}
       </div>
+
+      <GearProductDetailDialog product={product} />
 
       <a
         href={affiliatePlaceholderUrl}
