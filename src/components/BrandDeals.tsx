@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import georgeStudioImg from "@/assets/george-williams-news-studio.png";
+import { trackMediaKitDownload } from "@/lib/trackMediaKitDownload";
 
 const audience = ["Owner operators", "Fleet owners", "CDL drivers", "Logistics professionals"];
 const stats = [
@@ -129,7 +130,15 @@ const BrandDeals = () => {
                 <Link to="/contact">
                   <Button variant="hero" size="lg">Partner With Us</Button>
                 </Link>
-                <a href="/true-trucking-tv-sponsor-media-kit.pdf" download target="_blank" rel="noopener noreferrer">
+                <a
+                  href="/true-trucking-tv-sponsor-media-kit.pdf"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    void trackMediaKitDownload("brand_deals");
+                  }}
+                >
                   <Button variant="hero-outline" size="lg">Download Media Kit</Button>
                 </a>
               </div>

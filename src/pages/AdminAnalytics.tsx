@@ -19,7 +19,9 @@ type AnalyticsResponse = {
   comparePrevious: boolean;
   totalImpressions: number;
   totalClicks: number;
+  totalMediaKitDownloads: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
+  mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
     placement: Placement;
@@ -54,6 +56,14 @@ type AnalyticsResponse = {
     footer: number;
     unknown: number;
   }>;
+  mediaKitSeries: Array<{
+    date: string;
+    youtube: number;
+    tiktok: number;
+    facebook: number;
+    instagram: number;
+    direct: number;
+  }>;
 };
 
 const ranges = [7, 30, 90] as const;
@@ -63,6 +73,11 @@ const platformLabels: Record<Platform, string> = {
   tiktok: "TikTok",
   facebook: "Facebook",
   instagram: "Instagram",
+};
+
+const sponsorPlatformLabels: Record<Platform | "direct", string> = {
+  ...platformLabels,
+  direct: "Direct",
 };
 
 const placementLabels = {
@@ -337,6 +352,14 @@ const AdminAnalytics = () => {
               </CardTitle>
             </CardHeader>
           </Card>
+          <Card className="border-primary/15 shadow-lg shadow-primary/5">
+            <CardHeader>
+              <CardDescription>Media kit downloads</CardDescription>
+              <CardTitle className="font-display text-4xl text-brand-red">
+                {data?.totalMediaKitDownloads.toLocaleString() ?? "—"}
+              </CardTitle>
+            </CardHeader>
+          </Card>
         </section>
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.9fr]">
@@ -401,6 +424,67 @@ const AdminAnalytics = () => {
                         style={{ backgroundColor: `hsl(var(--platform-${item.platform}))` }}
                         aria-hidden="true"
                       />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.9fr]">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Media kit downloads over time</CardTitle>
+              <CardDescription>Track sponsor interest by referral source day by day.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                  Loading media kit trends...
+                </div>
+              ) : error ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-destructive/40 bg-destructive/5 px-6 text-center text-sm text-destructive">
+                  {(error as Error).message}
+                </div>
+              ) : !data?.mediaKitSeries.length ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                  No media kit downloads yet for this time range.
+                </div>
+              ) : (
+                <ChartContainer config={{ ...chartConfig, direct: { label: "Direct", color: "hsl(var(--muted-foreground))" } }} className="h-[320px] w-full">
+                  <LineChart data={data.mediaKitSeries} margin={{ left: 8, right: 12, top: 12, bottom: 4 }}>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
+                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={36} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="youtube" stroke="var(--color-youtube)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="tiktok" stroke="var(--color-tiktok)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="facebook" stroke="var(--color-facebook)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="instagram" stroke="var(--color-instagram)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="direct" stroke="var(--color-direct)" strokeWidth={3} dot={false} />
+                  </LineChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Sponsor interest by source</CardTitle>
+              <CardDescription>See which referral platforms are driving media kit downloads.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(data?.mediaKitTotals ?? []).map((item) => (
+                  <div key={item.platform} className="rounded-2xl border border-border bg-muted/50 p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{sponsorPlatformLabels[item.platform]}</p>
+                        <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+                          <p><span className="font-semibold text-foreground">{item.downloads.toLocaleString()}</span> downloads</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
