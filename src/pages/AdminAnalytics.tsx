@@ -35,6 +35,14 @@ type AnalyticsResponse = {
     facebookClicks: number;
     instagramClicks: number;
   }>;
+  placementSeries: Array<{
+    date: string;
+    hero: number;
+    navbar: number;
+    gear: number;
+    footer: number;
+    unknown: number;
+  }>;
 };
 
 const ranges = [7, 30, 90] as const;
@@ -59,6 +67,14 @@ const chartConfig = {
   tiktok: { label: "TikTok", color: "hsl(var(--platform-tiktok))" },
   facebook: { label: "Facebook", color: "hsl(var(--platform-facebook))" },
   instagram: { label: "Instagram", color: "hsl(var(--platform-instagram))" },
+} satisfies ChartConfig;
+
+const placementChartConfig = {
+  hero: { label: "Hero CTA", color: "hsl(var(--platform-youtube))" },
+  navbar: { label: "Navbar", color: "hsl(var(--platform-facebook))" },
+  gear: { label: "Gear card", color: "hsl(var(--platform-instagram))" },
+  footer: { label: "Footer", color: "hsl(var(--tt-orange))" },
+  unknown: { label: "Unknown", color: "hsl(var(--muted-foreground))" },
 } satisfies ChartConfig;
 
 const AdminAnalytics = () => {
@@ -238,6 +254,43 @@ const AdminAnalytics = () => {
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">IFTA click placement trends</CardTitle>
+              <CardDescription>Track which site placement drives the most outbound clicks day by day.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                  Loading placement trends...
+                </div>
+              ) : error ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-destructive/40 bg-destructive/5 px-6 text-center text-sm text-destructive">
+                  {(error as Error).message}
+                </div>
+              ) : !data?.placementSeries.length ? (
+                <div className="flex h-[320px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                  No tracked placement clicks yet for this time range.
+                </div>
+              ) : (
+                <ChartContainer config={placementChartConfig} className="h-[320px] w-full">
+                  <LineChart data={data.placementSeries} margin={{ left: 8, right: 12, top: 12, bottom: 4 }}>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
+                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={36} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="hero" stroke="var(--color-hero)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="navbar" stroke="var(--color-navbar)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="gear" stroke="var(--color-gear)" strokeWidth={3} dot={false} />
+                    <Line type="monotone" dataKey="footer" stroke="var(--color-footer)" strokeWidth={3} dot={false} />
+                  </LineChart>
+                </ChartContainer>
+              )}
             </CardContent>
           </Card>
         </section>
