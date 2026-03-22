@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import LatestVideos from "@/components/LatestVideos";
 import GearStore from "@/components/GearStore";
+import GearGeorgeRecommends from "@/components/GearGeorgeRecommends";
 import BrandDeals from "@/components/BrandDeals";
 import AboutGeorge from "@/components/AboutGeorge";
 import Newsletter from "@/components/Newsletter";
@@ -19,6 +20,7 @@ const Index = () => {
         <HeroSection />
         <LatestVideos />
         <GearStore />
+        <GearGeorgeRecommends />
         <BrandDeals />
         <AboutGeorge />
         <Newsletter />
