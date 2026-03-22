@@ -13,6 +13,7 @@ type Platform = (typeof platforms)[number];
 type Placement = (typeof placements)[number];
 
 type DailyCounts = Record<Platform, number>;
+type PlacementDailyCounts = Record<Placement, number>;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -106,6 +107,7 @@ Deno.serve(async (req) => {
 
     const impressionByDate = new Map<string, DailyCounts>();
     const clickByDate = new Map<string, DailyCounts>();
+    const placementTrendByDate = new Map<string, PlacementDailyCounts>();
     const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const placementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
@@ -119,6 +121,7 @@ Deno.serve(async (req) => {
       const key = current.toISOString().slice(0, 10);
       impressionByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
       clickByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
+      placementTrendByDate.set(key, { hero: 0, navbar: 0, gear: 0, footer: 0, unknown: 0 });
     }
 
     for (const row of impressionRows ?? []) {
@@ -148,6 +151,10 @@ Deno.serve(async (req) => {
       if (placements.includes(placement)) {
         placementTotals[placement] += 1;
         placementByPlatform[placement][platform] += 1;
+        const placementTrend = placementTrendByDate.get(key);
+        if (placementTrend) {
+          placementTrend[placement] += 1;
+        }
       }
     }
 
@@ -163,6 +170,11 @@ Deno.serve(async (req) => {
         instagramClicks: clickCounts.instagram,
       };
     });
+
+    const placementSeries = [...placementTrendByDate.entries()].map(([date, placementCounts]) => ({
+      date: new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      ...placementCounts,
+    }));
 
     const response = {
       days,
@@ -183,6 +195,7 @@ Deno.serve(async (req) => {
         instagram: placementByPlatform[placement].instagram,
       })),
       series,
+      placementSeries,
     };
 
     return new Response(JSON.stringify(response), {
