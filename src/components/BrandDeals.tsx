@@ -12,6 +12,17 @@ const stats = [
   { value: "100%", label: "Real Truckers Only" },
 ];
 
+const partnerProof = [
+  {
+    quote: "George speaks to professional drivers in a voice brands can trust because he lives the industry every day.",
+    label: "Authentic audience fit",
+  },
+  {
+    quote: "From freight talk to road reports, True Trucking TV gives sponsors a direct line to working truckers across the country.",
+    label: "Nationwide visibility",
+  },
+];
+
 const BrandDeals = () => {
   const ref = useScrollReveal();
   return (
@@ -52,18 +63,32 @@ const BrandDeals = () => {
           </div>
 
           <div className="animate-reveal animate-reveal-delay-3">
-            <div className="relative mx-auto max-w-sm overflow-hidden rounded-[1.75rem] border border-primary-foreground/10 bg-brand-dark-surface p-3 shadow-2xl shadow-black/25">
-              <div className="overflow-hidden rounded-[1.25rem] aspect-[4/5]">
-                <img
-                  src={georgeStudioImg}
-                  alt="George Williams in the True Trucking TV studio wearing a True Trucker hat and IFTA shirt"
-                  className="h-full w-full object-cover"
-                />
+            <div className="mx-auto max-w-sm space-y-4">
+              <div className="relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/10 bg-brand-dark-surface p-3 shadow-2xl shadow-black/25">
+                <div className="overflow-hidden rounded-[1.25rem] aspect-[4/5]">
+                  <img
+                    src={georgeStudioImg}
+                    alt="George Williams in the True Trucking TV studio wearing a True Trucker hat and IFTA shirt"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="absolute inset-x-7 bottom-7 rounded-2xl border border-brand-red/20 bg-secondary/90 p-4 backdrop-blur-sm">
+                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">Brand partner access</p>
+                  <p className="mt-2 font-display text-2xl leading-none text-primary-foreground">George Williams</p>
+                  <p className="mt-2 text-sm text-primary-foreground/70">A trusted voice for real drivers, freight news, and trucking brands.</p>
+                </div>
               </div>
-              <div className="absolute inset-x-7 bottom-7 rounded-2xl border border-brand-red/20 bg-secondary/90 p-4 backdrop-blur-sm">
-                <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">Brand partner access</p>
-                <p className="mt-2 font-display text-2xl leading-none text-primary-foreground">George Williams</p>
-                <p className="mt-2 text-sm text-primary-foreground/70">A trusted voice for real drivers, freight news, and trucking brands.</p>
+
+              <div className="space-y-3">
+                {partnerProof.map((item, index) => (
+                  <div
+                    key={item.label}
+                    className={`rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 p-4 animate-reveal animate-reveal-delay-${Math.min(index + 2, 5)}`}
+                  >
+                    <p className="text-sm leading-relaxed text-primary-foreground/80">“{item.quote}”</p>
+                    <p className="mt-3 text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">{item.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
