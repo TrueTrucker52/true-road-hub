@@ -10,6 +10,22 @@ export const trackContactSubmission = (
   if (typeof window === "undefined") return;
 
   const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-contact-submission`;
+  const payload = {
+    submissionType,
+    budgetTier: budgetTier ?? null,
+    platform: getReferralPlatform() ?? "direct",
+    pagePath: `${window.location.pathname}${window.location.search}`,
+    referrer: document.referrer || null,
+    userAgent: navigator.userAgent,
+  };
+  const body = JSON.stringify(payload);
+
+  if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
+    const blob = new Blob([body], { type: "application/json" });
+    if (navigator.sendBeacon(url, blob)) {
+      return;
+    }
+  }
 
   void fetch(url, {
     method: "POST",
@@ -18,13 +34,6 @@ export const trackContactSubmission = (
       "Content-Type": "application/json",
       apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
     },
-    body: JSON.stringify({
-      submissionType,
-      budgetTier: budgetTier ?? null,
-      platform: getReferralPlatform() ?? "direct",
-      pagePath: `${window.location.pathname}${window.location.search}`,
-      referrer: document.referrer || null,
-      userAgent: navigator.userAgent,
-    }),
+    body,
   }).catch(() => undefined);
 };
