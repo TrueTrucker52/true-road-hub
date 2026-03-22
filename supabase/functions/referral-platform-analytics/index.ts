@@ -10,6 +10,8 @@ const platforms = ["youtube", "tiktok", "facebook", "instagram"] as const;
 
 type Platform = (typeof platforms)[number];
 
+type DailyCounts = Record<Platform, number>;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -80,47 +82,86 @@ Deno.serve(async (req) => {
     startDate.setUTCDate(startDate.getUTCDate() - (days - 1));
     startDate.setUTCHours(0, 0, 0, 0);
 
-    const { data, error } = await adminClient
+    const { data: impressionRows, error: impressionsError } = await adminClient
       .from("referral_label_impressions")
       .select("platform, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
-    if (error) {
-      throw new Error(error.message);
+    if (impressionsError) {
+      throw new Error(impressionsError.message);
     }
 
-    const byDate = new Map<string, Record<Platform, number>>();
-    const totals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as Record<Platform, number>;
+    const { data: clickRows, error: clicksError } = await adminClient
+      .from("referral_ifta_clicks")
+      .select("platform, clicked_at")
+      .gte("clicked_at", startDate.toISOString())
+      .order("clicked_at", { ascending: true });
+
+    if (clicksError) {
+      throw new Error(clicksError.message);
+    }
+
+    const impressionByDate = new Map<string, DailyCounts>();
+    const clickByDate = new Map<string, DailyCounts>();
+    const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
+    const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
 
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
       current.setUTCDate(startDate.getUTCDate() + offset);
       const key = current.toISOString().slice(0, 10);
-      byDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
+      impressionByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
+      clickByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
     }
 
-    for (const row of data ?? []) {
+    for (const row of impressionRows ?? []) {
       const platform = row.platform as Platform;
       if (!platforms.includes(platform)) continue;
 
       const key = row.created_at.slice(0, 10);
-      const current = byDate.get(key);
+      const current = impressionByDate.get(key);
       if (!current) continue;
 
       current[platform] += 1;
-      totals[platform] += 1;
+      impressionTotals[platform] += 1;
     }
 
-    const series = [...byDate.entries()].map(([date, counts]) => ({
+    for (const row of clickRows ?? []) {
+      const platform = row.platform as Platform;
+      if (!platforms.includes(platform)) continue;
+
+      const key = row.clicked_at.slice(0, 10);
+      const current = clickByDate.get(key);
+      if (!current) continue;
+
+      current[platform] += 1;
+      clickTotals[platform] += 1;
+    }
+
+    const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
+      const clickCounts = clickByDate.get(date) ?? { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 };
+
+      return {
       date: new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      ...counts,
-    }));
+        ...impressionCounts,
+        youtubeClicks: clickCounts.youtube,
+        tiktokClicks: clickCounts.tiktok,
+        facebookClicks: clickCounts.facebook,
+        instagramClicks: clickCounts.instagram,
+      };
+    });
 
     const response = {
       days,
-      totalImpressions: Object.values(totals).reduce((sum, value) => sum + value, 0),
-      totals: platforms.map((platform) => ({ platform, impressions: totals[platform] })),
+      totalImpressions: Object.values(impressionTotals).reduce((sum, value) => sum + value, 0),
+      totalClicks: Object.values(clickTotals).reduce((sum, value) => sum + value, 0),
+      totals: platforms.map((platform) => ({
+        platform,
+        impressions: impressionTotals[platform],
+        clicks: clickTotals[platform],
+        conversionRate: impressionTotals[platform] === 0 ? 0 : clickTotals[platform] / impressionTotals[platform],
+      })),
       series,
     };
 

@@ -14,8 +14,19 @@ type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type AnalyticsResponse = {
   days: number;
   totalImpressions: number;
-  totals: Array<{ platform: Platform; impressions: number }>;
-  series: Array<{ date: string; youtube: number; tiktok: number; facebook: number; instagram: number }>;
+  totalClicks: number;
+  totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
+  series: Array<{
+    date: string;
+    youtube: number;
+    tiktok: number;
+    facebook: number;
+    instagram: number;
+    youtubeClicks: number;
+    tiktokClicks: number;
+    facebookClicks: number;
+    instagramClicks: number;
+  }>;
 };
 
 const ranges = [7, 30, 90] as const;
@@ -53,6 +64,11 @@ const AdminAnalytics = () => {
   const topPlatform = useMemo(() => {
     if (!data?.totals.length) return null;
     return [...data.totals].sort((a, b) => b.impressions - a.impressions)[0] ?? null;
+  }, [data]);
+
+  const bestConversionPlatform = useMemo(() => {
+    if (!data?.totals.length) return null;
+    return [...data.totals].sort((a, b) => b.conversionRate - a.conversionRate)[0] ?? null;
   }, [data]);
 
   return (
@@ -105,12 +121,20 @@ const AdminAnalytics = () => {
           </div>
         </div>
 
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Card className="border-primary/15 shadow-lg shadow-primary/5">
             <CardHeader>
               <CardDescription>Total impressions</CardDescription>
               <CardTitle className="font-display text-4xl text-brand-red">
                 {data?.totalImpressions.toLocaleString() ?? "—"}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card className="border-primary/15 shadow-lg shadow-primary/5">
+            <CardHeader>
+              <CardDescription>Total IFTA clicks</CardDescription>
+              <CardTitle className="font-display text-4xl text-brand-red">
+                {data?.totalClicks.toLocaleString() ?? "—"}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -124,8 +148,10 @@ const AdminAnalytics = () => {
           </Card>
           <Card className="border-primary/15 shadow-lg shadow-primary/5">
             <CardHeader>
-              <CardDescription>Window</CardDescription>
-              <CardTitle className="font-display text-4xl">{days} days</CardTitle>
+              <CardDescription>Best conversion rate</CardDescription>
+              <CardTitle className="font-display text-4xl">
+                {bestConversionPlatform ? `${(bestConversionPlatform.conversionRate * 100).toFixed(1)}%` : "—"}
+              </CardTitle>
             </CardHeader>
           </Card>
         </section>
@@ -171,17 +197,21 @@ const AdminAnalytics = () => {
 
           <Card className="border-primary/15 shadow-xl shadow-primary/5">
             <CardHeader>
-              <CardTitle className="font-display text-3xl">Platform totals</CardTitle>
-              <CardDescription>Total label impressions in the selected range.</CardDescription>
+              <CardTitle className="font-display text-3xl">Platform conversion snapshot</CardTitle>
+              <CardDescription>Compare impressions, clicks, and conversion rate for each platform.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {(data?.totals ?? []).map((item) => (
                   <div key={item.platform} className="rounded-2xl border border-border bg-muted/50 p-4">
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{platformLabels[item.platform]}</p>
-                        <p className="mt-1 font-display text-3xl text-foreground">{item.impressions.toLocaleString()}</p>
+                        <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+                          <p><span className="font-semibold text-foreground">{item.impressions.toLocaleString()}</span> impressions</p>
+                          <p><span className="font-semibold text-foreground">{item.clicks.toLocaleString()}</span> IFTA clicks</p>
+                          <p><span className="font-semibold text-brand-red">{(item.conversionRate * 100).toFixed(1)}%</span> conversion rate</p>
+                        </div>
                       </div>
                       <div
                         className="h-4 w-4 rounded-full"
