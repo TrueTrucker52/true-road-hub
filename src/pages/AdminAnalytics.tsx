@@ -16,6 +16,7 @@ type AnalyticsResponse = {
   totalImpressions: number;
   totalClicks: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
+  placementTotals: Array<{ placement: "hero" | "navbar" | "gear" | "footer" | "unknown"; clicks: number }>;
   series: Array<{
     date: string;
     youtube: number;
@@ -37,6 +38,14 @@ const platformLabels: Record<Platform, string> = {
   facebook: "Facebook",
   instagram: "Instagram",
 };
+
+const placementLabels = {
+  hero: "Hero CTA",
+  navbar: "Navbar",
+  gear: "Gear card",
+  footer: "Footer",
+  unknown: "Unknown",
+} as const;
 
 const chartConfig = {
   youtube: { label: "YouTube", color: "hsl(var(--platform-youtube))" },
@@ -219,6 +228,26 @@ const AdminAnalytics = () => {
                         aria-hidden="true"
                       />
                     </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">IFTA click placement performance</CardTitle>
+              <CardDescription>See which button placement is driving the most outbound IFTA clicks.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                {(data?.placementTotals ?? []).map((item) => (
+                  <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
+                    <p className="mt-3 font-display text-4xl text-foreground">{item.clicks.toLocaleString()}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Tracked outbound clicks</p>
                   </div>
                 ))}
               </div>

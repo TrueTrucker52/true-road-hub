@@ -35,7 +35,7 @@ const HeroSection = () => {
             <a href="https://www.youtube.com/@truetrucking5301" target="_blank" rel="noopener noreferrer">
               <Button variant="hero" size="lg">Watch Latest Videos</Button>
             </a>
-            <ReferralIFTAButton>
+            <ReferralIFTAButton placement="hero">
               <Button variant="hero-outline" size="lg">Get the IFTA App Free</Button>
             </ReferralIFTAButton>
           </div>

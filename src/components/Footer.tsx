@@ -25,7 +25,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li><a href="#videos" className="hover:text-primary-foreground transition-colors">Videos</a></li>
               <li><a href="#gear" className="hover:text-primary-foreground transition-colors">Gear Store</a></li>
-              <li><ReferralIFTAButton className="hover:text-primary-foreground transition-colors">IFTA App</ReferralIFTAButton></li>
+              <li><ReferralIFTAButton placement="footer" className="hover:text-primary-foreground transition-colors">IFTA App</ReferralIFTAButton></li>
               <li><a href="#about" className="hover:text-primary-foreground transition-colors">About</a></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
             </ul>
@@ -54,7 +54,7 @@ const Footer = () => {
           {/* IFTA App */}
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">IFTA App</h4>
-            <ReferralIFTAButton>
+            <ReferralIFTAButton placement="footer">
               <Button variant="hero" className="w-full">Get the IFTA App</Button>
             </ReferralIFTAButton>
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground/60">

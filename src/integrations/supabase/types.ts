@@ -19,6 +19,7 @@ export type Database = {
           clicked_at: string
           id: string
           page_path: string
+          placement: string
           platform: string
           referrer: string | null
           session_id: string
@@ -29,6 +30,7 @@ export type Database = {
           clicked_at?: string
           id?: string
           page_path: string
+          placement: string
           platform: string
           referrer?: string | null
           session_id: string
@@ -39,6 +41,7 @@ export type Database = {
           clicked_at?: string
           id?: string
           page_path?: string
+          placement?: string
           platform?: string
           referrer?: string | null
           session_id?: string

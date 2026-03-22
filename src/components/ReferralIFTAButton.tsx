@@ -1,15 +1,16 @@
 import { MouseEvent, ReactNode } from "react";
-import { trackReferralIFTAClick } from "@/lib/trackReferralIFTA";
+import { IFTAPlacement, trackReferralIFTAClick } from "@/lib/trackReferralIFTA";
 
 type ReferralIFTAButtonProps = {
   children: ReactNode;
   className?: string;
+  placement: IFTAPlacement;
 };
 
-const ReferralIFTAButton = ({ children, className }: ReferralIFTAButtonProps) => {
+const ReferralIFTAButton = ({ children, className, placement }: ReferralIFTAButtonProps) => {
   const handleClick = async (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    const targetUrl = await trackReferralIFTAClick();
+    const targetUrl = await trackReferralIFTAClick(placement);
     window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
 
