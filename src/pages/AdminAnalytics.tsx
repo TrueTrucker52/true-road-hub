@@ -15,6 +15,7 @@ type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
 type MediaKitPlacement = "brand_deals";
 type ContactSubmissionType = "general" | "brand_deal";
+type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 
 type AnalyticsResponse = {
   days: number;
@@ -29,6 +30,7 @@ type AnalyticsResponse = {
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
   contactSubmissionTotals: Array<{ submissionType: ContactSubmissionType; submissions: number }>;
+  budgetTierTotals: Array<{ budgetTier: BudgetTier; inquiries: number }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
     placement: Placement;
@@ -102,6 +104,13 @@ const mediaKitPlacementLabels: Record<MediaKitPlacement, string> = {
 const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
   general: "General contact",
   brand_deal: "Brand deal inquiries",
+};
+
+const budgetTierLabels: Record<BudgetTier, string> = {
+  "Under $1,000": "Under $1,000",
+  "$1,000 - $5,000": "$1,000 - $5,000",
+  "$5,000 - $10,000": "$5,000 - $10,000",
+  "Over $10,000": "Over $10,000",
 };
 
 const chartConfig = {
@@ -231,6 +240,11 @@ const AdminAnalytics = () => {
     if (!data?.mediaKitPlacementTotals.length) return null;
     return [...data.mediaKitPlacementTotals].sort((a, b) => b.downloads - a.downloads)[0] ?? null;
   }, [data]);
+
+  const sortedBudgetTierTotals = useMemo(
+    () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
+    [data],
+  );
 
   const placementExtremes = useMemo(() => {
     if (!comparePrevious || !data?.placementComparison.length) {
@@ -497,6 +511,34 @@ const AdminAnalytics = () => {
                     <p className="mt-2 font-display text-3xl text-foreground">{item.submissions.toLocaleString()}</p>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-border bg-background/70 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Brand inquiry quality by budget</p>
+                    <p className="mt-1 text-sm text-muted-foreground">See which sponsor budget tiers are showing the most intent in this range.</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  {sortedBudgetTierTotals.map((item, index) => (
+                    <div key={item.budgetTier} className="rounded-2xl border border-border bg-muted/50 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                          {budgetTierLabels[item.budgetTier]}
+                        </p>
+                        {index === 0 && item.inquiries > 0 ? (
+                          <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                            Top tier
+                          </Badge>
+                        ) : null}
+                      </div>
+                      <p className="mt-3 font-display text-3xl text-foreground">{item.inquiries.toLocaleString()}</p>
+                      <p className="mt-2 text-sm text-muted-foreground">brand inquiries</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>

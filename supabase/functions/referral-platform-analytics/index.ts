@@ -9,10 +9,12 @@ const allowedDays = new Set([7, 30, 90]);
 const platforms = ["youtube", "tiktok", "facebook", "instagram"] as const;
 const placements = ["hero", "navbar", "gear", "footer", "unknown"] as const;
 const mediaKitPlacements = ["brand_deals"] as const;
+const budgetTiers = ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "Over $10,000"] as const;
 
 type Platform = (typeof platforms)[number];
 type Placement = (typeof placements)[number];
 type MediaKitPlacement = (typeof mediaKitPlacements)[number];
+type BudgetTier = (typeof budgetTiers)[number];
 
 type DailyCounts = Record<Platform, number>;
 type PlacementDailyCounts = Record<Placement, number>;
@@ -128,7 +130,7 @@ Deno.serve(async (req) => {
 
     const { data: contactSubmissionRows, error: contactSubmissionsError } = await adminClient
       .from("contact_form_submissions")
-      .select("submission_type, created_at")
+      .select("submission_type, budget_tier, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
@@ -162,6 +164,9 @@ Deno.serve(async (req) => {
       general: 0,
       brand_deal: 0,
     };
+    const budgetTierTotals = Object.fromEntries(
+      budgetTiers.map((tier) => [tier, 0]),
+    ) as Record<BudgetTier, number>;
     const mediaKitTotals = {
       youtube: 0,
       tiktok: 0,
@@ -242,6 +247,10 @@ Deno.serve(async (req) => {
     for (const row of contactSubmissionRows ?? []) {
       const submissionType = row.submission_type === "brand_deal" ? "brand_deal" : "general";
       contactSubmissionTotals[submissionType] += 1;
+
+      if (submissionType === "brand_deal" && row.budget_tier && budgetTiers.includes(row.budget_tier as BudgetTier)) {
+        budgetTierTotals[row.budget_tier as BudgetTier] += 1;
+      }
     }
 
     const sponsorInquiryCount = contactSubmissionTotals.brand_deal;
@@ -298,6 +307,10 @@ Deno.serve(async (req) => {
         { submissionType: "general", submissions: contactSubmissionTotals.general },
         { submissionType: "brand_deal", submissions: contactSubmissionTotals.brand_deal },
       ],
+      budgetTierTotals: budgetTiers.map((tier) => ({
+        budgetTier: tier,
+        inquiries: budgetTierTotals[tier],
+      })),
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
       placementComparison: placements.map((placement) => {
         const current = placementTotals[placement];
