@@ -19,6 +19,7 @@ export const categories: Category[] = [
     products: [
       {
         bestFor: "Drivers taking back-to-back calls who need clear audio without pulling over.",
+        comparisonBadge: "Long-Haul Pick",
         name: "Professional Trucker Bluetooth Headset",
         priceRange: "$79 to $299",
         description: ["Crystal clear calls on the road.", "Noise cancelling mic for truck cab use."],
@@ -29,6 +30,7 @@ export const categories: Category[] = [
       },
       {
         bestFor: "Owner-operators and team drivers who still rely on road chatter and hazard callouts.",
+        comparisonBadge: "Best Value",
         name: "CB Radio for Truckers",
         priceRange: "$89 to $189",
         description: ["Stay connected with other drivers.", "Essential tool for every trucker."],
@@ -45,6 +47,7 @@ export const categories: Category[] = [
     products: [
       {
         bestFor: "Drivers handling night inspections, trailer checks, and roadside stops.",
+        comparisonBadge: "Safety Essential",
         name: "Heavy Duty Trucker Flashlight",
         priceRange: "$29 to $89",
         description: ["Military grade brightness.", "Rechargeable and waterproof."],
@@ -55,6 +58,7 @@ export const categories: Category[] = [
       },
       {
         bestFor: "Drivers who want a faster, clearer safety setup during roadside breakdowns.",
+        comparisonBadge: "Safety Essential",
         name: "LED Roadside Emergency Kit",
         priceRange: "$39 to $79",
         description: ["DOT approved warning triangles", "and LED flares for roadside safety."],
@@ -71,6 +75,7 @@ export const categories: Category[] = [
     products: [
       {
         bestFor: "Drivers who need truck-safe routing and fewer surprises on unfamiliar lanes.",
+        comparisonBadge: "Long-Haul Pick",
         name: "Garmin dezl Truck GPS",
         priceRange: "$249 to $399",
         description: ["Built specifically for truck drivers.", "Custom truck routing avoids low bridges."],
@@ -81,6 +86,7 @@ export const categories: Category[] = [
       },
       {
         bestFor: "Drivers wanting incident protection, insurance evidence, and peace of mind on every run.",
+        comparisonBadge: "Safety Essential",
         name: "Dash Camera for Trucks",
         priceRange: "$89 to $299",
         description: ["Protect yourself on the road.", "Full HD recording front and rear."],
@@ -97,6 +103,7 @@ export const categories: Category[] = [
     products: [
       {
         bestFor: "Long-haul drivers who want cold drinks and meal prep access inside the sleeper.",
+        comparisonBadge: "Long-Haul Pick",
         name: "Truck Cab Mini Fridge",
         priceRange: "$49 to $149",
         description: ["Keep food and drinks cold on long hauls.", "Plugs into truck 12V outlet."],
@@ -107,6 +114,7 @@ export const categories: Category[] = [
       },
       {
         bestFor: "Drivers sleeping through daylight who need quicker, deeper rest between hauls.",
+        comparisonBadge: "Long-Haul Pick",
         name: "Blackout Window Shades for Truck",
         priceRange: "$29 to $79",
         description: ["Sleep better during rest periods.", "Complete blackout for day sleeping."],
@@ -123,6 +131,7 @@ export const categories: Category[] = [
     products: [
       {
         bestFor: "Drivers powering laptops, chargers, and small electronics from the cab.",
+        comparisonBadge: "Best Value",
         name: "Heavy Duty Power Inverter",
         priceRange: "$39 to $129",
         description: ["Power your devices from truck battery.", "Charge laptops phones and more."],
@@ -133,6 +142,7 @@ export const categories: Category[] = [
       },
       {
         bestFor: "Drivers using navigation and dispatch apps who need the phone visible without wobble.",
+        comparisonBadge: "Best Value",
         name: "Truck Driver Phone Mount",
         priceRange: "$19 to $59",
         description: ["Hands free phone use while driving.", "Heavy duty for truck cab vibration."],
