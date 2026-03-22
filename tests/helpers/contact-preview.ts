@@ -83,6 +83,32 @@ export const fillBrandInquiryForm = async (
   }
 };
 
+export const submitGeneralContactForm = async (
+  page: Page,
+  values: {
+    fullName?: string;
+    email?: string;
+    message?: string;
+  } = {},
+) => {
+  await fillGeneralContactForm(page, values);
+  await page.getByRole("button", { name: contactSelectors.general.submitButton }).click();
+};
+
+export const submitBrandInquiryForm = async (
+  page: Page,
+  values: {
+    companyName?: string;
+    contactName?: string;
+    contactEmail?: string;
+    budgetRange?: string;
+    campaignDetails?: string;
+  } = {},
+) => {
+  await fillBrandInquiryForm(page, values);
+  await page.getByRole("button", { name: contactSelectors.brand.submitButton }).click();
+};
+
 export const expectContactMessageVisible = async (page: Page, message: RegExp) => {
   await expect(page.getByText(message)).toBeVisible();
 };
