@@ -2,12 +2,20 @@ import AffiliateProductCard from "@/components/affiliate/AffiliateProductCard";
 import type { Category } from "@/components/gear/types";
 
 type AffiliateProductSectionProps = {
+  badgeLabel?: string;
+  ctaLabel?: string;
   category: Category;
   description?: string;
   index?: number;
 };
 
-const AffiliateProductSection = ({ category, description, index = 0 }: AffiliateProductSectionProps) => (
+const AffiliateProductSection = ({
+  badgeLabel,
+  category,
+  ctaLabel,
+  description,
+  index = 0,
+}: AffiliateProductSectionProps) => (
   <section
     className={`rounded-[2rem] border border-primary/15 bg-background/5 p-6 md:p-8 animate-reveal animate-reveal-delay-${Math.min(index + 1, 5)}`}
   >
@@ -21,7 +29,7 @@ const AffiliateProductSection = ({ category, description, index = 0 }: Affiliate
 
     <div className="grid gap-5 xl:grid-cols-2">
       {category.products.map((product) => (
-        <AffiliateProductCard key={product.name} product={product} />
+        <AffiliateProductCard key={product.name} badgeLabel={badgeLabel} ctaLabel={ctaLabel} product={product} />
       ))}
     </div>
   </section>
