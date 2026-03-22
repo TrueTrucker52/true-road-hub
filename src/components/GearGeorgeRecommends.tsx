@@ -1,6 +1,8 @@
-import GearProductCard from "@/components/gear/GearProductCard";
+import AffiliateProductSection from "@/components/affiliate/AffiliateProductSection";
 import { categories } from "@/components/gear/gearData";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+
+const categoryDescription = "Clean picks, practical price ranges, and placeholder affiliate buttons ready for your Amazon links.";
 
 const GearGeorgeRecommends = () => {
   const ref = useScrollReveal();
@@ -20,26 +22,12 @@ const GearGeorgeRecommends = () => {
 
         <div className="mt-16 space-y-8">
           {categories.map((category, index) => (
-            <section
+            <AffiliateProductSection
               key={category.id}
-              className={`rounded-[2rem] border border-primary/15 bg-background/5 p-6 md:p-8 animate-reveal animate-reveal-delay-${Math.min(index + 1, 5)}`}
-            >
-              <div className="mb-8 flex flex-col gap-3 border-b border-primary/10 pb-6 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.28em] text-primary-foreground/45">{category.id.replace("-", " ")}</p>
-                  <h3 className="mt-3 text-3xl font-bold text-primary-foreground md:text-4xl">{category.title}</h3>
-                </div>
-                <p className="max-w-xl text-sm leading-6 text-primary-foreground/62 md:text-right">
-                  Clean picks, practical price ranges, and placeholder affiliate buttons ready for your Amazon links.
-                </p>
-              </div>
-
-              <div className="grid gap-5 xl:grid-cols-2">
-                {category.products.map((product) => (
-                  <GearProductCard key={product.name} product={product} />
-                ))}
-              </div>
-            </section>
+              category={category}
+              description={categoryDescription}
+              index={index}
+            />
           ))}
         </div>
 
