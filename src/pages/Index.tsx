@@ -7,21 +7,26 @@ import AboutGeorge from "@/components/AboutGeorge";
 import Newsletter from "@/components/Newsletter";
 import SocialMedia from "@/components/SocialMedia";
 import Footer from "@/components/Footer";
+import { useReferralImpressionTracking } from "@/hooks/useReferralImpressionTracking";
 
-const Index = () => (
-  <>
-    <Navbar />
-    <main>
-      <HeroSection />
-      <LatestVideos />
-      <GearStore />
-      <BrandDeals />
-      <AboutGeorge />
-      <Newsletter />
-      <SocialMedia />
-    </main>
-    <Footer />
-  </>
-);
+const Index = () => {
+  useReferralImpressionTracking();
+
+  return (
+    <>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <LatestVideos />
+        <GearStore />
+        <BrandDeals />
+        <AboutGeorge />
+        <Newsletter />
+        <SocialMedia />
+      </main>
+      <Footer />
+    </>
+  );
+};
 
 export default Index;

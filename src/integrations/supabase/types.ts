@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      referral_label_impressions: {
+        Row: {
+          created_at: string
+          id: string
+          page_path: string
+          platform: string
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_path: string
+          platform: string
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_path?: string
+          platform?: string
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -103,6 +133,14 @@ export type Database = {
           title?: string | null
           video_url?: string | null
           youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      referral_platform_impression_totals: {
+        Row: {
+          impressions: number | null
+          last_seen_at: string | null
+          platform: string | null
         }
         Relationships: []
       }
