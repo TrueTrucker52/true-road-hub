@@ -58,14 +58,14 @@ const HeroSection = () => {
           </div>
 
           <div className="animate-reveal animate-reveal-delay-2">
-            <div className="relative mx-auto max-w-md lg:ml-auto lg:mr-0">
-              <div className="absolute -inset-3 rounded-[2rem] border border-primary-foreground/10 bg-primary-foreground/5" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/10 bg-primary-foreground/5 p-3 shadow-2xl shadow-black/30 backdrop-blur-sm">
+            <div className="hero-photo-shell relative mx-auto max-w-md lg:ml-auto lg:mr-0">
+              <div className="hero-photo-accent absolute -inset-3 rounded-[2rem] border border-primary-foreground/10 bg-primary-foreground/5 opacity-80" />
+              <div className="hero-photo-frame relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/10 bg-primary-foreground/5 p-3 shadow-2xl shadow-black/30 backdrop-blur-sm">
                 <div className="overflow-hidden rounded-[1.25rem] aspect-[4/5]">
                   <img
                     src={georgeStudioImg}
                     alt="George Williams in the True Trucking TV studio wearing a True Trucker hat and IFTA shirt"
-                    className="h-full w-full object-cover"
+                    className="hero-photo-image h-full w-full object-cover"
                   />
                 </div>
                 <div className="absolute inset-x-7 bottom-7 rounded-2xl border border-brand-red/20 bg-secondary/90 p-4 backdrop-blur-sm">
