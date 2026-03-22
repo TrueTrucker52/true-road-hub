@@ -31,15 +31,20 @@ const BrandInquiryForm = ({
   submissionConfirmed,
   values,
 }: BrandInquiryFormProps) => (
-  <form onSubmit={onSubmit} className="bg-muted/50 rounded-2xl p-8 space-y-5 animate-reveal animate-reveal-delay-3">
+  <form onSubmit={onSubmit} className="bg-muted/50 rounded-2xl p-8 flex flex-col gap-5 animate-reveal animate-reveal-delay-3">
     <h2 className="font-display text-2xl font-bold mb-2">Brand Deal Inquiry</h2>
-    {submissionConfirmed ? (
-      <FormStatusAlert
-        variant="success"
-        message="Tracking recorded. Your email app should open next so you can send the sponsorship inquiry directly to George."
-      />
+
+    {submissionConfirmed || error ? (
+      <div className="order-last md:order-none">
+        {submissionConfirmed ? (
+          <FormStatusAlert
+            variant="success"
+            message="Tracking recorded. Your email app should open next so you can send the sponsorship inquiry directly to George."
+          />
+        ) : null}
+        {error ? <FormStatusAlert variant="error" message={error} /> : null}
+      </div>
     ) : null}
-    {error ? <FormStatusAlert variant="error" message={error} /> : null}
 
     <ContactField htmlFor="brand-company" label="Company Name">
       <input
