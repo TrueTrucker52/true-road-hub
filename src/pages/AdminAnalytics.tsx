@@ -113,22 +113,28 @@ const AdminAnalytics = () => {
     return [...data.totals].sort((a, b) => b.conversionRate - a.conversionRate)[0] ?? null;
   }, [data]);
 
-  const bestImprovingPlacement = useMemo(() => {
-    if (!comparePrevious || !data?.placementComparison.length) return null;
+  const placementExtremes = useMemo(() => {
+    if (!comparePrevious || !data?.placementComparison.length) {
+      return {
+        bestImprovingPlacement: null,
+        bestDecliningPlacement: null,
+        topGainer: null,
+        topDecliner: null,
+      };
+    }
 
-    const winner = [...data.placementComparison].sort((a, b) => b.deltaPercent - a.deltaPercent)[0] ?? null;
+    const sortedDescending = [...data.placementComparison].sort((a, b) => b.deltaPercent - a.deltaPercent);
+    const sortedAscending = [...sortedDescending].reverse();
 
-    if (!winner || winner.delta <= 0) return null;
-    return winner.placement;
-  }, [comparePrevious, data]);
+    const topGainer = sortedDescending.find((item) => item.delta > 0) ?? null;
+    const topDecliner = sortedAscending.find((item) => item.delta < 0) ?? null;
 
-  const bestDecliningPlacement = useMemo(() => {
-    if (!comparePrevious || !data?.placementComparison.length) return null;
-
-    const loser = [...data.placementComparison].sort((a, b) => a.deltaPercent - b.deltaPercent)[0] ?? null;
-
-    if (!loser || loser.delta >= 0) return null;
-    return loser.placement;
+    return {
+      bestImprovingPlacement: topGainer?.placement ?? null,
+      bestDecliningPlacement: topDecliner?.placement ?? null,
+      topGainer,
+      topDecliner,
+    };
   }, [comparePrevious, data]);
 
   return (
@@ -335,11 +341,50 @@ const AdminAnalytics = () => {
               <CardDescription>See which button placement is driving the most outbound IFTA clicks.</CardDescription>
             </CardHeader>
             <CardContent>
+              {comparePrevious && (placementExtremes.topGainer || placementExtremes.topDecliner) ? (
+                <div className="mb-4 grid gap-3 md:grid-cols-2">
+                  <div className="rounded-2xl border border-brand-red/15 bg-brand-red/5 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top gainer</p>
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {(placementExtremes.topGainer?.deltaPercent ?? 0) >= 0 ? "+" : ""}
+                        {(((placementExtremes.topGainer?.deltaPercent ?? 0) * 100).toFixed(1))}%
+                      </Badge>
+                    </div>
+                    <p className="mt-2 font-display text-2xl text-foreground">
+                      {placementExtremes.topGainer ? placementLabels[placementExtremes.topGainer.placement] : "No gains yet"}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {placementExtremes.topGainer
+                        ? `${placementExtremes.topGainer.current.toLocaleString()} clicks this period`
+                        : "No placement improved in the selected range."}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top decliner</p>
+                      <Badge variant="outline" className="border-destructive/25 bg-destructive/10 text-destructive">
+                        {(((placementExtremes.topDecliner?.deltaPercent ?? 0) * 100).toFixed(1))}%
+                      </Badge>
+                    </div>
+                    <p className="mt-2 font-display text-2xl text-foreground">
+                      {placementExtremes.topDecliner ? placementLabels[placementExtremes.topDecliner.placement] : "No declines yet"}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {placementExtremes.topDecliner
+                        ? `${placementExtremes.topDecliner.current.toLocaleString()} clicks this period`
+                        : "No placement declined in the selected range."}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 {(data?.placementComparison ?? []).map((item) => {
                   const positive = item.delta >= 0;
-                  const isBestImproving = comparePrevious && bestImprovingPlacement === item.placement;
-                  const isBestDeclining = comparePrevious && bestDecliningPlacement === item.placement;
+                  const isBestImproving = comparePrevious && placementExtremes.bestImprovingPlacement === item.placement;
+                  const isBestDeclining = comparePrevious && placementExtremes.bestDecliningPlacement === item.placement;
 
                   return (
                     <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
