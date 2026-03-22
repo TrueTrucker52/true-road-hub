@@ -1,19 +1,6 @@
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getReferralPlatform } from "@/lib/referral";
-
-const SESSION_KEY = "tttv-referral-session-id";
-
-const getSessionId = () => {
-  if (typeof window === "undefined") return null;
-
-  const existing = sessionStorage.getItem(SESSION_KEY);
-  if (existing) return existing;
-
-  const sessionId = crypto.randomUUID();
-  sessionStorage.setItem(SESSION_KEY, sessionId);
-  return sessionId;
-};
+import { getReferralPlatform, getReferralSessionId } from "@/lib/referral";
 
 export const useReferralImpressionTracking = () => {
   useEffect(() => {
@@ -25,7 +12,7 @@ export const useReferralImpressionTracking = () => {
 
     if (sessionStorage.getItem(dedupeKey)) return;
 
-    const sessionId = getSessionId();
+    const sessionId = getReferralSessionId();
     if (!sessionId) return;
 
     sessionStorage.setItem(dedupeKey, "pending");

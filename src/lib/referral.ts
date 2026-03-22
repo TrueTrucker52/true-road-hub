@@ -72,3 +72,15 @@ export const getReferralAwareIFTAUrl = () => {
 
   return url.toString();
 };
+
+export const getReferralSessionId = () => {
+  if (typeof window === "undefined") return null;
+
+  const sessionKey = "tttv-referral-session-id";
+  const existing = sessionStorage.getItem(sessionKey);
+  if (existing) return existing;
+
+  const sessionId = crypto.randomUUID();
+  sessionStorage.setItem(sessionKey, sessionId);
+  return sessionId;
+};

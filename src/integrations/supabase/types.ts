@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      referral_ifta_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          page_path: string
+          platform: string
+          referrer: string | null
+          session_id: string
+          target_url: string
+          user_agent: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          page_path: string
+          platform: string
+          referrer?: string | null
+          session_id: string
+          target_url: string
+          user_agent?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          page_path?: string
+          platform?: string
+          referrer?: string | null
+          session_id?: string
+          target_url?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       referral_label_impressions: {
         Row: {
           created_at: string
@@ -133,6 +166,14 @@ export type Database = {
           title?: string | null
           video_url?: string | null
           youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      referral_platform_ifta_click_totals: {
+        Row: {
+          clicks: number | null
+          last_clicked_at: string | null
+          platform: string | null
         }
         Relationships: []
       }
