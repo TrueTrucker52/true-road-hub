@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      media_kit_downloads: {
+        Row: {
+          downloaded_at: string
+          id: string
+          page_path: string
+          placement: string
+          platform: string
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          downloaded_at?: string
+          id?: string
+          page_path: string
+          placement?: string
+          platform?: string
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          downloaded_at?: string
+          id?: string
+          page_path?: string
+          placement?: string
+          platform?: string
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       referral_ifta_clicks: {
         Row: {
           clicked_at: string
