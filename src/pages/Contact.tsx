@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BrandInquiryForm from "@/components/contact/BrandInquiryForm";
+import GeneralContactForm from "@/components/contact/GeneralContactForm";
+import type { BrandInquiryValues, GeneralContactValues } from "@/components/contact/types";
 import { trackContactSubmission } from "@/lib/trackContactSubmission";
 
 const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -25,8 +25,8 @@ const openMailtoWithDelay = (mailtoUrl: string) => {
 };
 
 const Contact = () => {
-  const [general, setGeneral] = useState({ name: "", email: "", message: "" });
-  const [brand, setBrand] = useState({ company: "", contact: "", email: "", budget: "", details: "" });
+  const [general, setGeneral] = useState<GeneralContactValues>({ name: "", email: "", message: "" });
+  const [brand, setBrand] = useState<BrandInquiryValues>({ company: "", contact: "", email: "", budget: "", details: "" });
   const [generalSubmissionConfirmed, setGeneralSubmissionConfirmed] = useState(false);
   const [brandSubmissionConfirmed, setBrandSubmissionConfirmed] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -133,7 +133,6 @@ const Contact = () => {
   };
 
   const inputClass = "w-full px-4 py-3 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-border";
-  const labelClass = "block text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground";
 
   return (
     <>
@@ -148,111 +147,54 @@ const Contact = () => {
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* General Contact */}
-            <form onSubmit={handleGeneral} className="bg-muted/50 rounded-2xl p-8 space-y-5 animate-reveal animate-reveal-delay-2">
-              <h2 className="font-display text-2xl font-bold mb-2">General Contact</h2>
-              {generalSubmissionConfirmed && (
-                <Alert className="border-brand-red/20 bg-background/90 text-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-brand-red" />
-                  <AlertDescription>
-                    Tracking recorded. Your email app should open next so you can send your message directly to George.
-                  </AlertDescription>
-                </Alert>
-              )}
-              {generalError && (
-                <Alert variant="destructive">
-                  <AlertDescription>{generalError}</AlertDescription>
-                </Alert>
-              )}
-              <div className="space-y-2">
-                <label htmlFor="general-name" className={labelClass}>Full Name</label>
-                <input id="general-name" name="generalName" autoComplete="section-general name" type="text" placeholder="Name" required maxLength={100} value={general.name} onChange={(e) => {
-                  setGeneral((current) => ({ ...current, name: e.target.value }));
-                  if (generalError) setGeneralError(null);
-                }} className={inputClass} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="general-email" className={labelClass}>Email Address</label>
-                <input id="general-email" name="generalEmail" autoComplete="section-general email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={general.email} onChange={(e) => {
-                  setGeneral((current) => ({ ...current, email: e.target.value }));
-                  if (generalError) setGeneralError(null);
-                }} className={inputClass} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="general-message" className={labelClass}>Message</label>
-                <textarea id="general-message" name="generalMessage" autoComplete="off" placeholder="Message" required maxLength={1000} rows={5} value={general.message} onChange={(e) => {
-                  setGeneral((current) => ({ ...current, message: e.target.value }));
-                  if (generalError) setGeneralError(null);
-                }} className={inputClass + " resize-none"} />
-              </div>
-              <Button type="submit" variant="subscribe" size="lg" className="w-full">Send Message</Button>
-            </form>
+            <GeneralContactForm
+              values={general}
+              error={generalError}
+              submissionConfirmed={generalSubmissionConfirmed}
+              onSubmit={handleGeneral}
+              inputClass={inputClass}
+              onNameChange={(value) => {
+                setGeneral((current) => ({ ...current, name: value }));
+                if (generalError) setGeneralError(null);
+              }}
+              onEmailChange={(value) => {
+                setGeneral((current) => ({ ...current, email: value }));
+                if (generalError) setGeneralError(null);
+              }}
+              onMessageChange={(value) => {
+                setGeneral((current) => ({ ...current, message: value }));
+                if (generalError) setGeneralError(null);
+              }}
+            />
 
-            {/* Brand Deal */}
-            <form onSubmit={handleBrand} className="bg-muted/50 rounded-2xl p-8 space-y-5 animate-reveal animate-reveal-delay-3">
-              <h2 className="font-display text-2xl font-bold mb-2">Brand Deal Inquiry</h2>
-              {brandSubmissionConfirmed && (
-                <Alert className="border-brand-red/20 bg-background/90 text-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-brand-red" />
-                  <AlertDescription>
-                    Tracking recorded. Your email app should open next so you can send the sponsorship inquiry directly to George.
-                  </AlertDescription>
-                </Alert>
-              )}
-              {brandError && (
-                <Alert variant="destructive">
-                  <AlertDescription>{brandError}</AlertDescription>
-                </Alert>
-              )}
-              <div className="space-y-2">
-                <label htmlFor="brand-company" className={labelClass}>Company Name</label>
-                <input id="brand-company" name="brandCompany" autoComplete="section-brand organization" type="text" placeholder="Company Name" required maxLength={120} value={brand.company} onChange={(e) => {
-                  setBrand((current) => ({ ...current, company: e.target.value }));
-                  if (brandError) setBrandError(null);
-                }} className={inputClass} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="brand-contact" className={labelClass}>Contact Name</label>
-                <input id="brand-contact" name="brandContactName" autoComplete="section-brand name" type="text" placeholder="Contact Name" required maxLength={100} value={brand.contact} onChange={(e) => {
-                  setBrand((current) => ({ ...current, contact: e.target.value }));
-                  if (brandError) setBrandError(null);
-                }} className={inputClass} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="brand-email" className={labelClass}>Contact Email</label>
-                <input id="brand-email" name="brandEmail" autoComplete="section-brand email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={brand.email} onChange={(e) => {
-                  setBrand((current) => ({ ...current, email: e.target.value }));
-                  if (brandError) setBrandError(null);
-                }} className={inputClass} />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="brand-budget" className={labelClass}>Budget Range</label>
-                <select id="brand-budget" name="brandBudget" autoComplete="off" required value={brand.budget} onChange={(e) => {
-                  setBrand((current) => ({ ...current, budget: e.target.value }));
-                  if (brandError) setBrandError(null);
-                }} className={inputClass}>
-                  <option value="" disabled>Select Budget</option>
-                  <option value="Under $1,000">Under $1,000</option>
-                  <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                  <option value="$5,000 - $10,000">$5,000 - $10,000</option>
-                  <option value="Over $10,000">Over $10,000</option>
-                </select>
-                <p className="text-xs text-muted-foreground">
-                  Pick the range closest to your planned monthly or campaign spend so we can suggest the right package.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="brand-details" className={labelClass}>Campaign Details</label>
-                <textarea id="brand-details" name="brandCampaignDetails" autoComplete="off" placeholder="Campaign Details" required maxLength={1000} rows={4} value={brand.details} onChange={(e) => {
-                  setBrand((current) => ({ ...current, details: e.target.value }));
-                  if (brandError) setBrandError(null);
-                }} className={inputClass + " resize-none"} />
-                <p className="text-xs text-muted-foreground">
-                  Share your goals, target audience, preferred platforms, timeline, and any products or offers you want featured.
-                </p>
-              </div>
-              <Button type="submit" variant="hero" size="lg" className="w-full">Submit Brand Deal Inquiry</Button>
-            </form>
+            <BrandInquiryForm
+              values={brand}
+              budgetOptions={brandBudgetTiers}
+              error={brandError}
+              submissionConfirmed={brandSubmissionConfirmed}
+              onSubmit={handleBrand}
+              inputClass={inputClass}
+              onCompanyChange={(value) => {
+                setBrand((current) => ({ ...current, company: value }));
+                if (brandError) setBrandError(null);
+              }}
+              onContactChange={(value) => {
+                setBrand((current) => ({ ...current, contact: value }));
+                if (brandError) setBrandError(null);
+              }}
+              onEmailChange={(value) => {
+                setBrand((current) => ({ ...current, email: value }));
+                if (brandError) setBrandError(null);
+              }}
+              onBudgetChange={(value) => {
+                setBrand((current) => ({ ...current, budget: value }));
+                if (brandError) setBrandError(null);
+              }}
+              onDetailsChange={(value) => {
+                setBrand((current) => ({ ...current, details: value }));
+                if (brandError) setBrandError(null);
+              }}
+            />
           </div>
         </div>
       </main>
