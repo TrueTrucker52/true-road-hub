@@ -1,14 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
-import GearProductDetailDialog from "@/components/gear/GearProductDetailDialog";
+import AffiliateProductDetailDialog from "@/components/affiliate/AffiliateProductDetailDialog";
 import type { Product } from "@/components/gear/types";
 
-type GearProductCardProps = {
+type AffiliateProductCardProps = {
   product: Product;
 };
 
-const GearProductCard = ({ product }: GearProductCardProps) => (
+const AffiliateProductCard = ({ product }: AffiliateProductCardProps) => (
   <article className="rounded-[1.75rem] border border-primary/15 bg-background/5 p-5 shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)] backdrop-blur-sm animate-reveal">
     <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/15 bg-brand-dark-surface aspect-[4/3]">
       <img
@@ -37,7 +37,7 @@ const GearProductCard = ({ product }: GearProductCardProps) => (
         ))}
       </div>
 
-      <GearProductDetailDialog product={product} />
+      <AffiliateProductDetailDialog product={product} />
 
       <a
         href={affiliatePlaceholderUrl}
@@ -54,4 +54,4 @@ const GearProductCard = ({ product }: GearProductCardProps) => (
   </article>
 );
 
-export default GearProductCard;
+export default AffiliateProductCard;
