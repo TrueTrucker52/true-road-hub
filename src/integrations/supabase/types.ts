@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_form_submissions: {
+        Row: {
+          created_at: string
+          id: string
+          page_path: string
+          referrer: string | null
+          submission_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_path: string
+          referrer?: string | null
+          submission_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          submission_type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       media_kit_downloads: {
         Row: {
           downloaded_at: string
