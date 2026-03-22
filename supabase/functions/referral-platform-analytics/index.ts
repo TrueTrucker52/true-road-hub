@@ -80,10 +80,15 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const requestedDays = Number(body?.days ?? 30);
+    const comparePrevious = Boolean(body?.comparePrevious);
     const days = allowedDays.has(requestedDays) ? requestedDays : 30;
     const startDate = new Date();
     startDate.setUTCDate(startDate.getUTCDate() - (days - 1));
     startDate.setUTCHours(0, 0, 0, 0);
+    const previousStartDate = new Date(startDate);
+    previousStartDate.setUTCDate(previousStartDate.getUTCDate() - days);
+    const previousEndDate = new Date(startDate);
+    previousEndDate.setUTCMilliseconds(previousEndDate.getUTCMilliseconds() - 1);
 
     const { data: impressionRows, error: impressionsError } = await adminClient
       .from("referral_label_impressions")
@@ -105,12 +110,25 @@ Deno.serve(async (req) => {
       throw new Error(clicksError.message);
     }
 
+    const { data: previousClickRows, error: previousClicksError } = comparePrevious
+      ? await adminClient
+          .from("referral_ifta_clicks")
+          .select("placement")
+          .gte("clicked_at", previousStartDate.toISOString())
+          .lte("clicked_at", previousEndDate.toISOString())
+      : { data: [], error: null };
+
+    if (previousClicksError) {
+      throw new Error(previousClicksError.message);
+    }
+
     const impressionByDate = new Map<string, DailyCounts>();
     const clickByDate = new Map<string, DailyCounts>();
     const placementTrendByDate = new Map<string, PlacementDailyCounts>();
     const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const placementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
+    const previousPlacementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
     const placementByPlatform = Object.fromEntries(
       placements.map((placement) => [placement, Object.fromEntries(platforms.map((platform) => [platform, 0]))]),
     ) as Record<Placement, DailyCounts>;
@@ -158,6 +176,13 @@ Deno.serve(async (req) => {
       }
     }
 
+    for (const row of previousClickRows ?? []) {
+      const placement = (row.placement as Placement | null) ?? "unknown";
+      if (placements.includes(placement)) {
+        previousPlacementTotals[placement] += 1;
+      }
+    }
+
     const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
       const clickCounts = clickByDate.get(date) ?? { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 };
 
@@ -187,6 +212,19 @@ Deno.serve(async (req) => {
         conversionRate: impressionTotals[platform] === 0 ? 0 : clickTotals[platform] / impressionTotals[platform],
       })),
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
+      placementComparison: placements.map((placement) => {
+        const current = placementTotals[placement];
+        const previous = previousPlacementTotals[placement];
+        const delta = current - previous;
+
+        return {
+          placement,
+          current,
+          previous,
+          delta,
+          deltaPercent: previous === 0 ? (current > 0 ? 1 : 0) : delta / previous,
+        };
+      }),
       placementByPlatform: placements.map((placement) => ({
         placement,
         youtube: placementByPlatform[placement].youtube,
@@ -196,6 +234,7 @@ Deno.serve(async (req) => {
       })),
       series,
       placementSeries,
+      comparePrevious,
     };
 
     return new Response(JSON.stringify(response), {
