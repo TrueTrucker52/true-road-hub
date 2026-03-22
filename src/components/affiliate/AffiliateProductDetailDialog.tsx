@@ -11,11 +11,20 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/components/gear/types";
 
-type GearProductDetailDialogProps = {
+type AffiliateProductDetailDialogProps = {
+  badgeLabel?: string;
+  ctaLabel?: string;
   product: Product;
 };
 
-const GearProductDetailDialog = ({ product }: GearProductDetailDialogProps) => {
+const AffiliateProductDetailDialog = ({
+  badgeLabel = "George recommends",
+  ctaLabel = "Get Best Price on Amazon",
+  product,
+}: AffiliateProductDetailDialogProps) => {
+  const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
+  const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -33,7 +42,7 @@ const GearProductDetailDialog = ({ product }: GearProductDetailDialogProps) => {
 
           <div className="p-6 md:p-8">
             <DialogHeader className="space-y-4 text-left">
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-brand-red/80">Gear George Recommends</p>
+                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-brand-red/80">{badgeLabel}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <DialogTitle className="font-display text-3xl leading-[1.02] text-primary-foreground md:text-4xl">
                   {product.name}
@@ -87,13 +96,13 @@ const GearProductDetailDialog = ({ product }: GearProductDetailDialogProps) => {
               </section>
 
               <a
-                href={affiliatePlaceholderUrl}
-                onClick={(event) => event.preventDefault()}
-                aria-label={`Placeholder affiliate link for ${product.name}`}
+                href={affiliateUrl}
+                onClick={isPlaceholderLink ? (event) => event.preventDefault() : undefined}
+                aria-label={`${ctaLabel} for ${product.name}`}
                 className="block"
               >
                 <Button variant="hero" size="lg" className="w-full justify-center">
-                  Get Best Price on Amazon
+                  {ctaLabel}
                 </Button>
               </a>
             </div>
@@ -104,4 +113,4 @@ const GearProductDetailDialog = ({ product }: GearProductDetailDialogProps) => {
   );
 };
 
-export default GearProductDetailDialog;
+export default AffiliateProductDetailDialog;

@@ -1,4 +1,5 @@
 export type Product = {
+  affiliateUrl?: string;
   bestFor: string;
   description: [string, string];
   image: string;
