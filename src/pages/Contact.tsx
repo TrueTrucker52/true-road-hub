@@ -24,7 +24,14 @@ const openMailtoWithDelay = (mailtoUrl: string) => {
   });
 };
 
+const isContactMailtoDisabled = () => {
+  if (typeof window === "undefined") return false;
+
+  return new URLSearchParams(window.location.search).get("contactTestMode") === "1";
+};
+
 const Contact = () => {
+  const contactMailtoDisabled = isContactMailtoDisabled();
   const [general, setGeneral] = useState<GeneralContactValues>({ name: "", email: "", message: "" });
   const [brand, setBrand] = useState<BrandInquiryValues>({ company: "", contact: "", email: "", budget: "", details: "" });
   const [generalSubmissionConfirmed, setGeneralSubmissionConfirmed] = useState(false);
@@ -87,7 +94,9 @@ const Contact = () => {
       `${trimmedGeneral.message}\n\nFrom: ${trimmedGeneral.name} (${trimmedGeneral.email})`,
     );
 
-    openMailtoWithDelay(mailtoUrl);
+    if (!contactMailtoDisabled) {
+      openMailtoWithDelay(mailtoUrl);
+    }
   };
 
   const handleBrand = (e: React.FormEvent) => {
@@ -129,7 +138,9 @@ const Contact = () => {
       `Company: ${trimmedBrand.company}\nContact: ${trimmedBrand.contact}\nEmail: ${trimmedBrand.email}\nBudget: ${trimmedBrand.budget}\n\n${trimmedBrand.details}`,
     );
 
-    openMailtoWithDelay(mailtoUrl);
+    if (!contactMailtoDisabled) {
+      openMailtoWithDelay(mailtoUrl);
+    }
   };
 
   const inputClass = "w-full px-4 py-3 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-border";
@@ -145,6 +156,12 @@ const Contact = () => {
           <p className="text-center text-muted-foreground mb-14 max-w-xl mx-auto animate-reveal animate-reveal-delay-1">
             Whether you have a question or want to partner with True Trucking TV, we'd love to hear from you.
           </p>
+
+          {contactMailtoDisabled ? (
+            <p className="mb-8 text-center text-sm text-muted-foreground animate-reveal animate-reveal-delay-1">
+              Test mode is on — success messages stay visible here and your email app will not open.
+            </p>
+          ) : null}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <GeneralContactForm
