@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,14 @@ type AnalyticsResponse = {
     previousConversionRate: number;
     delta: number;
     deltaPercent: number;
+  }>;
+  sponsorInquirySeries: Array<{
+    date: string;
+    youtube: number;
+    tiktok: number;
+    facebook: number;
+    instagram: number;
+    direct: number;
   }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
@@ -589,6 +597,43 @@ const AdminAnalytics = () => {
                       <p className="mt-2 text-sm text-muted-foreground">brand inquiries</p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-border bg-background/70 p-5">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Sponsor inquiries by referral source over time</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Stacked daily inquiry volume makes source-quality shifts easier to spot at a glance.</p>
+                </div>
+
+                <div className="mt-4">
+                  {isLoading ? (
+                    <div className="flex h-[280px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                      Loading sponsor inquiry trends...
+                    </div>
+                  ) : error ? (
+                    <div className="flex h-[280px] items-center justify-center rounded-2xl border border-dashed border-destructive/40 bg-destructive/5 px-6 text-center text-sm text-destructive">
+                      {(error as Error).message}
+                    </div>
+                  ) : !data?.sponsorInquirySeries.length ? (
+                    <div className="flex h-[280px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                      No sponsor inquiries yet for this time range.
+                    </div>
+                  ) : (
+                    <ChartContainer config={{ ...chartConfig, direct: { label: "Direct", color: "hsl(var(--muted-foreground))" } }} className="h-[280px] w-full">
+                      <AreaChart data={data.sponsorInquirySeries} margin={{ left: 8, right: 12, top: 12, bottom: 4 }}>
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
+                        <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={36} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Area type="monotone" dataKey="youtube" stackId="sponsor-inquiries" stroke="var(--color-youtube)" fill="var(--color-youtube)" fillOpacity={0.85} />
+                        <Area type="monotone" dataKey="tiktok" stackId="sponsor-inquiries" stroke="var(--color-tiktok)" fill="var(--color-tiktok)" fillOpacity={0.85} />
+                        <Area type="monotone" dataKey="facebook" stackId="sponsor-inquiries" stroke="var(--color-facebook)" fill="var(--color-facebook)" fillOpacity={0.85} />
+                        <Area type="monotone" dataKey="instagram" stackId="sponsor-inquiries" stroke="var(--color-instagram)" fill="var(--color-instagram)" fillOpacity={0.85} />
+                        <Area type="monotone" dataKey="direct" stackId="sponsor-inquiries" stroke="var(--color-direct)" fill="var(--color-direct)" fillOpacity={0.65} />
+                      </AreaChart>
+                    </ChartContainer>
+                  )}
                 </div>
               </div>
 
