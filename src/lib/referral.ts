@@ -16,6 +16,13 @@ const DISCOUNT_CODES: Record<ReferralPlatform, string> = {
   instagram: "INSTAGRAM",
 };
 
+const PLATFORM_LABELS: Record<ReferralPlatform, string> = {
+  youtube: "YouTube",
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  instagram: "Instagram",
+};
+
 const normalizePlatform = (value: string | null): ReferralPlatform | null => {
   switch (value?.toLowerCase()) {
     case "youtube":
@@ -50,6 +57,8 @@ export const getReferralPlatform = (): ReferralPlatform | null => {
 };
 
 export const getReferralDiscountCode = () => DISCOUNT_CODES[getReferralPlatform() ?? "youtube"];
+
+export const getReferralPlatformLabel = () => PLATFORM_LABELS[getReferralPlatform() ?? "youtube"];
 
 export const getReferralAwareIFTAUrl = () => {
   if (typeof window === "undefined") return IFTA_APP_URL;

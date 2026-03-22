@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Truck, Smartphone } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { getReferralAwareIFTAUrl, getReferralDiscountCode } from "@/lib/referral";
+import { getReferralAwareIFTAUrl, getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
 const merch = [
   { name: "TT Snapback Hat", price: "$29.99" },
@@ -14,6 +14,7 @@ const essentials = ["Dash Cameras", "GPS Devices", "CB Radios", "Truck Accessori
 const GearStore = () => {
   const ref = useScrollReveal();
   const referralCode = getReferralDiscountCode();
+  const referralPlatform = getReferralPlatformLabel();
   const iftaUrl = getReferralAwareIFTAUrl();
 
   return (
@@ -69,7 +70,10 @@ const GearStore = () => {
             <a href={iftaUrl} target="_blank" rel="noopener noreferrer">
               <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold uppercase tracking-wider active:scale-[0.97]">Try FREE 7 Days</Button>
             </a>
-            <p className="text-xs text-center mt-3 opacity-80">Use code <strong>{referralCode}</strong> for 20% off</p>
+            <p className="mt-3 text-center text-xs opacity-80">
+              Use code <strong>{referralCode}</strong> for 20% off
+              <span className="ml-2 opacity-70">Offer unlocked from {referralPlatform}</span>
+            </p>
           </div>
         </div>
       </div>

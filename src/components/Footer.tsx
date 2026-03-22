@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getReferralAwareIFTAUrl, getReferralDiscountCode } from "@/lib/referral";
+import { getReferralAwareIFTAUrl, getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
 const Footer = () => {
   const referralCode = getReferralDiscountCode();
+  const referralPlatform = getReferralPlatformLabel();
   const iftaUrl = getReferralAwareIFTAUrl();
 
   return (
@@ -58,6 +59,7 @@ const Footer = () => {
             </a>
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground/60">
               Use code {referralCode} for 20% off
+              <span className="ml-2 text-primary-foreground/45">Offer unlocked from {referralPlatform}</span>
             </p>
           </div>
         </div>
