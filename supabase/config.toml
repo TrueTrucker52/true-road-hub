@@ -1,0 +1,4 @@
+project_id = "yspfoerdcaltzdndywrp"
+
+[functions.sync-youtube-videos]
+verify_jwt = false
