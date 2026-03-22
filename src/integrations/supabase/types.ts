@@ -14,16 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      youtube_videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          published_at: string
+          synced_at: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string
+          youtube_video_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          published_at: string
+          synced_at?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url: string
+          youtube_video_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string
+          synced_at?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string
+          youtube_video_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      published_youtube_videos: {
+        Row: {
+          description: string | null
+          id: string | null
+          published_at: string | null
+          thumbnail_url: string | null
+          title: string | null
+          video_url: string | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string | null
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url?: string | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string | null
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          video_url?: string | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +244,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
