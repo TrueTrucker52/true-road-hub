@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Truck, Smartphone } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { getReferralDiscountCode } from "@/lib/referral";
 
 const merch = [
   { name: "TT Snapback Hat", price: "$29.99" },
@@ -12,6 +13,8 @@ const essentials = ["Dash Cameras", "GPS Devices", "CB Radios", "Truck Accessori
 
 const GearStore = () => {
   const ref = useScrollReveal();
+  const referralCode = getReferralDiscountCode();
+
   return (
     <section id="gear" className="bg-background py-20 md:py-28">
       <div className="container mx-auto px-4" ref={ref}>
@@ -65,7 +68,7 @@ const GearStore = () => {
             <a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer">
               <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold uppercase tracking-wider active:scale-[0.97]">Try FREE 7 Days</Button>
             </a>
-            <p className="text-xs text-center mt-3 opacity-80">Use code <strong>YOUTUBE</strong> for 20% off</p>
+            <p className="text-xs text-center mt-3 opacity-80">Use code <strong>{referralCode}</strong> for 20% off</p>
           </div>
         </div>
       </div>
