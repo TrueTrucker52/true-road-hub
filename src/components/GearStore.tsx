@@ -4,10 +4,12 @@ import { ShoppingBag, Truck, Smartphone } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
+const merchStoreUrl = "https://truetrucker.printify.me";
+
 const merch = [
-  { name: "TT Snapback Hat", price: "$29.99" },
-  { name: "TT Classic T-Shirt", price: "$24.99" },
-  { name: "TT Pullover Hoodie", price: "$49.99" },
+  { name: "TT Snapback Hat", price: "$29.99", url: merchStoreUrl },
+  { name: "TT Classic T-Shirt", price: "$24.99", url: merchStoreUrl },
+  { name: "TT Pullover Hoodie", price: "$49.99", url: merchStoreUrl },
 ];
 
 const essentials = ["Dash Cameras", "GPS Devices", "CB Radios", "Truck Accessories"];
@@ -33,13 +35,21 @@ const GearStore = () => {
             </div>
             <div className="space-y-4">
               {merch.map((m) => (
-                <div key={m.name} className="flex justify-between items-center bg-background rounded-lg p-4">
+                <a
+                  key={m.name}
+                  href={m.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-between items-center rounded-lg bg-background p-4 transition-colors hover:bg-background/80"
+                >
                   <span className="font-medium text-sm">{m.name}</span>
                   <span className="font-display font-bold text-brand-red">{m.price}</span>
-                </div>
+                </a>
               ))}
             </div>
-            <Button variant="subscribe" className="w-full mt-6">Shop Merch</Button>
+            <a href={merchStoreUrl} target="_blank" rel="noopener noreferrer" className="block mt-6">
+              <Button variant="subscribe" className="w-full">Shop Merch</Button>
+            </a>
           </div>
 
           {/* Essentials */}
