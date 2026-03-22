@@ -171,6 +171,16 @@ const AdminAnalytics = () => {
     };
   }, [comparePrevious, data]);
 
+  const sortedPlacementComparison = useMemo(() => {
+    const items = data?.placementComparison ?? [];
+
+    if (!comparePrevious) {
+      return [...items].sort((a, b) => b.current - a.current);
+    }
+
+    return [...items].sort((a, b) => b.deltaPercent - a.deltaPercent);
+  }, [comparePrevious, data]);
+
   const getPlacementTrend = (placement: Placement | null) => {
     if (!placement || !data?.placementSeries.length) return [];
     return data.placementSeries.map((entry) => entry[placement]);
@@ -440,7 +450,7 @@ const AdminAnalytics = () => {
               ) : null}
 
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                {(data?.placementComparison ?? []).map((item) => {
+                {sortedPlacementComparison.map((item) => {
                   const positive = item.delta >= 0;
                   const isBestImproving = comparePrevious && placementExtremes.bestImprovingPlacement === item.placement;
                   const isBestDeclining = comparePrevious && placementExtremes.bestDecliningPlacement === item.placement;
