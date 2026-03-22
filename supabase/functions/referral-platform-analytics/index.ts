@@ -8,9 +8,11 @@ const corsHeaders = {
 const allowedDays = new Set([7, 30, 90]);
 const platforms = ["youtube", "tiktok", "facebook", "instagram"] as const;
 const placements = ["hero", "navbar", "gear", "footer", "unknown"] as const;
+const mediaKitPlacements = ["brand_deals"] as const;
 
 type Platform = (typeof platforms)[number];
 type Placement = (typeof placements)[number];
+type MediaKitPlacement = (typeof mediaKitPlacements)[number];
 
 type DailyCounts = Record<Platform, number>;
 type PlacementDailyCounts = Record<Placement, number>;
@@ -120,7 +122,7 @@ Deno.serve(async (req) => {
 
     const { data: mediaKitRows, error: mediaKitError } = await adminClient
       .from("media_kit_downloads")
-      .select("platform, downloaded_at")
+      .select("platform, placement, downloaded_at")
       .gte("downloaded_at", startDate.toISOString())
       .order("downloaded_at", { ascending: true });
 
@@ -143,6 +145,9 @@ Deno.serve(async (req) => {
     const placementByPlatform = Object.fromEntries(
       placements.map((placement) => [placement, Object.fromEntries(platforms.map((platform) => [platform, 0]))]),
     ) as Record<Placement, DailyCounts>;
+    const mediaKitPlacementTotals = Object.fromEntries(
+      mediaKitPlacements.map((placement) => [placement, 0]),
+    ) as Record<MediaKitPlacement, number>;
     const mediaKitTotals = {
       youtube: 0,
       tiktok: 0,
@@ -206,12 +211,18 @@ Deno.serve(async (req) => {
       const platform = row.platform === "direct" ? "direct" : (row.platform as Platform);
       if (![...platforms, "direct"].includes(platform)) continue;
 
+      const placement = row.placement as MediaKitPlacement;
+
       const key = row.downloaded_at.slice(0, 10);
       const current = mediaKitByDate.get(key);
       if (!current) continue;
 
       current[platform] += 1;
       mediaKitTotals[platform] += 1;
+
+      if (mediaKitPlacements.includes(placement)) {
+        mediaKitPlacementTotals[placement] += 1;
+      }
     }
 
     const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
@@ -251,6 +262,10 @@ Deno.serve(async (req) => {
       mediaKitTotals: ["youtube", "tiktok", "facebook", "instagram", "direct"].map((platform) => ({
         platform,
         downloads: mediaKitTotals[platform as keyof typeof mediaKitTotals],
+      })),
+      mediaKitPlacementTotals: mediaKitPlacements.map((placement) => ({
+        placement,
+        downloads: mediaKitPlacementTotals[placement],
       })),
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
       placementComparison: placements.map((placement) => {
