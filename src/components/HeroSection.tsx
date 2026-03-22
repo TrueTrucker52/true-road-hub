@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/hero-bg.jpg";
-import { getReferralDiscountCode } from "@/lib/referral";
+import { getReferralAwareIFTAUrl, getReferralDiscountCode } from "@/lib/referral";
 
 const stats = [
   { value: "15+", label: "Years Experience" },
@@ -10,6 +10,7 @@ const stats = [
 
 const HeroSection = () => {
   const referralCode = getReferralDiscountCode();
+  const iftaUrl = getReferralAwareIFTAUrl();
 
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
@@ -33,7 +34,7 @@ const HeroSection = () => {
             <a href="https://www.youtube.com/@truetrucking5301" target="_blank" rel="noopener noreferrer">
               <Button variant="hero" size="lg">Watch Latest Videos</Button>
             </a>
-            <a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer">
+            <a href={iftaUrl} target="_blank" rel="noopener noreferrer">
               <Button variant="hero-outline" size="lg">Get the IFTA App Free</Button>
             </a>
           </div>

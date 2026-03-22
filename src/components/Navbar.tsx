@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { getReferralAwareIFTAUrl } from "@/lib/referral";
 
 const navLinks = [
   { label: "Videos", href: "#videos" },
@@ -14,6 +15,10 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const iftaUrl = getReferralAwareIFTAUrl();
+  const resolvedNavLinks = navLinks.map((link) =>
+    link.label === "IFTA App" ? { ...link, href: iftaUrl } : link,
+  );
 
   return (
     <nav className="sticky top-0 z-50 bg-brand-dark border-b border-primary/20 backdrop-blur-sm">
@@ -28,7 +33,7 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) =>
+          {resolvedNavLinks.map((link) =>
             link.isRoute ? (
               <Link key={link.label} to={link.href} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
@@ -57,7 +62,7 @@ const Navbar = () => {
       {/* Mobile menu */}
       {open && (
         <div className="lg:hidden bg-brand-dark border-t border-primary/20 px-4 pb-4 space-y-3">
-          {navLinks.map((link) =>
+          {resolvedNavLinks.map((link) =>
             link.isRoute ? (
               <Link key={link.label} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}
