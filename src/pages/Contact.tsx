@@ -182,10 +182,16 @@ const Contact = () => {
                   <option value="$5,000 - $10,000">$5,000 - $10,000</option>
                   <option value="Over $10,000">Over $10,000</option>
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  Pick the range closest to your planned monthly or campaign spend so we can suggest the right package.
+                </p>
               </div>
               <div className="space-y-2">
                 <label htmlFor="brand-details" className={labelClass}>Campaign Details</label>
                 <textarea id="brand-details" name="brandCampaignDetails" autoComplete="off" placeholder="Campaign Details" required maxLength={1000} rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
+                <p className="text-xs text-muted-foreground">
+                  Share your goals, target audience, preferred platforms, timeline, and any products or offers you want featured.
+                </p>
               </div>
               <Button type="submit" variant="hero" size="lg" className="w-full">Submit Brand Deal Inquiry</Button>
             </form>
