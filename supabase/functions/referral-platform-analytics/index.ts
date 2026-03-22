@@ -19,6 +19,9 @@ type BudgetTier = (typeof budgetTiers)[number];
 type DailyCounts = Record<Platform, number>;
 type PlacementDailyCounts = Record<Placement, number>;
 
+const createBudgetTierCounts = () =>
+  Object.fromEntries(budgetTiers.map((tier) => [tier, 0])) as Record<BudgetTier, number>;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -199,6 +202,13 @@ Deno.serve(async (req) => {
       instagram: { downloads: 0, inquiries: 0 },
       direct: { downloads: 0, inquiries: 0 },
     };
+    const sponsorBudgetBySource = {
+      youtube: createBudgetTierCounts(),
+      tiktok: createBudgetTierCounts(),
+      facebook: createBudgetTierCounts(),
+      instagram: createBudgetTierCounts(),
+      direct: createBudgetTierCounts(),
+    };
     const previousSponsorConversionBySource = {
       youtube: { downloads: 0, inquiries: 0 },
       tiktok: { downloads: 0, inquiries: 0 },
@@ -298,6 +308,10 @@ Deno.serve(async (req) => {
           ? row.platform
           : "direct";
         sponsorConversionBySource[platform].inquiries += 1;
+
+        if (row.budget_tier && budgetTiers.includes(row.budget_tier as BudgetTier)) {
+          sponsorBudgetBySource[platform][row.budget_tier as BudgetTier] += 1;
+        }
 
         const key = row.created_at.slice(0, 10);
         const current = sponsorInquiryByDate.get(key);
@@ -413,6 +427,10 @@ Deno.serve(async (req) => {
           platform,
           downloads: current.downloads,
           inquiries: current.inquiries,
+          budgetBreakdown: budgetTiers.map((tier) => ({
+            budgetTier: tier,
+            inquiries: sponsorBudgetBySource[platform as keyof typeof sponsorBudgetBySource][tier],
+          })),
           conversionRate,
           previousDownloads: previous.downloads,
           previousInquiries: previous.inquiries,
