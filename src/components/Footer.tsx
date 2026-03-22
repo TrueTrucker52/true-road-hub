@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getReferralDiscountCode } from "@/lib/referral";
+import { getReferralAwareIFTAUrl, getReferralDiscountCode } from "@/lib/referral";
 
 const Footer = () => {
   const referralCode = getReferralDiscountCode();
+  const iftaUrl = getReferralAwareIFTAUrl();
 
   return (
     <footer className="section-dark pt-16 pb-8">
@@ -23,7 +24,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li><a href="#videos" className="hover:text-primary-foreground transition-colors">Videos</a></li>
               <li><a href="#gear" className="hover:text-primary-foreground transition-colors">Gear Store</a></li>
-              <li><a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">IFTA App</a></li>
+              <li><a href={iftaUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">IFTA App</a></li>
               <li><a href="#about" className="hover:text-primary-foreground transition-colors">About</a></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
             </ul>
@@ -52,7 +53,7 @@ const Footer = () => {
           {/* IFTA App */}
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">IFTA App</h4>
-            <a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer">
+            <a href={iftaUrl} target="_blank" rel="noopener noreferrer">
               <Button variant="hero" className="w-full">Get the IFTA App</Button>
             </a>
             <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground/60">
