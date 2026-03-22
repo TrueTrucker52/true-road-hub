@@ -109,6 +109,9 @@ Deno.serve(async (req) => {
     const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const placementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
+    const placementByPlatform = Object.fromEntries(
+      placements.map((placement) => [placement, Object.fromEntries(platforms.map((platform) => [platform, 0]))]),
+    ) as Record<Placement, DailyCounts>;
 
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
@@ -144,6 +147,7 @@ Deno.serve(async (req) => {
       clickTotals[platform] += 1;
       if (placements.includes(placement)) {
         placementTotals[placement] += 1;
+        placementByPlatform[placement][platform] += 1;
       }
     }
 
@@ -171,6 +175,13 @@ Deno.serve(async (req) => {
         conversionRate: impressionTotals[platform] === 0 ? 0 : clickTotals[platform] / impressionTotals[platform],
       })),
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
+      placementByPlatform: placements.map((placement) => ({
+        placement,
+        youtube: placementByPlatform[placement].youtube,
+        tiktok: placementByPlatform[placement].tiktok,
+        facebook: placementByPlatform[placement].facebook,
+        instagram: placementByPlatform[placement].instagram,
+      })),
       series,
     };
 
