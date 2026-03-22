@@ -95,6 +95,7 @@ const Contact = () => {
   };
 
   const inputClass = "w-full px-4 py-3 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-border";
+  const labelClass = "block text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground";
 
   return (
     <>
@@ -125,18 +126,27 @@ const Contact = () => {
                   <AlertDescription>{generalError}</AlertDescription>
                 </Alert>
               )}
-              <input id="general-name" name="name" autoComplete="name" type="text" placeholder="Name" required maxLength={100} value={general.name} onChange={(e) => {
-                setGeneral((current) => ({ ...current, name: e.target.value }));
-                if (generalError) setGeneralError(null);
-              }} className={inputClass} />
-              <input id="general-email" name="email" autoComplete="email" inputMode="email" type="email" placeholder="Email" required maxLength={255} value={general.email} onChange={(e) => {
-                setGeneral((current) => ({ ...current, email: e.target.value }));
-                if (generalError) setGeneralError(null);
-              }} className={inputClass} />
-              <textarea id="general-message" name="message" autoComplete="off" placeholder="Message" required maxLength={1000} rows={5} value={general.message} onChange={(e) => {
-                setGeneral((current) => ({ ...current, message: e.target.value }));
-                if (generalError) setGeneralError(null);
-              }} className={inputClass + " resize-none"} />
+              <div className="space-y-2">
+                <label htmlFor="general-name" className={labelClass}>Full Name</label>
+                <input id="general-name" name="generalName" autoComplete="section-general name" type="text" placeholder="Name" required maxLength={100} value={general.name} onChange={(e) => {
+                  setGeneral((current) => ({ ...current, name: e.target.value }));
+                  if (generalError) setGeneralError(null);
+                }} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="general-email" className={labelClass}>Email Address</label>
+                <input id="general-email" name="generalEmail" autoComplete="section-general email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={general.email} onChange={(e) => {
+                  setGeneral((current) => ({ ...current, email: e.target.value }));
+                  if (generalError) setGeneralError(null);
+                }} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="general-message" className={labelClass}>Message</label>
+                <textarea id="general-message" name="generalMessage" autoComplete="off" placeholder="Message" required maxLength={1000} rows={5} value={general.message} onChange={(e) => {
+                  setGeneral((current) => ({ ...current, message: e.target.value }));
+                  if (generalError) setGeneralError(null);
+                }} className={inputClass + " resize-none"} />
+              </div>
               <Button type="submit" variant="subscribe" size="lg" className="w-full">Send Message</Button>
             </form>
 
@@ -151,17 +161,32 @@ const Contact = () => {
                   </AlertDescription>
                 </Alert>
               )}
-              <input id="brand-company" name="company" autoComplete="organization" type="text" placeholder="Company Name" required value={brand.company} onChange={(e) => setBrand((current) => ({ ...current, company: e.target.value }))} className={inputClass} />
-              <input id="brand-contact" name="contactName" autoComplete="name" type="text" placeholder="Contact Name" required value={brand.contact} onChange={(e) => setBrand((current) => ({ ...current, contact: e.target.value }))} className={inputClass} />
-              <input id="brand-email" name="email" autoComplete="email" inputMode="email" type="email" placeholder="Email" required value={brand.email} onChange={(e) => setBrand((current) => ({ ...current, email: e.target.value }))} className={inputClass} />
-              <select id="brand-budget" name="budget" autoComplete="off" required value={brand.budget} onChange={(e) => setBrand((current) => ({ ...current, budget: e.target.value }))} className={inputClass}>
-                <option value="" disabled>Select Budget</option>
-                <option value="Under $1,000">Under $1,000</option>
-                <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                <option value="$5,000 - $10,000">$5,000 - $10,000</option>
-                <option value="Over $10,000">Over $10,000</option>
-              </select>
-              <textarea id="brand-details" name="campaignDetails" autoComplete="off" placeholder="Campaign Details" required rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
+              <div className="space-y-2">
+                <label htmlFor="brand-company" className={labelClass}>Company Name</label>
+                <input id="brand-company" name="brandCompany" autoComplete="section-brand organization" type="text" placeholder="Company Name" required maxLength={120} value={brand.company} onChange={(e) => setBrand((current) => ({ ...current, company: e.target.value }))} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="brand-contact" className={labelClass}>Contact Name</label>
+                <input id="brand-contact" name="brandContactName" autoComplete="section-brand name" type="text" placeholder="Contact Name" required maxLength={100} value={brand.contact} onChange={(e) => setBrand((current) => ({ ...current, contact: e.target.value }))} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="brand-email" className={labelClass}>Contact Email</label>
+                <input id="brand-email" name="brandEmail" autoComplete="section-brand email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={brand.email} onChange={(e) => setBrand((current) => ({ ...current, email: e.target.value }))} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="brand-budget" className={labelClass}>Budget Range</label>
+                <select id="brand-budget" name="brandBudget" autoComplete="off" required value={brand.budget} onChange={(e) => setBrand((current) => ({ ...current, budget: e.target.value }))} className={inputClass}>
+                  <option value="" disabled>Select Budget</option>
+                  <option value="Under $1,000">Under $1,000</option>
+                  <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+                  <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                  <option value="Over $10,000">Over $10,000</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="brand-details" className={labelClass}>Campaign Details</label>
+                <textarea id="brand-details" name="brandCampaignDetails" autoComplete="off" placeholder="Campaign Details" required maxLength={1000} rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
+              </div>
               <Button type="submit" variant="hero" size="lg" className="w-full">Submit Brand Deal Inquiry</Button>
             </form>
           </div>
