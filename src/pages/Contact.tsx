@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { trackContactSubmission } from "@/lib/trackContactSubmission";
 
 const Contact = () => {
   const [general, setGeneral] = useState({ name: "", email: "", message: "" });
@@ -9,11 +10,13 @@ const Contact = () => {
 
   const handleGeneral = (e: React.FormEvent) => {
     e.preventDefault();
+    trackContactSubmission("general");
     window.location.href = `mailto:george@true-trucker-ifta-pro.com?subject=General Contact from ${general.name}&body=${general.message}%0A%0AFrom: ${general.name} (${general.email})`;
   };
 
   const handleBrand = (e: React.FormEvent) => {
     e.preventDefault();
+    trackContactSubmission("brand_deal");
     window.location.href = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
   };
 

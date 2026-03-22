@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
 type MediaKitPlacement = "brand_deals";
+type ContactSubmissionType = "general" | "brand_deal";
 
 type AnalyticsResponse = {
   days: number;
@@ -21,9 +22,13 @@ type AnalyticsResponse = {
   totalImpressions: number;
   totalClicks: number;
   totalMediaKitDownloads: number;
+  totalContactSubmissions: number;
+  totalBrandDealSubmissions: number;
+  sponsorConversionRate: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
+  contactSubmissionTotals: Array<{ submissionType: ContactSubmissionType; submissions: number }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
     placement: Placement;
@@ -92,6 +97,11 @@ const placementLabels = {
 
 const mediaKitPlacementLabels: Record<MediaKitPlacement, string> = {
   brand_deals: "Brand deals section",
+};
+
+const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
+  general: "General contact",
+  brand_deal: "Brand deal inquiries",
 };
 
 const chartConfig = {
@@ -371,6 +381,14 @@ const AdminAnalytics = () => {
               </CardTitle>
             </CardHeader>
           </Card>
+          <Card className="border-primary/15 shadow-lg shadow-primary/5">
+            <CardHeader>
+              <CardDescription>Sponsor funnel conversion</CardDescription>
+              <CardTitle className="font-display text-4xl text-brand-red">
+                {data ? `${(data.sponsorConversionRate * 100).toFixed(1)}%` : "—"}
+              </CardTitle>
+            </CardHeader>
+          </Card>
         </section>
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.4fr_0.8fr_0.8fr]">
@@ -436,6 +454,47 @@ const AdminAnalytics = () => {
                         aria-hidden="true"
                       />
                     </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Sponsor funnel</CardTitle>
+              <CardDescription>Compare media kit downloads against contact submissions to track deeper sponsor intent.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-2xl border border-border bg-muted/50 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Media kit downloads</p>
+                  <p className="mt-3 font-display text-4xl text-foreground">{data?.totalMediaKitDownloads.toLocaleString() ?? "—"}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">Top-of-funnel sponsor interest.</p>
+                </div>
+                <div className="rounded-2xl border border-brand-red/20 bg-brand-red/5 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Brand deal inquiries</p>
+                  <p className="mt-3 font-display text-4xl text-brand-red">{data?.totalBrandDealSubmissions.toLocaleString() ?? "—"}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">Tracked form submits from brands ready to talk.</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-muted/50 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Download-to-inquiry conversion</p>
+                  <p className="mt-3 font-display text-4xl text-foreground">
+                    {data ? `${(data.sponsorConversionRate * 100).toFixed(1)}%` : "—"}
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">How often a download turns into a brand inquiry in this range.</p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {(data?.contactSubmissionTotals ?? []).map((item) => (
+                  <div key={item.submissionType} className="rounded-2xl border border-border bg-background/70 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                      {contactSubmissionLabels[item.submissionType]}
+                    </p>
+                    <p className="mt-2 font-display text-3xl text-foreground">{item.submissions.toLocaleString()}</p>
                   </div>
                 ))}
               </div>

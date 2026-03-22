@@ -126,8 +126,18 @@ Deno.serve(async (req) => {
       .gte("downloaded_at", startDate.toISOString())
       .order("downloaded_at", { ascending: true });
 
+    const { data: contactSubmissionRows, error: contactSubmissionsError } = await adminClient
+      .from("contact_form_submissions")
+      .select("submission_type, created_at")
+      .gte("created_at", startDate.toISOString())
+      .order("created_at", { ascending: true });
+
     if (mediaKitError) {
       throw new Error(mediaKitError.message);
+    }
+
+    if (contactSubmissionsError) {
+      throw new Error(contactSubmissionsError.message);
     }
 
     if (previousClicksError) {
@@ -148,6 +158,10 @@ Deno.serve(async (req) => {
     const mediaKitPlacementTotals = Object.fromEntries(
       mediaKitPlacements.map((placement) => [placement, 0]),
     ) as Record<MediaKitPlacement, number>;
+    const contactSubmissionTotals = {
+      general: 0,
+      brand_deal: 0,
+    };
     const mediaKitTotals = {
       youtube: 0,
       tiktok: 0,
@@ -225,6 +239,16 @@ Deno.serve(async (req) => {
       }
     }
 
+    for (const row of contactSubmissionRows ?? []) {
+      const submissionType = row.submission_type === "brand_deal" ? "brand_deal" : "general";
+      contactSubmissionTotals[submissionType] += 1;
+    }
+
+    const sponsorInquiryCount = contactSubmissionTotals.brand_deal;
+    const sponsorConversionRate = Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0) === 0
+      ? 0
+      : sponsorInquiryCount / Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0);
+
     const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
       const clickCounts = clickByDate.get(date) ?? { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 };
 
@@ -253,6 +277,9 @@ Deno.serve(async (req) => {
       totalImpressions: Object.values(impressionTotals).reduce((sum, value) => sum + value, 0),
       totalClicks: Object.values(clickTotals).reduce((sum, value) => sum + value, 0),
       totalMediaKitDownloads: Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0),
+      totalContactSubmissions: contactSubmissionTotals.general + contactSubmissionTotals.brand_deal,
+      totalBrandDealSubmissions: sponsorInquiryCount,
+      sponsorConversionRate,
       totals: platforms.map((platform) => ({
         platform,
         impressions: impressionTotals[platform],
@@ -267,6 +294,10 @@ Deno.serve(async (req) => {
         placement,
         downloads: mediaKitPlacementTotals[placement],
       })),
+      contactSubmissionTotals: [
+        { submissionType: "general", submissions: contactSubmissionTotals.general },
+        { submissionType: "brand_deal", submissions: contactSubmissionTotals.brand_deal },
+      ],
       placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
       placementComparison: placements.map((placement) => {
         const current = placementTotals[placement];
