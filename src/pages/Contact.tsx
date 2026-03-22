@@ -16,7 +16,7 @@ const Contact = () => {
 
   const handleBrand = (e: React.FormEvent) => {
     e.preventDefault();
-    trackContactSubmission("brand_deal");
+    trackContactSubmission("brand_deal", brand.budget as "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000" | "Under $1,000");
     window.location.href = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
   };
 
