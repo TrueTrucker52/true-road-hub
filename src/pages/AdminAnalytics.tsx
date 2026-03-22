@@ -17,6 +17,13 @@ type AnalyticsResponse = {
   totalClicks: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   placementTotals: Array<{ placement: "hero" | "navbar" | "gear" | "footer" | "unknown"; clicks: number }>;
+  placementByPlatform: Array<{
+    placement: "hero" | "navbar" | "gear" | "footer" | "unknown";
+    youtube: number;
+    tiktok: number;
+    facebook: number;
+    instagram: number;
+  }>;
   series: Array<{
     date: string;
     youtube: number;
@@ -250,6 +257,47 @@ const AdminAnalytics = () => {
                     <p className="mt-1 text-sm text-muted-foreground">Tracked outbound clicks</p>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Placement by referral platform</CardTitle>
+              <CardDescription>Compare which source drives the most IFTA clicks in each section of the site.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto rounded-2xl border border-border">
+                <table className="min-w-full border-collapse text-sm">
+                  <thead className="bg-muted/70 text-left">
+                    <tr>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">Placement</th>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">YouTube</th>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">TikTok</th>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">Facebook</th>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">Instagram</th>
+                      <th className="px-4 py-3 font-bold uppercase tracking-[0.2em] text-muted-foreground">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(data?.placementByPlatform ?? []).map((row) => {
+                      const total = row.youtube + row.tiktok + row.facebook + row.instagram;
+
+                      return (
+                        <tr key={row.placement} className="border-t border-border bg-background/80">
+                          <td className="px-4 py-4 font-medium text-foreground">{placementLabels[row.placement]}</td>
+                          <td className="px-4 py-4 text-muted-foreground">{row.youtube.toLocaleString()}</td>
+                          <td className="px-4 py-4 text-muted-foreground">{row.tiktok.toLocaleString()}</td>
+                          <td className="px-4 py-4 text-muted-foreground">{row.facebook.toLocaleString()}</td>
+                          <td className="px-4 py-4 text-muted-foreground">{row.instagram.toLocaleString()}</td>
+                          <td className="px-4 py-4 font-semibold text-brand-red">{total.toLocaleString()}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>
