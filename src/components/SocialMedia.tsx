@@ -2,9 +2,9 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const socials = [
   { name: "YouTube", handle: "@truetrucking5301", url: "https://www.youtube.com/@truetrucking5301", color: "bg-brand-red" },
-  { name: "TikTok", handle: "@truetruckingtv", url: "#", color: "bg-foreground" },
-  { name: "Facebook", handle: "True Trucking TV", url: "#", color: "bg-[hsl(221_44%_41%)]" },
-  { name: "Instagram", handle: "@truetruckingtv", url: "#", color: "bg-[hsl(330_60%_50%)]" },
+  { name: "TikTok", handle: "@1truetrucker", url: "https://www.tiktok.com/@1truetrucker", color: "bg-foreground" },
+  { name: "Facebook", handle: "/1truetrucker", url: "https://www.facebook.com/1truetrucker", color: "bg-[hsl(221_44%_41%)]" },
+  { name: "Instagram", handle: "@truetrucker51", url: "https://www.instagram.com/truetrucker51", color: "bg-[hsl(330_60%_50%)]" },
 ];
 
 const SocialMedia = () => {

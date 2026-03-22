@@ -30,9 +30,9 @@ const Footer = () => (
           <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">Social Media</h4>
           <ul className="space-y-2 text-sm text-primary-foreground/70">
             <li><a href="https://www.youtube.com/@truetrucking5301" target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">YouTube</a></li>
-            <li><a href="#" className="hover:text-primary-foreground transition-colors">TikTok</a></li>
-            <li><a href="#" className="hover:text-primary-foreground transition-colors">Facebook</a></li>
-            <li><a href="#" className="hover:text-primary-foreground transition-colors">Instagram</a></li>
+            <li><a href="https://www.tiktok.com/@1truetrucker" target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">TikTok</a></li>
+            <li><a href="https://www.facebook.com/1truetrucker" target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">Facebook</a></li>
+            <li><a href="https://www.instagram.com/truetrucker51" target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground transition-colors">Instagram</a></li>
           </ul>
         </div>
 
