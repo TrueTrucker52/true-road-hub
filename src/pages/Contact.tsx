@@ -151,17 +151,17 @@ const Contact = () => {
                   </AlertDescription>
                 </Alert>
               )}
-              <input type="text" placeholder="Company Name" required value={brand.company} onChange={(e) => setBrand((current) => ({ ...current, company: e.target.value }))} className={inputClass} />
-              <input type="text" placeholder="Contact Name" required value={brand.contact} onChange={(e) => setBrand((current) => ({ ...current, contact: e.target.value }))} className={inputClass} />
-              <input type="email" placeholder="Email" required value={brand.email} onChange={(e) => setBrand((current) => ({ ...current, email: e.target.value }))} className={inputClass} />
-              <select required value={brand.budget} onChange={(e) => setBrand((current) => ({ ...current, budget: e.target.value }))} className={inputClass}>
+              <input id="brand-company" name="company" autoComplete="organization" type="text" placeholder="Company Name" required value={brand.company} onChange={(e) => setBrand((current) => ({ ...current, company: e.target.value }))} className={inputClass} />
+              <input id="brand-contact" name="contactName" autoComplete="name" type="text" placeholder="Contact Name" required value={brand.contact} onChange={(e) => setBrand((current) => ({ ...current, contact: e.target.value }))} className={inputClass} />
+              <input id="brand-email" name="email" autoComplete="email" inputMode="email" type="email" placeholder="Email" required value={brand.email} onChange={(e) => setBrand((current) => ({ ...current, email: e.target.value }))} className={inputClass} />
+              <select id="brand-budget" name="budget" autoComplete="off" required value={brand.budget} onChange={(e) => setBrand((current) => ({ ...current, budget: e.target.value }))} className={inputClass}>
                 <option value="" disabled>Select Budget</option>
                 <option value="Under $1,000">Under $1,000</option>
                 <option value="$1,000 - $5,000">$1,000 - $5,000</option>
                 <option value="$5,000 - $10,000">$5,000 - $10,000</option>
                 <option value="Over $10,000">Over $10,000</option>
               </select>
-              <textarea placeholder="Campaign Details" required rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
+              <textarea id="brand-details" name="campaignDetails" autoComplete="off" placeholder="Campaign Details" required rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
               <Button type="submit" variant="hero" size="lg" className="w-full">Submit Brand Deal Inquiry</Button>
             </form>
           </div>
