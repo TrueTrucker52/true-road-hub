@@ -2,3 +2,6 @@ project_id = "yspfoerdcaltzdndywrp"
 
 [functions.sync-youtube-videos]
 verify_jwt = false
+
+[functions.track-referral-impression]
+verify_jwt = false
