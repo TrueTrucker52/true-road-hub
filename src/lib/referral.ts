@@ -1,6 +1,7 @@
 export type ReferralPlatform = "youtube" | "tiktok" | "facebook" | "instagram";
 
 const IFTA_APP_URL = "https://true-trucker-ifta-pro.com";
+const REFERRAL_PLATFORM_STORAGE_KEY = "tttv-referral-platform";
 
 const PLATFORM_HOSTS: Record<ReferralPlatform, string[]> = {
   youtube: ["youtube.com", "youtu.be"],
@@ -40,19 +41,30 @@ export const getReferralPlatform = (): ReferralPlatform | null => {
 
   const params = new URLSearchParams(window.location.search);
   const fromParam = normalizePlatform(params.get("src") ?? params.get("source"));
-  if (fromParam) return fromParam;
+  if (fromParam) {
+    sessionStorage.setItem(REFERRAL_PLATFORM_STORAGE_KEY, fromParam);
+    return fromParam;
+  }
 
   const referrer = document.referrer;
-  if (!referrer) return null;
+  if (!referrer) {
+    return normalizePlatform(sessionStorage.getItem(REFERRAL_PLATFORM_STORAGE_KEY));
+  }
 
   try {
     const hostname = new URL(referrer).hostname.replace(/^www\./, "");
 
-    return (Object.entries(PLATFORM_HOSTS).find(([, hosts]) =>
+    const detectedPlatform = (Object.entries(PLATFORM_HOSTS).find(([, hosts]) =>
       hosts.some((host) => hostname === host || hostname.endsWith(`.${host}`)),
-    )?.[0] as ReferralPlatform | undefined) ?? null;
+    )?.[0] as ReferralPlatform | undefined) ?? normalizePlatform(sessionStorage.getItem(REFERRAL_PLATFORM_STORAGE_KEY));
+
+    if (detectedPlatform) {
+      sessionStorage.setItem(REFERRAL_PLATFORM_STORAGE_KEY, detectedPlatform);
+    }
+
+    return detectedPlatform;
   } catch {
-    return null;
+    return normalizePlatform(sessionStorage.getItem(REFERRAL_PLATFORM_STORAGE_KEY));
   }
 };
 
