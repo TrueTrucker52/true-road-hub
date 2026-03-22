@@ -122,15 +122,15 @@ const Contact = () => {
                 </Alert>
               )}
               <input id="general-name" name="name" autoComplete="name" type="text" placeholder="Name" required maxLength={100} value={general.name} onChange={(e) => {
-                setGeneral({ ...general, name: e.target.value });
+                setGeneral((current) => ({ ...current, name: e.target.value }));
                 if (generalError) setGeneralError(null);
               }} className={inputClass} />
               <input id="general-email" name="email" autoComplete="email" inputMode="email" type="email" placeholder="Email" required maxLength={255} value={general.email} onChange={(e) => {
-                setGeneral({ ...general, email: e.target.value });
+                setGeneral((current) => ({ ...current, email: e.target.value }));
                 if (generalError) setGeneralError(null);
               }} className={inputClass} />
               <textarea id="general-message" name="message" autoComplete="off" placeholder="Message" required maxLength={1000} rows={5} value={general.message} onChange={(e) => {
-                setGeneral({ ...general, message: e.target.value });
+                setGeneral((current) => ({ ...current, message: e.target.value }));
                 if (generalError) setGeneralError(null);
               }} className={inputClass + " resize-none"} />
               <Button type="submit" variant="subscribe" size="lg" className="w-full">Send Message</Button>
