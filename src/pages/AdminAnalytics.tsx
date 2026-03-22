@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
+type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
 
 type AnalyticsResponse = {
   days: number;
@@ -18,16 +19,16 @@ type AnalyticsResponse = {
   totalImpressions: number;
   totalClicks: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
-  placementTotals: Array<{ placement: "hero" | "navbar" | "gear" | "footer" | "unknown"; clicks: number }>;
+  placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
-    placement: "hero" | "navbar" | "gear" | "footer" | "unknown";
+    placement: Placement;
     current: number;
     previous: number;
     delta: number;
     deltaPercent: number;
   }>;
   placementByPlatform: Array<{
-    placement: "hero" | "navbar" | "gear" | "footer" | "unknown";
+    placement: Placement;
     youtube: number;
     tiktok: number;
     facebook: number;
@@ -86,6 +87,39 @@ const placementChartConfig = {
   unknown: { label: "Unknown", color: "hsl(var(--muted-foreground))" },
 } satisfies ChartConfig;
 
+const buildSparklinePath = (values: number[], width = 120, height = 36) => {
+  if (!values.length) return "";
+
+  if (values.length === 1) {
+    const y = height / 2;
+    return `M 0 ${y} L ${width} ${y}`;
+  }
+
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+
+  return values
+    .map((value, index) => {
+      const x = (index / (values.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
+    })
+    .join(" ");
+};
+
+const SummarySparkline = ({ values, className }: { values: number[]; className: string }) => {
+  const path = buildSparklinePath(values);
+
+  return (
+    <div className={`h-10 w-32 ${className}`} aria-hidden="true">
+      <svg viewBox="0 0 120 36" className="h-full w-full overflow-visible" fill="none">
+        <path d={path} stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+};
+
 const AdminAnalytics = () => {
   const { user, signOut } = useAuth();
   const [days, setDays] = useState<(typeof ranges)[number]>(30);
@@ -136,6 +170,11 @@ const AdminAnalytics = () => {
       topDecliner,
     };
   }, [comparePrevious, data]);
+
+  const getPlacementTrend = (placement: Placement | null) => {
+    if (!placement || !data?.placementSeries.length) return [];
+    return data.placementSeries.map((entry) => entry[placement]);
+  };
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -351,14 +390,24 @@ const AdminAnalytics = () => {
                         {(((placementExtremes.topGainer?.deltaPercent ?? 0) * 100).toFixed(1))}%
                       </Badge>
                     </div>
-                    <p className="mt-2 font-display text-2xl text-foreground">
-                      {placementExtremes.topGainer ? placementLabels[placementExtremes.topGainer.placement] : "No gains yet"}
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {placementExtremes.topGainer
-                        ? `${placementExtremes.topGainer.current.toLocaleString()} clicks this period`
-                        : "No placement improved in the selected range."}
-                    </p>
+                    <div className="mt-2 flex items-end justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="font-display text-2xl text-foreground">
+                          {placementExtremes.topGainer ? placementLabels[placementExtremes.topGainer.placement] : "No gains yet"}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {placementExtremes.topGainer
+                            ? `${placementExtremes.topGainer.current.toLocaleString()} clicks this period`
+                            : "No placement improved in the selected range."}
+                        </p>
+                      </div>
+                      {placementExtremes.topGainer ? (
+                        <SummarySparkline
+                          values={getPlacementTrend(placementExtremes.topGainer.placement)}
+                          className="shrink-0 text-brand-red"
+                        />
+                      ) : null}
+                    </div>
                   </div>
 
                   <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-4">
@@ -368,14 +417,24 @@ const AdminAnalytics = () => {
                         {(((placementExtremes.topDecliner?.deltaPercent ?? 0) * 100).toFixed(1))}%
                       </Badge>
                     </div>
-                    <p className="mt-2 font-display text-2xl text-foreground">
-                      {placementExtremes.topDecliner ? placementLabels[placementExtremes.topDecliner.placement] : "No declines yet"}
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {placementExtremes.topDecliner
-                        ? `${placementExtremes.topDecliner.current.toLocaleString()} clicks this period`
-                        : "No placement declined in the selected range."}
-                    </p>
+                    <div className="mt-2 flex items-end justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="font-display text-2xl text-foreground">
+                          {placementExtremes.topDecliner ? placementLabels[placementExtremes.topDecliner.placement] : "No declines yet"}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {placementExtremes.topDecliner
+                            ? `${placementExtremes.topDecliner.current.toLocaleString()} clicks this period`
+                            : "No placement declined in the selected range."}
+                        </p>
+                      </div>
+                      {placementExtremes.topDecliner ? (
+                        <SummarySparkline
+                          values={getPlacementTrend(placementExtremes.topDecliner.placement)}
+                          className="shrink-0 text-destructive"
+                        />
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               ) : null}
