@@ -125,9 +125,14 @@ const BrandDeals = () => {
             </div>
 
             <div className="mt-8 text-center lg:text-left animate-reveal animate-reveal-delay-4">
-              <Link to="/contact">
-                <Button variant="hero" size="lg">Partner With Us</Button>
-              </Link>
+              <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+                <Link to="/contact">
+                  <Button variant="hero" size="lg">Partner With Us</Button>
+                </Link>
+                <a href="/true-trucking-tv-sponsor-media-kit.pdf" download target="_blank" rel="noopener noreferrer">
+                  <Button variant="hero-outline" size="lg">Download Media Kit</Button>
+                </a>
+              </div>
             </div>
 
             <div className="mt-8 rounded-[1.5rem] border border-primary-foreground/10 bg-primary-foreground/5 p-6 animate-reveal animate-reveal-delay-5">
