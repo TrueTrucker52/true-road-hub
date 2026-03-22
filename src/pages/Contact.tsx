@@ -7,6 +7,11 @@ import Footer from "@/components/Footer";
 import { trackContactSubmission } from "@/lib/trackContactSubmission";
 
 const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const brandBudgetTiers = ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "Over $10,000"] as const;
+type BrandBudgetTier = (typeof brandBudgetTiers)[number];
+
+const isValidBrandBudgetTier = (value: string): value is BrandBudgetTier =>
+  brandBudgetTiers.includes(value as BrandBudgetTier);
 
 const buildMailtoLink = (subject: string, body: string) =>
   `mailto:george@true-trucker-ifta-pro.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -25,6 +30,7 @@ const Contact = () => {
   const [generalSubmissionConfirmed, setGeneralSubmissionConfirmed] = useState(false);
   const [brandSubmissionConfirmed, setBrandSubmissionConfirmed] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [brandError, setBrandError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!generalSubmissionConfirmed) return;
@@ -86,10 +92,42 @@ const Contact = () => {
 
   const handleBrand = (e: React.FormEvent) => {
     e.preventDefault();
-    trackContactSubmission("brand_deal", brand.budget as "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000" | "Under $1,000");
+
+    const trimmedBrand = {
+      company: brand.company.trim(),
+      contact: brand.contact.trim(),
+      email: brand.email.trim(),
+      budget: brand.budget.trim(),
+      details: brand.details.trim(),
+    };
+
+    if (!trimmedBrand.company || !trimmedBrand.contact || !trimmedBrand.email || !trimmedBrand.budget || !trimmedBrand.details) {
+      setBrandError("Please complete all fields before sending your inquiry.");
+      setBrandSubmissionConfirmed(false);
+      return;
+    }
+
+    if (!isValidEmail(trimmedBrand.email)) {
+      setBrandError("Please enter a valid contact email address.");
+      setBrandSubmissionConfirmed(false);
+      return;
+    }
+
+    if (!isValidBrandBudgetTier(trimmedBrand.budget)) {
+      setBrandError("Please select a valid budget range.");
+      setBrandSubmissionConfirmed(false);
+      return;
+    }
+
+    setBrand(trimmedBrand);
+    setBrandError(null);
+    trackContactSubmission("brand_deal", trimmedBrand.budget);
     setBrandSubmissionConfirmed(true);
 
-    const mailtoUrl = `mailto:george@true-trucker-ifta-pro.com?subject=Brand Deal Inquiry from ${brand.company}&body=Company: ${brand.company}%0AContact: ${brand.contact}%0AEmail: ${brand.email}%0ABudget: ${brand.budget}%0A%0A${brand.details}`;
+    const mailtoUrl = buildMailtoLink(
+      `Brand Deal Inquiry from ${trimmedBrand.company}`,
+      `Company: ${trimmedBrand.company}\nContact: ${trimmedBrand.contact}\nEmail: ${trimmedBrand.email}\nBudget: ${trimmedBrand.budget}\n\n${trimmedBrand.details}`,
+    );
 
     openMailtoWithDelay(mailtoUrl);
   };
@@ -161,21 +199,38 @@ const Contact = () => {
                   </AlertDescription>
                 </Alert>
               )}
+              {brandError && (
+                <Alert variant="destructive">
+                  <AlertDescription>{brandError}</AlertDescription>
+                </Alert>
+              )}
               <div className="space-y-2">
                 <label htmlFor="brand-company" className={labelClass}>Company Name</label>
-                <input id="brand-company" name="brandCompany" autoComplete="section-brand organization" type="text" placeholder="Company Name" required maxLength={120} value={brand.company} onChange={(e) => setBrand((current) => ({ ...current, company: e.target.value }))} className={inputClass} />
+                <input id="brand-company" name="brandCompany" autoComplete="section-brand organization" type="text" placeholder="Company Name" required maxLength={120} value={brand.company} onChange={(e) => {
+                  setBrand((current) => ({ ...current, company: e.target.value }));
+                  if (brandError) setBrandError(null);
+                }} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="brand-contact" className={labelClass}>Contact Name</label>
-                <input id="brand-contact" name="brandContactName" autoComplete="section-brand name" type="text" placeholder="Contact Name" required maxLength={100} value={brand.contact} onChange={(e) => setBrand((current) => ({ ...current, contact: e.target.value }))} className={inputClass} />
+                <input id="brand-contact" name="brandContactName" autoComplete="section-brand name" type="text" placeholder="Contact Name" required maxLength={100} value={brand.contact} onChange={(e) => {
+                  setBrand((current) => ({ ...current, contact: e.target.value }));
+                  if (brandError) setBrandError(null);
+                }} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="brand-email" className={labelClass}>Contact Email</label>
-                <input id="brand-email" name="brandEmail" autoComplete="section-brand email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={brand.email} onChange={(e) => setBrand((current) => ({ ...current, email: e.target.value }))} className={inputClass} />
+                <input id="brand-email" name="brandEmail" autoComplete="section-brand email" inputMode="email" autoCapitalize="none" spellCheck={false} type="email" placeholder="Email" required maxLength={255} value={brand.email} onChange={(e) => {
+                  setBrand((current) => ({ ...current, email: e.target.value }));
+                  if (brandError) setBrandError(null);
+                }} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label htmlFor="brand-budget" className={labelClass}>Budget Range</label>
-                <select id="brand-budget" name="brandBudget" autoComplete="off" required value={brand.budget} onChange={(e) => setBrand((current) => ({ ...current, budget: e.target.value }))} className={inputClass}>
+                <select id="brand-budget" name="brandBudget" autoComplete="off" required value={brand.budget} onChange={(e) => {
+                  setBrand((current) => ({ ...current, budget: e.target.value }));
+                  if (brandError) setBrandError(null);
+                }} className={inputClass}>
                   <option value="" disabled>Select Budget</option>
                   <option value="Under $1,000">Under $1,000</option>
                   <option value="$1,000 - $5,000">$1,000 - $5,000</option>
@@ -188,7 +243,10 @@ const Contact = () => {
               </div>
               <div className="space-y-2">
                 <label htmlFor="brand-details" className={labelClass}>Campaign Details</label>
-                <textarea id="brand-details" name="brandCampaignDetails" autoComplete="off" placeholder="Campaign Details" required maxLength={1000} rows={4} value={brand.details} onChange={(e) => setBrand((current) => ({ ...current, details: e.target.value }))} className={inputClass + " resize-none"} />
+                <textarea id="brand-details" name="brandCampaignDetails" autoComplete="off" placeholder="Campaign Details" required maxLength={1000} rows={4} value={brand.details} onChange={(e) => {
+                  setBrand((current) => ({ ...current, details: e.target.value }));
+                  if (brandError) setBrandError(null);
+                }} className={inputClass + " resize-none"} />
                 <p className="text-xs text-muted-foreground">
                   Share your goals, target audience, preferred platforms, timeline, and any products or offers you want featured.
                 </p>
