@@ -134,12 +134,36 @@ Deno.serve(async (req) => {
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
+    const { data: previousMediaKitRows, error: previousMediaKitError } = comparePrevious
+      ? await adminClient
+          .from("media_kit_downloads")
+          .select("id")
+          .gte("downloaded_at", previousStartDate.toISOString())
+          .lte("downloaded_at", previousEndDate.toISOString())
+      : { data: [], error: null };
+
+    const { data: previousContactSubmissionRows, error: previousContactSubmissionsError } = comparePrevious
+      ? await adminClient
+          .from("contact_form_submissions")
+          .select("submission_type")
+          .gte("created_at", previousStartDate.toISOString())
+          .lte("created_at", previousEndDate.toISOString())
+      : { data: [], error: null };
+
     if (mediaKitError) {
       throw new Error(mediaKitError.message);
     }
 
     if (contactSubmissionsError) {
       throw new Error(contactSubmissionsError.message);
+    }
+
+    if (previousMediaKitError) {
+      throw new Error(previousMediaKitError.message);
+    }
+
+    if (previousContactSubmissionsError) {
+      throw new Error(previousContactSubmissionsError.message);
     }
 
     if (previousClicksError) {
@@ -257,6 +281,17 @@ Deno.serve(async (req) => {
     const sponsorConversionRate = Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0) === 0
       ? 0
       : sponsorInquiryCount / Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0);
+    const previousMediaKitDownloadCount = (previousMediaKitRows ?? []).length;
+    const previousBrandDealSubmissionCount = (previousContactSubmissionRows ?? []).filter(
+      (row) => row.submission_type === "brand_deal",
+    ).length;
+    const previousSponsorConversionRate = previousMediaKitDownloadCount === 0
+      ? 0
+      : previousBrandDealSubmissionCount / previousMediaKitDownloadCount;
+    const sponsorConversionDelta = sponsorConversionRate - previousSponsorConversionRate;
+    const sponsorConversionDeltaPercent = previousSponsorConversionRate === 0
+      ? (sponsorConversionRate > 0 ? 1 : 0)
+      : sponsorConversionDelta / previousSponsorConversionRate;
 
     const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
       const clickCounts = clickByDate.get(date) ?? { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 };
@@ -289,6 +324,11 @@ Deno.serve(async (req) => {
       totalContactSubmissions: contactSubmissionTotals.general + contactSubmissionTotals.brand_deal,
       totalBrandDealSubmissions: sponsorInquiryCount,
       sponsorConversionRate,
+      previousMediaKitDownloads: previousMediaKitDownloadCount,
+      previousBrandDealSubmissions: previousBrandDealSubmissionCount,
+      previousSponsorConversionRate,
+      sponsorConversionDelta,
+      sponsorConversionDeltaPercent,
       totals: platforms.map((platform) => ({
         platform,
         impressions: impressionTotals[platform],
