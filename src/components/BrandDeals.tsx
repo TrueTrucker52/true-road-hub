@@ -38,6 +38,60 @@ const mediaKitSummary = [
   },
 ];
 
+const sponsorPackages = [
+  {
+    tier: "Sponsor Tier 1",
+    name: "Road Companion",
+    price: "Starting at $500/month",
+    includes: [
+      "Logo on website footer",
+      "Mention in 2 videos per month",
+      "Social media shoutout",
+      "Link on truetruckingtv.com",
+    ],
+  },
+  {
+    tier: "Sponsor Tier 2",
+    name: "Freight Partner",
+    price: "Starting at $1,500/month",
+    includes: [
+      "Everything in Basic PLUS",
+      "Dedicated sponsor segment in 4 videos per month",
+      "Featured in newsletter",
+      "Instagram and TikTok mention",
+      "Logo in video lower thirds",
+    ],
+  },
+  {
+    tier: "Sponsor Tier 3",
+    name: "Fleet Commander",
+    price: "Starting at $3,000/month",
+    includes: [
+      "Everything in Standard PLUS",
+      "Dedicated sponsored video",
+      "Product review or demo",
+      "All social platforms featured",
+      "Website banner placement",
+      "Email blast to subscriber list",
+      "Custom content creation",
+    ],
+    featured: true,
+  },
+  {
+    tier: "Sponsor Tier 4",
+    name: "Trucking Empire",
+    price: "Custom pricing",
+    includes: [
+      "Full brand partnership",
+      "Exclusive category rights",
+      "Custom campaign creation",
+      "All platforms all content",
+      "Quarterly strategy calls",
+      "Contact for pricing",
+    ],
+  },
+];
+
 const BrandDeals = () => {
   const ref = useScrollReveal();
   return (
@@ -127,6 +181,62 @@ const BrandDeals = () => {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="animate-reveal animate-reveal-delay-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">Sponsorship packages</p>
+            <h3 className="mt-3 font-display text-3xl md:text-4xl text-primary-foreground">Simple tiers for brands ready to reach real truckers</h3>
+            <p className="mt-4 text-sm leading-relaxed text-primary-foreground/70 md:text-base">
+              Placeholder ranges are live now so sponsors can understand placement options while exact pricing evolves.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {sponsorPackages.map((pkg, index) => (
+              <div
+                key={pkg.name}
+                className={[
+                  "flex h-full flex-col rounded-[1.75rem] border p-6 shadow-xl animate-reveal",
+                  `animate-reveal-delay-${Math.min(index + 1, 5)}`,
+                  pkg.featured
+                    ? "border-brand-red/30 bg-primary-foreground/10 shadow-primary/10"
+                    : "border-primary-foreground/10 bg-brand-dark-surface shadow-black/20",
+                ].join(" ")}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">{pkg.tier}</p>
+                    <h4 className="mt-3 font-display text-3xl leading-none text-primary-foreground">{pkg.name}</h4>
+                  </div>
+                  {pkg.featured ? (
+                    <span className="rounded-full border border-brand-red/20 bg-brand-red/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-brand-red">
+                      Most Popular
+                    </span>
+                  ) : null}
+                </div>
+
+                <p className="mt-5 font-display text-2xl text-primary-foreground">{pkg.price}</p>
+
+                <ul className="mt-5 space-y-3 text-sm text-primary-foreground/75">
+                  {pkg.includes.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <CheckCircle size={16} className="mt-0.5 shrink-0 text-brand-red" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-6 pt-6">
+                  <Link to="/contact" className="block">
+                    <Button variant={pkg.featured ? "hero" : "hero-outline"} className="w-full">
+                      Contact for Sponsorship
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
