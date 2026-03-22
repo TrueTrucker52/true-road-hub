@@ -23,6 +23,21 @@ const partnerProof = [
   },
 ];
 
+const mediaKitSummary = [
+  {
+    title: "Audience profile",
+    details: "Professional truck drivers, owner operators, fleet decision-makers, and logistics pros across the U.S.",
+  },
+  {
+    title: "Content formats",
+    details: "Channel features include trucking news, freight market commentary, road reports, product mentions, and sponsor integrations.",
+  },
+  {
+    title: "Contact",
+    details: "Reach George directly at george@true-trucker-ifta-pro.com or call 321-395-9957 for partnership inquiries.",
+  },
+];
+
 const BrandDeals = () => {
   const ref = useScrollReveal();
   return (
@@ -59,6 +74,27 @@ const BrandDeals = () => {
               <Link to="/contact">
                 <Button variant="hero" size="lg">Partner With Us</Button>
               </Link>
+            </div>
+
+            <div className="mt-8 rounded-[1.5rem] border border-primary-foreground/10 bg-primary-foreground/5 p-6 animate-reveal animate-reveal-delay-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">Media kit snapshot</p>
+                  <h3 className="mt-2 font-display text-2xl text-primary-foreground">Why brands partner with True Trucking TV</h3>
+                </div>
+                <Link to="/contact" className="text-sm font-bold uppercase tracking-[0.18em] text-primary-foreground/70 transition-colors hover:text-primary-foreground">
+                  Request details
+                </Link>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {mediaKitSummary.map((item) => (
+                  <div key={item.title} className="rounded-2xl border border-primary-foreground/10 bg-brand-dark-surface/80 p-4">
+                    <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">{item.title}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-primary-foreground/75">{item.details}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
