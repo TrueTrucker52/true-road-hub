@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.track-referral-ifta-click]
 verify_jwt = false
+
+[functions.referral-platform-analytics]
+verify_jwt = false
