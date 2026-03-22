@@ -95,6 +95,13 @@ const AdminLogin = () => {
                 Return home
               </Link>
             </p>
+
+            <p className="mt-3 text-sm text-muted-foreground">
+              No admin exists yet?{" "}
+              <Link to="/admin/setup" className="font-medium text-brand-red underline-offset-4 hover:underline">
+                Seed the first admin
+              </Link>
+            </p>
           </CardContent>
         </Card>
       </div>

@@ -7,6 +7,7 @@ type AuthContextValue = {
   user: User | null;
   isAdmin: boolean;
   loading: boolean;
+  refreshAdminStatus: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
 };
@@ -69,12 +70,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+  const refreshAdminStatus = async () => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+
+    const admin = await fetchIsAdmin(user.id);
+    setIsAdmin(admin);
+  };
+
   const value = useMemo<AuthContextValue>(
     () => ({
       session,
       user,
       isAdmin,
       loading,
+      refreshAdminStatus,
       signIn: async (email, password) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         return error?.message ?? null;

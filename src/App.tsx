@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
+import AdminSetup from "./pages/AdminSetup.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/setup" element={<AdminSetup />} />
             <Route element={<RequireAdmin />}>
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
             </Route>
