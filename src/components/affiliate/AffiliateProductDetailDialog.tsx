@@ -105,6 +105,8 @@ const AffiliateProductDetailDialog = ({
                 href={affiliateUrl}
                 onClick={isPlaceholderLink ? (event) => event.preventDefault() : undefined}
                 aria-label={`${ctaLabel} for ${product.name}`}
+                rel={isPlaceholderLink ? undefined : "noopener noreferrer"}
+                target={isPlaceholderLink ? undefined : "_blank"}
                 className="block"
               >
                 <Button variant="hero" size="lg" className="w-full justify-center">

@@ -34,8 +34,7 @@ const GearGeorgeRecommends = () => {
         <div className="mt-12 rounded-[1.75rem] border border-primary/15 bg-background/5 p-6 text-sm leading-7 text-primary-foreground/72 animate-reveal animate-reveal-delay-5 md:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-red/80">Affiliate disclaimer</p>
           <p className="mt-4 max-w-2xl">
-            Some links on this page are affiliate links. If you purchase through these links True Trucking TV may earn a
-            small commission at no extra cost to you. We only recommend products we personally use and trust.
+            As an Amazon Associate True Trucking TV earns from qualifying purchases at no extra cost to you.
           </p>
         </div>
       </div>
