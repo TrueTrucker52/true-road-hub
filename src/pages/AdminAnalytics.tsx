@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
+type MediaKitPlacement = "brand_deals";
 
 type AnalyticsResponse = {
   days: number;
@@ -22,6 +23,7 @@ type AnalyticsResponse = {
   totalMediaKitDownloads: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
+  mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
   placementTotals: Array<{ placement: Placement; clicks: number }>;
   placementComparison: Array<{
     placement: Placement;
@@ -87,6 +89,10 @@ const placementLabels = {
   footer: "Footer",
   unknown: "Unknown",
 } as const;
+
+const mediaKitPlacementLabels: Record<MediaKitPlacement, string> = {
+  brand_deals: "Brand deals section",
+};
 
 const chartConfig = {
   youtube: { label: "YouTube", color: "hsl(var(--platform-youtube))" },
@@ -209,6 +215,11 @@ const AdminAnalytics = () => {
   const bestConversionPlatform = useMemo(() => {
     if (!data?.totals.length) return null;
     return [...data.totals].sort((a, b) => b.conversionRate - a.conversionRate)[0] ?? null;
+  }, [data]);
+
+  const topMediaKitPlacement = useMemo(() => {
+    if (!data?.mediaKitPlacementTotals.length) return null;
+    return [...data.mediaKitPlacementTotals].sort((a, b) => b.downloads - a.downloads)[0] ?? null;
   }, [data]);
 
   const placementExtremes = useMemo(() => {
@@ -362,7 +373,7 @@ const AdminAnalytics = () => {
           </Card>
         </section>
 
-        <section className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.9fr]">
+        <section className="mt-8 grid gap-8 xl:grid-cols-[1.4fr_0.8fr_0.8fr]">
           <Card className="border-primary/15 shadow-xl shadow-primary/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-display text-3xl">
@@ -488,6 +499,42 @@ const AdminAnalytics = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/15 shadow-xl shadow-primary/5">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Sponsor interest by section</CardTitle>
+              <CardDescription>Compare which site section is generating media kit downloads.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(data?.mediaKitPlacementTotals ?? []).map((item) => {
+                  const isTopPlacement = topMediaKitPlacement?.placement === item.placement && item.downloads > 0;
+
+                  return (
+                    <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                              {mediaKitPlacementLabels[item.placement]}
+                            </p>
+                            {isTopPlacement ? (
+                              <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                                Top driver
+                              </Badge>
+                            ) : null}
+                          </div>
+                          <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
+                            <p><span className="font-semibold text-foreground">{item.downloads.toLocaleString()}</span> downloads</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
