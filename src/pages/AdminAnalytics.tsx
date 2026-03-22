@@ -122,6 +122,15 @@ const AdminAnalytics = () => {
     return winner.placement;
   }, [comparePrevious, data]);
 
+  const bestDecliningPlacement = useMemo(() => {
+    if (!comparePrevious || !data?.placementComparison.length) return null;
+
+    const loser = [...data.placementComparison].sort((a, b) => a.deltaPercent - b.deltaPercent)[0] ?? null;
+
+    if (!loser || loser.delta >= 0) return null;
+    return loser.placement;
+  }, [comparePrevious, data]);
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="border-b border-border bg-secondary text-primary-foreground">
@@ -330,16 +339,24 @@ const AdminAnalytics = () => {
                 {(data?.placementComparison ?? []).map((item) => {
                   const positive = item.delta >= 0;
                   const isBestImproving = comparePrevious && bestImprovingPlacement === item.placement;
+                  const isBestDeclining = comparePrevious && bestDecliningPlacement === item.placement;
 
                   return (
                     <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
-                        {isBestImproving ? (
-                          <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
-                            Best improving
-                          </Badge>
-                        ) : null}
+                        <div className="flex flex-wrap justify-end gap-2">
+                          {isBestImproving ? (
+                            <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                              Best improving
+                            </Badge>
+                          ) : null}
+                          {isBestDeclining ? (
+                            <Badge variant="outline" className="border-destructive/25 bg-destructive/10 text-destructive">
+                              Biggest decline
+                            </Badge>
+                          ) : null}
+                        </div>
                       </div>
                       <p className="mt-3 font-display text-4xl text-foreground">{item.current.toLocaleString()}</p>
                       {comparePrevious ? (
