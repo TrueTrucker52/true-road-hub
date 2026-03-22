@@ -67,7 +67,7 @@ const GearStore = () => {
               <span className="font-display text-4xl font-bold">$39</span>
               <span className="text-sm opacity-80">/month</span>
             </div>
-            <ReferralIFTAButton>
+            <ReferralIFTAButton placement="gear">
               <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold uppercase tracking-wider active:scale-[0.97]">Try FREE 7 Days</Button>
             </ReferralIFTAButton>
             <p className="mt-3 text-center text-xs opacity-80">

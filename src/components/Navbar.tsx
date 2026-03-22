@@ -35,7 +35,7 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ) : link.label === "IFTA App" ? (
-              <ReferralIFTAButton key={link.label} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <ReferralIFTAButton key={link.label} placement="navbar" className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
               </ReferralIFTAButton>
             ) : link.external ? (
@@ -68,7 +68,7 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ) : link.label === "IFTA App" ? (
-              <ReferralIFTAButton key={link.label} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
+              <ReferralIFTAButton key={link.label} placement="navbar" className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}
               </ReferralIFTAButton>
             ) : link.external ? (

@@ -6,6 +6,7 @@ const corsHeaders = {
 };
 
 const ALLOWED_PLATFORMS = new Set(["youtube", "tiktok", "facebook", "instagram"]);
+const ALLOWED_PLACEMENTS = new Set(["hero", "navbar", "gear", "footer", "unknown"]);
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -35,10 +36,11 @@ Deno.serve(async (req) => {
     const pagePath = typeof body?.pagePath === "string" ? body.pagePath : "";
     const sessionId = typeof body?.sessionId === "string" ? body.sessionId : "";
     const targetUrl = typeof body?.targetUrl === "string" ? body.targetUrl : "";
+    const placement = typeof body?.placement === "string" ? body.placement.toLowerCase() : "unknown";
     const referrer = typeof body?.referrer === "string" ? body.referrer : null;
     const userAgent = typeof body?.userAgent === "string" ? body.userAgent : null;
 
-    if (!ALLOWED_PLATFORMS.has(platform) || !pagePath || !sessionId || !targetUrl) {
+    if (!ALLOWED_PLATFORMS.has(platform) || !ALLOWED_PLACEMENTS.has(placement) || !pagePath || !sessionId || !targetUrl) {
       return new Response(JSON.stringify({ error: "Invalid payload" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -54,6 +56,7 @@ Deno.serve(async (req) => {
       page_path: pagePath,
       session_id: sessionId,
       target_url: targetUrl,
+      placement,
       referrer,
       user_agent: userAgent,
     });

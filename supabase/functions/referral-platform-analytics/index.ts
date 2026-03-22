@@ -7,8 +7,10 @@ const corsHeaders = {
 
 const allowedDays = new Set([7, 30, 90]);
 const platforms = ["youtube", "tiktok", "facebook", "instagram"] as const;
+const placements = ["hero", "navbar", "gear", "footer", "unknown"] as const;
 
 type Platform = (typeof platforms)[number];
+type Placement = (typeof placements)[number];
 
 type DailyCounts = Record<Platform, number>;
 
@@ -94,7 +96,7 @@ Deno.serve(async (req) => {
 
     const { data: clickRows, error: clicksError } = await adminClient
       .from("referral_ifta_clicks")
-      .select("platform, clicked_at")
+      .select("platform, clicked_at, placement")
       .gte("clicked_at", startDate.toISOString())
       .order("clicked_at", { ascending: true });
 
@@ -106,6 +108,7 @@ Deno.serve(async (req) => {
     const clickByDate = new Map<string, DailyCounts>();
     const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
+    const placementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
 
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
@@ -131,12 +134,17 @@ Deno.serve(async (req) => {
       const platform = row.platform as Platform;
       if (!platforms.includes(platform)) continue;
 
+      const placement = (row.placement as Placement | null) ?? "unknown";
+
       const key = row.clicked_at.slice(0, 10);
       const current = clickByDate.get(key);
       if (!current) continue;
 
       current[platform] += 1;
       clickTotals[platform] += 1;
+      if (placements.includes(placement)) {
+        placementTotals[placement] += 1;
+      }
     }
 
     const series = [...impressionByDate.entries()].map(([date, impressionCounts]) => {
@@ -162,6 +170,7 @@ Deno.serve(async (req) => {
         clicks: clickTotals[platform],
         conversionRate: impressionTotals[platform] === 0 ? 0 : clickTotals[platform] / impressionTotals[platform],
       })),
+      placementTotals: placements.map((placement) => ({ placement, clicks: placementTotals[placement] })),
       series,
     };
 

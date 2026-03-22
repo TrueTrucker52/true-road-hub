@@ -1,7 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getReferralAwareIFTAUrl, getReferralPlatform, getReferralSessionId } from "@/lib/referral";
 
-export const trackReferralIFTAClick = async () => {
+export type IFTAPlacement = "hero" | "navbar" | "gear" | "footer";
+
+export const trackReferralIFTAClick = async (placement: IFTAPlacement) => {
   if (typeof window === "undefined") return getReferralAwareIFTAUrl();
 
   const platform = getReferralPlatform();
@@ -19,6 +21,7 @@ export const trackReferralIFTAClick = async () => {
         pagePath: `${window.location.pathname}${window.location.search}`,
         sessionId,
         targetUrl,
+        placement,
         referrer: document.referrer || null,
         userAgent: navigator.userAgent,
       },
