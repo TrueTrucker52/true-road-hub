@@ -1,0 +1,1 @@
+ALTER VIEW public.referral_platform_ifta_click_totals SET (security_invoker = true);
