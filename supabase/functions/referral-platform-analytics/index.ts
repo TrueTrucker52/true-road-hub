@@ -174,6 +174,7 @@ Deno.serve(async (req) => {
     const clickByDate = new Map<string, DailyCounts>();
     const mediaKitByDate = new Map<string, Record<Platform | "direct", number>>();
     const placementTrendByDate = new Map<string, PlacementDailyCounts>();
+    const sponsorInquiryByDate = new Map<string, Record<Platform | "direct", number>>();
     const impressionTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const clickTotals = Object.fromEntries(platforms.map((platform) => [platform, 0])) as DailyCounts;
     const placementTotals = Object.fromEntries(placements.map((placement) => [placement, 0])) as Record<Placement, number>;
@@ -221,6 +222,7 @@ Deno.serve(async (req) => {
       clickByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0 });
       mediaKitByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0, direct: 0 });
       placementTrendByDate.set(key, { hero: 0, navbar: 0, gear: 0, footer: 0, unknown: 0 });
+      sponsorInquiryByDate.set(key, { youtube: 0, tiktok: 0, facebook: 0, instagram: 0, direct: 0 });
     }
 
     for (const row of impressionRows ?? []) {
@@ -296,6 +298,12 @@ Deno.serve(async (req) => {
           ? row.platform
           : "direct";
         sponsorConversionBySource[platform].inquiries += 1;
+
+        const key = row.created_at.slice(0, 10);
+        const current = sponsorInquiryByDate.get(key);
+        if (current) {
+          current[platform] += 1;
+        }
       }
     }
 
@@ -352,6 +360,11 @@ Deno.serve(async (req) => {
     const placementSeries = [...placementTrendByDate.entries()].map(([date, placementCounts]) => ({
       date: new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       ...placementCounts,
+    }));
+
+    const sponsorInquirySeries = [...sponsorInquiryByDate.entries()].map(([date, counts]) => ({
+      date: new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      ...counts,
     }));
 
     const response = {
@@ -432,6 +445,7 @@ Deno.serve(async (req) => {
       series,
       mediaKitSeries,
       placementSeries,
+      sponsorInquirySeries,
       comparePrevious,
     };
 
