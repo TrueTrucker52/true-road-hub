@@ -6,11 +6,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trackContactSubmission } from "@/lib/trackContactSubmission";
 
+const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+const buildMailtoLink = (subject: string, body: string) =>
+  `mailto:george@true-trucker-ifta-pro.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
 const Contact = () => {
   const [general, setGeneral] = useState({ name: "", email: "", message: "" });
   const [brand, setBrand] = useState({ company: "", contact: "", email: "", budget: "", details: "" });
   const [generalSubmissionConfirmed, setGeneralSubmissionConfirmed] = useState(false);
   const [brandSubmissionConfirmed, setBrandSubmissionConfirmed] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!generalSubmissionConfirmed) return;
@@ -34,10 +40,38 @@ const Contact = () => {
 
   const handleGeneral = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const trimmedGeneral = {
+      name: general.name.trim(),
+      email: general.email.trim(),
+      message: general.message.trim(),
+    };
+
+    if (!trimmedGeneral.name || !trimmedGeneral.email || !trimmedGeneral.message) {
+      setGeneralError("Please complete all fields before sending your message.");
+      setGeneralSubmissionConfirmed(false);
+      return;
+    }
+
+    if (!isValidEmail(trimmedGeneral.email)) {
+      setGeneralError("Please enter a valid email address.");
+      setGeneralSubmissionConfirmed(false);
+      return;
+    }
+
+    setGeneral({
+      name: trimmedGeneral.name,
+      email: trimmedGeneral.email,
+      message: trimmedGeneral.message,
+    });
+    setGeneralError(null);
     trackContactSubmission("general");
     setGeneralSubmissionConfirmed(true);
 
-    const mailtoUrl = `mailto:george@true-trucker-ifta-pro.com?subject=General Contact from ${general.name}&body=${general.message}%0A%0AFrom: ${general.name} (${general.email})`;
+    const mailtoUrl = buildMailtoLink(
+      `General Contact from ${trimmedGeneral.name}`,
+      `${trimmedGeneral.message}\n\nFrom: ${trimmedGeneral.name} (${trimmedGeneral.email})`,
+    );
 
     window.setTimeout(() => {
       window.location.href = mailtoUrl;
@@ -82,9 +116,23 @@ const Contact = () => {
                   </AlertDescription>
                 </Alert>
               )}
-              <input type="text" placeholder="Name" required value={general.name} onChange={(e) => setGeneral({ ...general, name: e.target.value })} className={inputClass} />
-              <input type="email" placeholder="Email" required value={general.email} onChange={(e) => setGeneral({ ...general, email: e.target.value })} className={inputClass} />
-              <textarea placeholder="Message" required rows={5} value={general.message} onChange={(e) => setGeneral({ ...general, message: e.target.value })} className={inputClass + " resize-none"} />
+              {generalError && (
+                <Alert variant="destructive">
+                  <AlertDescription>{generalError}</AlertDescription>
+                </Alert>
+              )}
+              <input id="general-name" name="name" autoComplete="name" type="text" placeholder="Name" required maxLength={100} value={general.name} onChange={(e) => {
+                setGeneral({ ...general, name: e.target.value });
+                if (generalError) setGeneralError(null);
+              }} className={inputClass} />
+              <input id="general-email" name="email" autoComplete="email" inputMode="email" type="email" placeholder="Email" required maxLength={255} value={general.email} onChange={(e) => {
+                setGeneral({ ...general, email: e.target.value });
+                if (generalError) setGeneralError(null);
+              }} className={inputClass} />
+              <textarea id="general-message" name="message" autoComplete="off" placeholder="Message" required maxLength={1000} rows={5} value={general.message} onChange={(e) => {
+                setGeneral({ ...general, message: e.target.value });
+                if (generalError) setGeneralError(null);
+              }} className={inputClass + " resize-none"} />
               <Button type="submit" variant="subscribe" size="lg" className="w-full">Send Message</Button>
             </form>
 
