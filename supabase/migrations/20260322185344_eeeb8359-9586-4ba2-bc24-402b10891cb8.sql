@@ -1,0 +1,1 @@
+ALTER VIEW public.referral_platform_impression_totals SET (security_invoker = true);
