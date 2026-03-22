@@ -18,6 +18,12 @@ type ContactSubmissionType = "general" | "brand_deal";
 type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 type SponsorSourcePlatform = Platform | "direct";
 const budgetTierValueOrder: BudgetTier[] = ["Over $10,000", "$5,000 - $10,000", "$1,000 - $5,000", "Under $1,000"];
+const budgetTierWeights: Record<BudgetTier, number> = {
+  "Under $1,000": 1,
+  "$1,000 - $5,000": 2,
+  "$5,000 - $10,000": 3,
+  "Over $10,000": 4,
+};
 
 type AnalyticsResponse = {
   days: number;
@@ -280,6 +286,21 @@ const AdminAnalytics = () => {
     () => [...(data?.sponsorConversionBySource ?? [])].sort((a, b) => b.conversionRate - a.conversionRate),
     [data],
   );
+
+  const highestValueSource = useMemo(() => {
+    const items = data?.sponsorConversionBySource ?? [];
+    if (!items.length) return null;
+
+    return [...items]
+      .map((item) => ({
+        ...item,
+        weightedValueScore: item.budgetBreakdown.reduce(
+          (sum, budgetItem) => sum + budgetItem.inquiries * budgetTierWeights[budgetItem.budgetTier],
+          0,
+        ),
+      }))
+      .sort((a, b) => b.weightedValueScore - a.weightedValueScore || b.inquiries - a.inquiries || b.conversionRate - a.conversionRate)[0] ?? null;
+  }, [data]);
 
   const sponsorConversionPositive = (data?.sponsorConversionDelta ?? 0) >= 0;
 
@@ -661,9 +682,9 @@ const AdminAnalytics = () => {
                           <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
                             {sponsorPlatformLabels[item.platform]}
                           </p>
-                          {index === 0 && item.downloads > 0 ? (
+                          {highestValueSource?.platform === item.platform && highestValueSource.weightedValueScore > 0 ? (
                             <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
-                              Best quality
+                              Highest value
                             </Badge>
                           ) : null}
                         </div>
