@@ -4,7 +4,7 @@ import heroBg from "@/assets/hero-bg.jpg";
 const stats = [
   { value: "15+", label: "Years Experience" },
   { value: "500K+", label: "Views" },
-  { value: "∞", label: "Truckers Nationwide" },
+  { value: "10,000+", label: "Truckers Nationwide" },
 ];
 
 const HeroSection = () => (
