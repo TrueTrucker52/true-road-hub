@@ -68,6 +68,29 @@ describe("Contact page forms", () => {
     ).toBeInTheDocument();
   });
 
+  it("blocks general contact submit for invalid email and missing message", () => {
+    renderContactPage();
+
+    fireEvent.change(screen.getByLabelText("Full Name"), {
+      target: { value: "Alex Driver" },
+    });
+    fireEvent.change(screen.getByLabelText("Email Address"), {
+      target: { value: "not-an-email" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send Message" }));
+
+    expect(trackContactSubmissionMock).not.toHaveBeenCalled();
+    expect(screen.getByText(/please complete all fields before sending your message/i)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Message"), {
+      target: { value: "Need more information." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send Message" }));
+
+    expect(trackContactSubmissionMock).not.toHaveBeenCalled();
+    expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
+  });
+
   it("targets brand inquiry fields by visible labels with section-specific autocomplete", () => {
     renderContactPage();
 
@@ -111,5 +134,34 @@ describe("Contact page forms", () => {
     expect(
       screen.getByText(/your email app should open next so you can send the sponsorship inquiry directly to george/i),
     ).toBeInTheDocument();
+  });
+
+  it("blocks brand inquiry submit for missing details and invalid email", () => {
+    renderContactPage();
+
+    fireEvent.change(screen.getByLabelText("Company Name"), {
+      target: { value: "Roadline Partners" },
+    });
+    fireEvent.change(screen.getByLabelText("Contact Name"), {
+      target: { value: "Morgan Lee" },
+    });
+    fireEvent.change(screen.getByLabelText("Budget Range"), {
+      target: { value: "$1,000 - $5,000" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Submit Brand Deal Inquiry" }));
+
+    expect(trackContactSubmissionMock).not.toHaveBeenCalled();
+    expect(screen.getByText(/please complete all fields before sending your inquiry/i)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Contact Email"), {
+      target: { value: "bad-email" },
+    });
+    fireEvent.change(screen.getByLabelText("Campaign Details"), {
+      target: { value: "Owner-operator sponsorship test." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Submit Brand Deal Inquiry" }));
+
+    expect(trackContactSubmissionMock).not.toHaveBeenCalled();
+    expect(screen.getByText(/please enter a valid contact email address/i)).toBeInTheDocument();
   });
 });
