@@ -31,6 +31,58 @@ export const openContactPageInTestMode = async (page: Page) => {
   await expect(page.getByText(/test mode is on/i)).toBeVisible();
 };
 
+export const fillGeneralContactForm = async (
+  page: Page,
+  values: {
+    fullName?: string;
+    email?: string;
+    message?: string;
+  } = {},
+) => {
+  if (values.fullName !== undefined) {
+    await page.getByLabel(contactSelectors.general.fullName).fill(values.fullName);
+  }
+
+  if (values.email !== undefined) {
+    await page.getByLabel(contactSelectors.general.email).fill(values.email);
+  }
+
+  if (values.message !== undefined) {
+    await page.getByLabel(contactSelectors.general.message).fill(values.message);
+  }
+};
+
+export const fillBrandInquiryForm = async (
+  page: Page,
+  values: {
+    companyName?: string;
+    contactName?: string;
+    contactEmail?: string;
+    budgetRange?: string;
+    campaignDetails?: string;
+  } = {},
+) => {
+  if (values.companyName !== undefined) {
+    await page.getByLabel(contactSelectors.brand.companyName).fill(values.companyName);
+  }
+
+  if (values.contactName !== undefined) {
+    await page.getByLabel(contactSelectors.brand.contactName).fill(values.contactName);
+  }
+
+  if (values.contactEmail !== undefined) {
+    await page.getByLabel(contactSelectors.brand.contactEmail).fill(values.contactEmail);
+  }
+
+  if (values.budgetRange !== undefined) {
+    await page.getByLabel(contactSelectors.brand.budgetRange).selectOption(values.budgetRange);
+  }
+
+  if (values.campaignDetails !== undefined) {
+    await page.getByLabel(contactSelectors.brand.campaignDetails).fill(values.campaignDetails);
+  }
+};
+
 export const expectContactMessageVisible = async (page: Page, message: RegExp) => {
   await expect(page.getByText(message)).toBeVisible();
 };
