@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
@@ -146,6 +147,11 @@ const SummarySparkline = ({
   const path = buildSparklinePath(values);
   const points = buildSparklinePoints(data);
 
+  const formatSparklineDate = (value: string) => {
+    const parsed = new Date(`${value}T00:00:00`);
+    return Number.isNaN(parsed.getTime()) ? value : format(parsed, "MMM d");
+  };
+
   return (
     <div className={`h-10 w-32 ${className}`} aria-hidden="true">
       <svg viewBox="0 0 120 36" className="h-full w-full overflow-visible" fill="none">
@@ -154,7 +160,7 @@ const SummarySparkline = ({
           <g key={`${point.date}-${point.value}`}>
             <circle cx={point.x} cy={point.y} r="2.5" fill="currentColor" className="opacity-80" />
             <circle cx={point.x} cy={point.y} r="6" fill="transparent">
-              <title>{`${point.date}: ${point.value.toLocaleString()} clicks`}</title>
+              <title>{`${formatSparklineDate(point.date)}: ${point.value.toLocaleString()} clicks`}</title>
             </circle>
           </g>
         ))}
