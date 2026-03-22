@@ -26,6 +26,11 @@ type AnalyticsResponse = {
   totalContactSubmissions: number;
   totalBrandDealSubmissions: number;
   sponsorConversionRate: number;
+  previousMediaKitDownloads: number;
+  previousBrandDealSubmissions: number;
+  previousSponsorConversionRate: number;
+  sponsorConversionDelta: number;
+  sponsorConversionDeltaPercent: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
@@ -245,6 +250,8 @@ const AdminAnalytics = () => {
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
     [data],
   );
+
+  const sponsorConversionPositive = (data?.sponsorConversionDelta ?? 0) >= 0;
 
   const placementExtremes = useMemo(() => {
     if (!comparePrevious || !data?.placementComparison.length) {
@@ -498,7 +505,17 @@ const AdminAnalytics = () => {
                   <p className="mt-3 font-display text-4xl text-foreground">
                     {data ? `${(data.sponsorConversionRate * 100).toFixed(1)}%` : "—"}
                   </p>
-                  <p className="mt-2 text-sm text-muted-foreground">How often a download turns into a brand inquiry in this range.</p>
+                  <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                    <p>How often a download turns into a brand inquiry in this range.</p>
+                    {comparePrevious && data ? (
+                      <p className={`inline-flex items-center gap-1 font-medium ${sponsorConversionPositive ? "text-brand-red" : "text-destructive"}`}>
+                        {sponsorConversionPositive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                        {sponsorConversionPositive ? "+" : ""}
+                        {(data.sponsorConversionDelta * 100).toFixed(1)} pts ({sponsorConversionPositive ? "+" : ""}
+                        {(data.sponsorConversionDeltaPercent * 100).toFixed(1)}%) vs previous period
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
               </div>
 
@@ -512,6 +529,23 @@ const AdminAnalytics = () => {
                   </div>
                 ))}
               </div>
+
+              {comparePrevious && data ? (
+                <div className="mt-4 grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-border bg-background/70 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Previous media kit downloads</p>
+                    <p className="mt-2 font-display text-3xl text-foreground">{data.previousMediaKitDownloads.toLocaleString()}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-background/70 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Previous brand deal inquiries</p>
+                    <p className="mt-2 font-display text-3xl text-foreground">{data.previousBrandDealSubmissions.toLocaleString()}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-background/70 p-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Previous conversion rate</p>
+                    <p className="mt-2 font-display text-3xl text-foreground">{(data.previousSponsorConversionRate * 100).toFixed(1)}%</p>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-6 rounded-2xl border border-border bg-background/70 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
