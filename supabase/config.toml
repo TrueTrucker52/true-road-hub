@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.track-referral-impression]
 verify_jwt = false
+
+[functions.track-referral-ifta-click]
+verify_jwt = false
