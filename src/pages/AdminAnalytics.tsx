@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, LogOut, TrendingUp } from "lucide-react";
+import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,18 @@ type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 
 type AnalyticsResponse = {
   days: number;
+  comparePrevious: boolean;
   totalImpressions: number;
   totalClicks: number;
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   placementTotals: Array<{ placement: "hero" | "navbar" | "gear" | "footer" | "unknown"; clicks: number }>;
+  placementComparison: Array<{
+    placement: "hero" | "navbar" | "gear" | "footer" | "unknown";
+    current: number;
+    previous: number;
+    delta: number;
+    deltaPercent: number;
+  }>;
   placementByPlatform: Array<{
     placement: "hero" | "navbar" | "gear" | "footer" | "unknown";
     youtube: number;
@@ -80,12 +88,13 @@ const placementChartConfig = {
 const AdminAnalytics = () => {
   const { user, signOut } = useAuth();
   const [days, setDays] = useState<(typeof ranges)[number]>(30);
+  const [comparePrevious, setComparePrevious] = useState(true);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["referral-analytics", days],
+    queryKey: ["referral-analytics", days, comparePrevious],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("referral-platform-analytics", {
-        body: { days },
+        body: { days, comparePrevious },
       });
 
       if (error) throw new Error(error.message);
@@ -148,8 +157,13 @@ const AdminAnalytics = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-muted px-5 py-4 text-sm text-muted-foreground">
-            Includes tracked label impressions from the public website only.
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant={comparePrevious ? "hero" : "outline"} onClick={() => setComparePrevious((value) => !value)}>
+              {comparePrevious ? "Comparing to previous period" : "Enable previous-period comparison"}
+            </Button>
+            <div className="rounded-2xl border border-border bg-muted px-5 py-4 text-sm text-muted-foreground">
+              Includes tracked label impressions from the public website only.
+            </div>
           </div>
         </div>
 
@@ -303,13 +317,27 @@ const AdminAnalytics = () => {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                {(data?.placementTotals ?? []).map((item) => (
-                  <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
-                    <p className="mt-3 font-display text-4xl text-foreground">{item.clicks.toLocaleString()}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">Tracked outbound clicks</p>
-                  </div>
-                ))}
+                {(data?.placementComparison ?? []).map((item) => {
+                  const positive = item.delta >= 0;
+
+                  return (
+                    <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-5">
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{placementLabels[item.placement]}</p>
+                      <p className="mt-3 font-display text-4xl text-foreground">{item.current.toLocaleString()}</p>
+                      {comparePrevious ? (
+                        <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                          <p>Previous period: <span className="font-semibold text-foreground">{item.previous.toLocaleString()}</span></p>
+                          <p className={`inline-flex items-center gap-1 font-medium ${positive ? "text-brand-red" : "text-muted-foreground"}`}>
+                            {positive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                            {positive ? "+" : ""}{item.delta.toLocaleString()} ({positive ? "+" : ""}{(item.deltaPercent * 100).toFixed(1)}%)
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-sm text-muted-foreground">Tracked outbound clicks</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
