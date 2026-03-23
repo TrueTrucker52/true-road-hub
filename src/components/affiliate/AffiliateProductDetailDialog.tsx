@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { CheckCircle2, Gauge, ShieldCheck } from "lucide-react";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
 import { Badge } from "@/components/ui/badge";
@@ -11,20 +12,41 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/components/gear/types";
+import { trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
 
 type AffiliateProductDetailDialogProps = {
   badgeLabel?: string;
+  categoryId: string;
+  categoryTitle: string;
   ctaLabel?: string;
   product: Product;
 };
 
 const AffiliateProductDetailDialog = ({
   badgeLabel = "George recommends",
+  categoryId,
+  categoryTitle,
   ctaLabel = "Get Best Price on Amazon",
   product,
 }: AffiliateProductDetailDialogProps) => {
   const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
   const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
+
+  const handleAffiliateClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (isPlaceholderLink) return;
+
+    const targetUrl = await trackAffiliateProductClick({
+      affiliateUrl,
+      categoryId,
+      categoryTitle,
+      placement: "detail_dialog",
+      productName: product.name,
+      productSlug: product.slug,
+    });
+
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <Dialog>
@@ -103,7 +125,7 @@ const AffiliateProductDetailDialog = ({
 
               <a
                 href={affiliateUrl}
-                onClick={isPlaceholderLink ? (event) => event.preventDefault() : undefined}
+                onClick={handleAffiliateClick}
                 aria-label={`${ctaLabel} for ${product.name}`}
                 rel={isPlaceholderLink ? undefined : "noopener noreferrer"}
                 target={isPlaceholderLink ? undefined : "_blank"}

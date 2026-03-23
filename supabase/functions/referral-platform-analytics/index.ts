@@ -10,11 +10,13 @@ const platforms = ["youtube", "tiktok", "facebook", "instagram"] as const;
 const placements = ["hero", "navbar", "gear", "footer", "unknown"] as const;
 const mediaKitPlacements = ["brand_deals"] as const;
 const budgetTiers = ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "Over $10,000"] as const;
+const affiliatePlatforms = ["youtube", "tiktok", "facebook", "instagram", "direct"] as const;
 
 type Platform = (typeof platforms)[number];
 type Placement = (typeof placements)[number];
 type MediaKitPlacement = (typeof mediaKitPlacements)[number];
 type BudgetTier = (typeof budgetTiers)[number];
+type AffiliatePlatform = (typeof affiliatePlatforms)[number];
 
 type DailyCounts = Record<Platform, number>;
 type PlacementDailyCounts = Record<Placement, number>;
@@ -125,6 +127,20 @@ Deno.serve(async (req) => {
           .lte("clicked_at", previousEndDate.toISOString())
       : { data: [], error: null };
 
+    const { data: affiliateClickRows, error: affiliateClicksError } = await adminClient
+      .from("affiliate_product_clicks")
+      .select("product_slug, product_name, category_id, category_title, platform, created_at")
+      .gte("created_at", startDate.toISOString())
+      .order("created_at", { ascending: true });
+
+    const { data: previousAffiliateClickRows, error: previousAffiliateClicksError } = comparePrevious
+      ? await adminClient
+          .from("affiliate_product_clicks")
+          .select("product_slug")
+          .gte("created_at", previousStartDate.toISOString())
+          .lte("created_at", previousEndDate.toISOString())
+      : { data: [], error: null };
+
     const { data: mediaKitRows, error: mediaKitError } = await adminClient
       .from("media_kit_downloads")
       .select("platform, placement, downloaded_at")
@@ -171,6 +187,14 @@ Deno.serve(async (req) => {
 
     if (previousClicksError) {
       throw new Error(previousClicksError.message);
+    }
+
+    if (affiliateClicksError) {
+      throw new Error(affiliateClicksError.message);
+    }
+
+    if (previousAffiliateClicksError) {
+      throw new Error(previousAffiliateClicksError.message);
     }
 
     const impressionByDate = new Map<string, DailyCounts>();
@@ -223,6 +247,22 @@ Deno.serve(async (req) => {
       instagram: 0,
       direct: 0,
     };
+    const affiliateClickTotalsByPlatform = Object.fromEntries(
+      affiliatePlatforms.map((platform) => [platform, 0]),
+    ) as Record<AffiliatePlatform, number>;
+    const affiliateProductTotals = new Map<string, {
+      productSlug: string;
+      productName: string;
+      categoryId: string;
+      categoryTitle: string;
+      clicks: number;
+    }>();
+    const previousAffiliateProductTotals = new Map<string, number>();
+    const affiliateCategoryTotals = new Map<string, {
+      categoryId: string;
+      categoryTitle: string;
+      clicks: number;
+    }>();
 
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
@@ -274,6 +314,36 @@ Deno.serve(async (req) => {
       if (placements.includes(placement)) {
         previousPlacementTotals[placement] += 1;
       }
+    }
+
+    for (const row of affiliateClickRows ?? []) {
+      const platform = affiliatePlatforms.includes(row.platform as AffiliatePlatform)
+        ? (row.platform as AffiliatePlatform)
+        : "direct";
+
+      affiliateClickTotalsByPlatform[platform] += 1;
+
+      const product = affiliateProductTotals.get(row.product_slug) ?? {
+        productSlug: row.product_slug,
+        productName: row.product_name,
+        categoryId: row.category_id,
+        categoryTitle: row.category_title,
+        clicks: 0,
+      };
+      product.clicks += 1;
+      affiliateProductTotals.set(row.product_slug, product);
+
+      const category = affiliateCategoryTotals.get(row.category_id) ?? {
+        categoryId: row.category_id,
+        categoryTitle: row.category_title,
+        clicks: 0,
+      };
+      category.clicks += 1;
+      affiliateCategoryTotals.set(row.category_id, category);
+    }
+
+    for (const row of previousAffiliateClickRows ?? []) {
+      previousAffiliateProductTotals.set(row.product_slug, (previousAffiliateProductTotals.get(row.product_slug) ?? 0) + 1);
     }
 
     for (const row of mediaKitRows ?? []) {
@@ -385,6 +455,7 @@ Deno.serve(async (req) => {
       days,
       totalImpressions: Object.values(impressionTotals).reduce((sum, value) => sum + value, 0),
       totalClicks: Object.values(clickTotals).reduce((sum, value) => sum + value, 0),
+      totalAffiliateProductClicks: [...affiliateProductTotals.values()].reduce((sum, item) => sum + item.clicks, 0),
       totalMediaKitDownloads: Object.values(mediaKitTotals).reduce((sum, value) => sum + value, 0),
       totalContactSubmissions: contactSubmissionTotals.general + contactSubmissionTotals.brand_deal,
       totalBrandDealSubmissions: sponsorInquiryCount,
@@ -408,6 +479,26 @@ Deno.serve(async (req) => {
         placement,
         downloads: mediaKitPlacementTotals[placement],
       })),
+      affiliatePlatformTotals: affiliatePlatforms.map((platform) => ({
+        platform,
+        clicks: affiliateClickTotalsByPlatform[platform],
+      })),
+      affiliateCategoryTotals: [...affiliateCategoryTotals.values()].sort(
+        (a, b) => b.clicks - a.clicks || a.categoryTitle.localeCompare(b.categoryTitle),
+      ),
+      affiliateProductTotals: [...affiliateProductTotals.values()]
+        .map((item) => {
+          const previousClicks = previousAffiliateProductTotals.get(item.productSlug) ?? 0;
+          const delta = item.clicks - previousClicks;
+
+          return {
+            ...item,
+            previousClicks,
+            delta,
+            deltaPercent: previousClicks === 0 ? (item.clicks > 0 ? 1 : 0) : delta / previousClicks,
+          };
+        })
+        .sort((a, b) => b.clicks - a.clicks || a.productName.localeCompare(b.productName)),
       contactSubmissionTotals: [
         { submissionType: "general", submissions: contactSubmissionTotals.general },
         { submissionType: "brand_deal", submissions: contactSubmissionTotals.brand_deal },
