@@ -308,6 +308,7 @@ Deno.serve(async (req) => {
     const previousAffiliateSectionTotals = new Map<string, number>();
     const recentAffiliateClicks: Array<{
       createdAt: string;
+      platform: AffiliatePlatform;
       placement: AffiliatePlacement;
       productName: string;
       productSlug: string;
@@ -502,6 +503,7 @@ Deno.serve(async (req) => {
 
       recentAffiliateClicks.push({
         createdAt: row.created_at,
+        platform,
         placement,
         productName: row.product_name,
         productSlug: row.product_slug,
