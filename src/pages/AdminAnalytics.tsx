@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { endOfDay, format, startOfDay, subDays } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, CalendarIcon, Download, LogOut, TrendingUp, X } from "lucide-react";
@@ -419,6 +419,28 @@ const AdminAnalytics = () => {
     if (!data?.activeAffiliateSectionId) return "All recommendation blocks";
     return data.availableAffiliateSections.find((item) => item.sectionId === data.activeAffiliateSectionId)?.sectionTitle ?? "Selected block";
   }, [data]);
+
+  const affiliateEventsCardRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToAffiliateEvents = () => {
+    affiliateEventsCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleSectionDrilldown = (sectionId: string) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter("all");
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
+
+  const handleSectionProductDrilldown = (sectionId: string, productSlug: string) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter(productSlug);
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
 
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
@@ -1009,7 +1031,12 @@ const AdminAnalytics = () => {
                         : item.sectionId === affiliateSectionFilter;
 
                       return (
-                        <div key={item.sectionId} className="rounded-2xl border border-border bg-muted/50 p-5">
+                        <button
+                          key={item.sectionId}
+                          type="button"
+                          onClick={() => handleSectionDrilldown(item.sectionId)}
+                          className={`rounded-2xl border bg-muted/50 p-5 text-left transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-red/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isActive ? "border-brand-red/40 shadow-lg" : "border-border"}`}
+                        >
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Recommendation block</p>
@@ -1100,22 +1127,34 @@ const AdminAnalytics = () => {
                             </div>
 
                             <div className="mt-3 space-y-2">
-                              {item.topProducts.map((product) => (
-                                <div key={`${item.sectionId}-${product.productSlug}`} className="flex items-start justify-between gap-3 rounded-xl border border-border bg-muted/50 px-3 py-3">
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{product.categoryTitle}</p>
-                                    <p className="mt-1 text-sm font-semibold leading-5 text-foreground">{product.productName}</p>
-                                    <p className="mt-1 text-xs text-muted-foreground">{product.productSlug}</p>
-                                  </div>
-                                  <div className="shrink-0 text-right">
-                                    <p className="text-sm font-semibold text-brand-red">{product.clicks.toLocaleString()}</p>
-                                    <p className="mt-1 text-xs text-muted-foreground">{(product.shareOfSectionClicks * 100).toFixed(1)}%</p>
-                                  </div>
-                                </div>
-                              ))}
+                              {item.topProducts.map((product) => {
+                                const isProductActive = affiliateSectionFilter === item.sectionId && affiliateProductFilter === product.productSlug;
+
+                                return (
+                                  <button
+                                    key={`${item.sectionId}-${product.productSlug}`}
+                                    type="button"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleSectionProductDrilldown(item.sectionId, product.productSlug);
+                                    }}
+                                    className={`flex w-full items-start justify-between gap-3 rounded-xl border px-3 py-3 text-left transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isProductActive ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
+                                  >
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{product.categoryTitle}</p>
+                                      <p className="mt-1 text-sm font-semibold leading-5 text-foreground">{product.productName}</p>
+                                      <p className="mt-1 text-xs text-muted-foreground">{product.productSlug}</p>
+                                    </div>
+                                    <div className="shrink-0 text-right">
+                                      <p className="text-sm font-semibold text-brand-red">{product.clicks.toLocaleString()}</p>
+                                      <p className="mt-1 text-xs text-muted-foreground">{(product.shareOfSectionClicks * 100).toFixed(1)}%</p>
+                                    </div>
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
-                        </div>
+                        </button>
                       );
                     })}
                   </div>
@@ -1293,7 +1332,7 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
+          <Card ref={affiliateEventsCardRef} className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
             <CardHeader>
               <CardTitle className="font-display text-3xl">Recent affiliate click events</CardTitle>
               <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
