@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { endOfDay, format, startOfDay, subDays } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, CalendarIcon, Download, LogOut, TrendingUp, X } from "lucide-react";
@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -183,7 +184,7 @@ const affiliateEventDateFilterLabels: Record<AffiliateEventDateFilter, string> =
   all: "All recent",
 };
 
-const AFFILIATE_EVENT_PAGE_SIZE = 20;
+const AFFILIATE_EVENT_PAGE_SIZE_OPTIONS = [10, 20, 50] as const;
 
 const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
   general: "General contact",
@@ -315,7 +316,8 @@ const AdminAnalytics = () => {
   const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
   const [affiliateEventFromDate, setAffiliateEventFromDate] = useState<Date>();
   const [affiliateEventToDate, setAffiliateEventToDate] = useState<Date>();
-  const [affiliateEventsVisibleCount, setAffiliateEventsVisibleCount] = useState(AFFILIATE_EVENT_PAGE_SIZE);
+  const [affiliateEventPageSize, setAffiliateEventPageSize] = useState<(typeof AFFILIATE_EVENT_PAGE_SIZE_OPTIONS)[number]>(20);
+  const [affiliateEventPage, setAffiliateEventPage] = useState(1);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
@@ -334,8 +336,8 @@ const AdminAnalytics = () => {
   }, [affiliateSectionFilter]);
 
   useEffect(() => {
-    setAffiliateEventsVisibleCount(AFFILIATE_EVENT_PAGE_SIZE);
-  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventSearch]);
+    setAffiliateEventPage(1);
+  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventFromDate, affiliateEventToDate, affiliateEventSearch]);
 
   useEffect(() => {
     if (affiliateProductFilter === "all") return;
@@ -406,18 +408,34 @@ const AdminAnalytics = () => {
     });
   }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
 
-  const visibleRecentAffiliateClicks = useMemo(
-    () => filteredRecentAffiliateClicks.slice(0, affiliateEventsVisibleCount),
-    [affiliateEventsVisibleCount, filteredRecentAffiliateClicks],
-  );
+  const affiliateEventTotalPages = Math.max(1, Math.ceil(filteredRecentAffiliateClicks.length / affiliateEventPageSize));
 
-  const hasMoreAffiliateEvents = visibleRecentAffiliateClicks.length < filteredRecentAffiliateClicks.length;
+  useEffect(() => {
+    setAffiliateEventPage((current) => Math.min(current, affiliateEventTotalPages));
+  }, [affiliateEventTotalPages]);
+
+  const paginatedRecentAffiliateClicks = useMemo(() => {
+    const startIndex = (affiliateEventPage - 1) * affiliateEventPageSize;
+    return filteredRecentAffiliateClicks.slice(startIndex, startIndex + affiliateEventPageSize);
+  }, [affiliateEventPage, affiliateEventPageSize, filteredRecentAffiliateClicks]);
+
+  const affiliateEventPageStart = filteredRecentAffiliateClicks.length === 0 ? 0 : (affiliateEventPage - 1) * affiliateEventPageSize + 1;
+  const affiliateEventPageEnd = Math.min(affiliateEventPage * affiliateEventPageSize, filteredRecentAffiliateClicks.length);
+
+  const affiliateEventVisiblePages = useMemo(() => {
+    if (affiliateEventTotalPages <= 5) {
+      return Array.from({ length: affiliateEventTotalPages }, (_, index) => index + 1);
+    }
+
+    const pages = new Set([1, affiliateEventTotalPages, affiliateEventPage - 1, affiliateEventPage, affiliateEventPage + 1]);
+    return [...pages].filter((page) => page >= 1 && page <= affiliateEventTotalPages).sort((a, b) => a - b);
+  }, [affiliateEventPage, affiliateEventTotalPages]);
 
   const exportAffiliateEventsCsv = () => {
-    if (!visibleRecentAffiliateClicks.length) return;
+    if (!paginatedRecentAffiliateClicks.length) return;
 
     const headers = ["clicked_at", "section_title", "section_id", "placement", "product_name", "product_slug", "target_url"];
-    const rows = visibleRecentAffiliateClicks.map((item) => [
+    const rows = paginatedRecentAffiliateClicks.map((item) => [
       item.createdAt,
       item.sectionTitle,
       item.sectionId,
@@ -1241,7 +1259,7 @@ const AdminAnalytics = () => {
                     type="button"
                     variant="outline"
                     onClick={exportAffiliateEventsCsv}
-                    disabled={!visibleRecentAffiliateClicks.length}
+                    disabled={!paginatedRecentAffiliateClicks.length}
                     className="md:self-end"
                   >
                     <Download className="mr-2 h-4 w-4" />
@@ -1256,15 +1274,35 @@ const AdminAnalytics = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
-                    <span>
-                      Showing {visibleRecentAffiliateClicks.length.toLocaleString()} of {filteredRecentAffiliateClicks.length.toLocaleString()} filtered events
-                    </span>
-                  {(affiliateEventFromDate || affiliateEventToDate) ? (
-                    <span className="text-xs sm:text-sm">
-                      {affiliateEventFromDate ? format(affiliateEventFromDate, "MMM d, yyyy") : "Start"} → {affiliateEventToDate ? format(affiliateEventToDate, "MMM d, yyyy") : "Now"}
-                    </span>
-                  ) : null}
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between text-sm text-muted-foreground">
+                    <div className="flex flex-col gap-1">
+                      <span>
+                        Showing {affiliateEventPageStart.toLocaleString()}–{affiliateEventPageEnd.toLocaleString()} of {filteredRecentAffiliateClicks.length.toLocaleString()} filtered events
+                      </span>
+                      {(affiliateEventFromDate || affiliateEventToDate) ? (
+                        <span className="text-xs sm:text-sm">
+                          {affiliateEventFromDate ? format(affiliateEventFromDate, "MMM d, yyyy") : "Start"} → {affiliateEventToDate ? format(affiliateEventToDate, "MMM d, yyyy") : "Now"}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex items-center gap-3 self-start lg:self-auto">
+                      <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Rows</span>
+                      <Select
+                        value={String(affiliateEventPageSize)}
+                        onValueChange={(value) => setAffiliateEventPageSize(Number(value) as (typeof AFFILIATE_EVENT_PAGE_SIZE_OPTIONS)[number])}
+                      >
+                        <SelectTrigger className="w-[110px]">
+                          <SelectValue aria-label={`Show ${affiliateEventPageSize} rows`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {AFFILIATE_EVENT_PAGE_SIZE_OPTIONS.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                              {size} / page
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <div className="rounded-2xl border border-border bg-background/70">
                   <Table>
@@ -1278,7 +1316,7 @@ const AdminAnalytics = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {visibleRecentAffiliateClicks.map((item) => (
+                      {paginatedRecentAffiliateClicks.map((item) => (
                         <TableRow key={`${item.createdAt}-${item.productSlug}-${item.placement}`}>
                           <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                             {format(new Date(item.createdAt), "MMM d, h:mm a")}
@@ -1315,17 +1353,49 @@ const AdminAnalytics = () => {
                     </TableBody>
                   </Table>
                   </div>
-                  {hasMoreAffiliateEvents ? (
-                    <div className="flex justify-center">
+                  <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      Page {affiliateEventPage} of {affiliateEventTotalPages}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => setAffiliateEventsVisibleCount((current) => current + AFFILIATE_EVENT_PAGE_SIZE)}
+                        size="sm"
+                        onClick={() => setAffiliateEventPage((current) => Math.max(1, current - 1))}
+                        disabled={affiliateEventPage === 1}
                       >
-                        Load 20 more events
+                        Previous
+                      </Button>
+                      {affiliateEventVisiblePages.map((page, index) => {
+                        const previousPage = affiliateEventVisiblePages[index - 1];
+                        const showGap = previousPage && page - previousPage > 1;
+
+                        return (
+                          <Fragment key={page}>
+                            {showGap ? <span className="px-1 text-sm text-muted-foreground">…</span> : null}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant={affiliateEventPage === page ? "hero" : "outline"}
+                              onClick={() => setAffiliateEventPage(page)}
+                            >
+                              {page}
+                            </Button>
+                          </Fragment>
+                        );
+                      })}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAffiliateEventPage((current) => Math.min(affiliateEventTotalPages, current + 1))}
+                        disabled={affiliateEventPage === affiliateEventTotalPages}
+                      >
+                        Next
                       </Button>
                     </div>
-                  ) : null}
+                  </div>
                 </div>
               )}
             </CardContent>
