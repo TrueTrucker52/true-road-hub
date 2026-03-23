@@ -642,39 +642,7 @@ const GearStore = () => {
             <MerchSpotlight />
             <div className="grid gap-5">
               {merch.map((m) => (
-                <article
-                  key={m.name}
-                  className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
-                >
-                  <div className="border-b border-border bg-background p-4">
-                    <MerchDetailDialog merchItem={m} />
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">
-                        {m.badge}
-                      </span>
-                      <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">
-                        {m.price}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-1 flex-col">
-                      <h4 className="text-xl font-extrabold leading-tight text-card-foreground">{m.name}</h4>
-                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{m.description}</p>
-                    </div>
-
-                    <div className="mt-5 grid gap-3">
-                      <MerchDetailDialog merchItem={m} triggerVariant="button" />
-                      <a href={m.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <Button variant="subscribe" className="w-full">
-                          Shop Now →
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                </article>
+                <MerchCard key={m.name} item={m} />
               ))}
             </div>
             <a href={merchStoreUrl} target="_blank" rel="noopener noreferrer" className="block mt-6">
