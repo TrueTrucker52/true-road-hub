@@ -5,14 +5,44 @@ import { ShoppingBag, Truck, Smartphone } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 import type { Product } from "@/components/gear/types";
+import merchClassicTshirt from "@/assets/merch-classic-tshirt.png";
+import merchPulloverHoodie from "@/assets/merch-pullover-hoodie.png";
+import merchSnapbackHat from "@/assets/merch-snapback-hat.png";
 
 const merchStoreUrl = "https://truetrucker.printify.me";
 
 const merch = [
-  { name: "TT Snapback Hat", price: "$29.99", url: merchStoreUrl },
-  { name: "TT Classic T-Shirt", price: "$24.99", url: merchStoreUrl },
-  { name: "TT Pullover Hoodie", price: "$49.99", url: merchStoreUrl },
-];
+  {
+    name: "TT Snapback Hat",
+    price: "$29.99",
+    description:
+      "Official True Trucking TV branded snapback hat. One size fits most with a road-ready red, black, and white colorway.",
+    image: merchSnapbackHat,
+    imageAlt: "True Trucking TV snapback hat in red, black, and white.",
+    badge: "Merch Favorite",
+    url: merchStoreUrl,
+  },
+  {
+    name: "TT Classic T-Shirt",
+    price: "$24.99",
+    description:
+      "Rep the True Trucking TV brand on the road and off with soft everyday comfort, sizes S through 3XL, and multiple color options.",
+    image: merchClassicTshirt,
+    imageAlt: "True Trucking TV classic t-shirt with bold trucking graphic.",
+    badge: "Everyday Wear",
+    url: merchStoreUrl,
+  },
+  {
+    name: "TT Pullover Hoodie",
+    price: "$49.99",
+    description:
+      "Stay warm on early morning pre-trips and dock waits with the official True Trucking TV hoodie in premium heavyweight fleece.",
+    image: merchPulloverHoodie,
+    imageAlt: "True Trucking TV pullover hoodie in red and black.",
+    badge: "Cold Weather",
+    url: merchStoreUrl,
+  },
+] as const;
 
 const truckingEssentials: Product[] = [
   {
@@ -285,18 +315,46 @@ const GearStore = () => {
               <ShoppingBag className="text-brand-red" size={24} />
               <h3 className="font-display text-xl font-bold">True Trucking Merch</h3>
             </div>
-            <div className="space-y-4">
+            <div className="grid gap-5">
               {merch.map((m) => (
-                <a
+                <article
                   key={m.name}
-                  href={m.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex justify-between items-center rounded-lg bg-background p-4 transition-colors hover:bg-background/80"
+                  className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <span className="font-medium text-sm">{m.name}</span>
-                  <span className="font-display font-bold text-brand-red">{m.price}</span>
-                </a>
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block border-b border-border bg-background p-4"
+                    aria-label={`Shop ${m.name}`}
+                  >
+                    <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background">
+                      <img src={m.image} alt={m.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+                    </div>
+                  </a>
+
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">
+                        {m.badge}
+                      </span>
+                      <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">
+                        {m.price}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-1 flex-col">
+                      <h4 className="text-xl font-extrabold leading-tight text-card-foreground">{m.name}</h4>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{m.description}</p>
+                    </div>
+
+                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="mt-5 block">
+                      <Button variant="subscribe" className="w-full">
+                        Shop Now →
+                      </Button>
+                    </a>
+                  </div>
+                </article>
               ))}
             </div>
             <a href={merchStoreUrl} target="_blank" rel="noopener noreferrer" className="block mt-6">
