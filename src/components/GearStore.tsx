@@ -63,7 +63,7 @@ const merch = [
     badge: "Merch Favorite",
     url: merchStoreUrl,
     variants: [
-      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true, soldThisWeek: 127 },
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true, soldThisWeek: 47 },
       { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
       { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
     ] as ColorVariant[],
@@ -84,7 +84,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
-      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true, soldThisWeek: 214 },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true, soldThisWeek: 83 },
       { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
     ] as ColorVariant[],
   },
@@ -104,7 +104,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
-      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true, soldThisWeek: 89 },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true, soldThisWeek: 31 },
       { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
     ] as ColorVariant[],
   },
@@ -690,7 +690,7 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
               </span>
               {activeVariant.soldThisWeek && (
                 <span className="inline-flex items-center gap-1 rounded-md bg-brand-orange/10 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
-                  🔥 {activeVariant.soldThisWeek} sold this week
+                  🔥 {activeVariant.soldThisWeek} sold
                 </span>
               )}
             </div>
