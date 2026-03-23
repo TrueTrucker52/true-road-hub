@@ -6,6 +6,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Eye,
   ShoppingBag,
   Shirt,
   Smartphone,
@@ -91,11 +92,21 @@ const MerchDetailDialog = ({
       {triggerVariant === "image" ? (
         <button
           type="button"
-          className="group block rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="group relative block w-full rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label={`View details for ${merchItem.name}`}
         >
-          <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background p-4 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
-            <img src={merchItem.image} alt={merchItem.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+          <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background p-4">
+            <img
+              src={merchItem.image}
+              alt={merchItem.imageAlt}
+              className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-110"
+              loading="lazy"
+            />
+          </div>
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl bg-foreground/0 transition-all duration-300 group-hover:bg-foreground/60">
+            <span className="flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-bold text-card-foreground opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-90">
+              <Eye className="h-3.5 w-3.5" /> Quick View
+            </span>
           </div>
         </button>
       ) : (
