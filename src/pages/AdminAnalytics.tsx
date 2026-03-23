@@ -86,6 +86,12 @@ type AnalyticsResponse = {
         value: number;
       }>;
     }>;
+    sourcePlacementBreakdown: Array<{
+      platform: AffiliateSourcePlatform;
+      placement: AffiliatePlacement;
+      clicks: number;
+      shareOfSectionClicks: number;
+    }>;
     trend: Array<{
       date: string;
       value: number;
@@ -554,6 +560,20 @@ const AdminAnalytics = () => {
     setAffiliateProductFilter("all");
     setAffiliateEventPlatformFilter(platform);
     setAffiliateEventPlacementFilter("all");
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
+
+  const handleSectionSourcePlacementDrilldown = (
+    sectionId: string,
+    platform: AffiliateSourcePlatform,
+    placement: AffiliatePlacement,
+  ) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter(platform);
+    setAffiliateEventPlacementFilter(placement);
     setAffiliateEventSearch("");
     setAffiliateEventPage(1);
     scrollToAffiliateEvents();
@@ -1268,6 +1288,42 @@ const AdminAnalytics = () => {
                                   <SummarySparkline data={item.detailDialogTrend} className="text-foreground" />
                                 </div>
                               </button>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Combined drill-down slices</p>
+                                <p className="mt-1 text-sm text-muted-foreground">Jump straight into the strongest source-plus-placement combinations for this block.</p>
+                              </div>
+                              <span className="text-xs text-muted-foreground">Top slices</span>
+                            </div>
+
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {item.sourcePlacementBreakdown.map((slice) => {
+                                const isSliceActive =
+                                  affiliateSectionFilter === item.sectionId &&
+                                  affiliateEventPlatformFilter === slice.platform &&
+                                  affiliateEventPlacementFilter === slice.placement &&
+                                  affiliateProductFilter === "all";
+
+                                return (
+                                  <button
+                                    key={`${item.sectionId}-${slice.platform}-${slice.placement}`}
+                                    type="button"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleSectionSourcePlacementDrilldown(item.sectionId, slice.platform, slice.placement);
+                                    }}
+                                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isSliceActive ? "border-brand-red/40 bg-background text-brand-red" : "border-border bg-muted/50 text-foreground"}`}
+                                  >
+                                    <span>{affiliateSourcePlatformLabels[slice.platform]}</span>
+                                    <span className="text-muted-foreground">{affiliatePlacementLabels[slice.placement]}</span>
+                                    <span className="text-brand-red">{slice.clicks.toLocaleString()}</span>
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
 

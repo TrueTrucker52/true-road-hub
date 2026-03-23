@@ -288,6 +288,11 @@ Deno.serve(async (req) => {
     }>();
     const affiliateSectionPlatformTotals = new Map<string, Record<AffiliatePlatform, number>>();
     const affiliateSectionPlatformTrendByDate = new Map<string, Record<AffiliatePlatform, Map<string, number>>>();
+    const affiliateSectionSourcePlacementTotals = new Map<string, Map<string, {
+      platform: AffiliatePlatform;
+      placement: AffiliatePlacement;
+      clicks: number;
+    }>>();
     const affiliateSectionProductTotals = new Map<string, Map<string, {
       productSlug: string;
       productName: string;
@@ -428,6 +433,21 @@ Deno.serve(async (req) => {
       const dateKey = row.created_at.slice(0, 10);
       sectionPlatformTrend[platform].set(dateKey, (sectionPlatformTrend[platform].get(dateKey) ?? 0) + 1);
       affiliateSectionPlatformTrendByDate.set(row.section_id, sectionPlatformTrend);
+
+      const sourcePlacementTotals = affiliateSectionSourcePlacementTotals.get(row.section_id) ?? new Map<string, {
+        platform: AffiliatePlatform;
+        placement: AffiliatePlacement;
+        clicks: number;
+      }>();
+      const sourcePlacementKey = `${platform}:${placement}`;
+      const sourcePlacementEntry = sourcePlacementTotals.get(sourcePlacementKey) ?? {
+        platform,
+        placement,
+        clicks: 0,
+      };
+      sourcePlacementEntry.clicks += 1;
+      sourcePlacementTotals.set(sourcePlacementKey, sourcePlacementEntry);
+      affiliateSectionSourcePlacementTotals.set(row.section_id, sourcePlacementTotals);
 
       const sectionProducts = affiliateSectionProductTotals.get(row.section_id) ?? new Map<string, {
         productSlug: string;
@@ -713,6 +733,13 @@ Deno.serve(async (req) => {
               }),
             }))
             .sort((a, b) => b.clicks - a.clicks || a.platform.localeCompare(b.platform));
+          const sourcePlacementBreakdown = [...(affiliateSectionSourcePlacementTotals.get(item.sectionId)?.values() ?? [])]
+            .map((entry) => ({
+              ...entry,
+              shareOfSectionClicks: item.clicks === 0 ? 0 : entry.clicks / item.clicks,
+            }))
+            .sort((a, b) => b.clicks - a.clicks || a.platform.localeCompare(b.platform) || a.placement.localeCompare(b.placement))
+            .slice(0, 6);
           const cardTrend = Array.from({ length: days }, (_, index) => {
             const current = new Date(startDate);
             current.setUTCDate(startDate.getUTCDate() + index);
@@ -744,6 +771,7 @@ Deno.serve(async (req) => {
             topProducts,
             trend,
             sourceBreakdown,
+            sourcePlacementBreakdown,
             cardTrend,
             detailDialogTrend,
           };
