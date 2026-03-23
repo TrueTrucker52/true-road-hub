@@ -12,6 +12,7 @@ import {
   Sparkles,
   Ruler,
   Truck,
+  Timer,
 } from "lucide-react";
 import {
   Dialog,
