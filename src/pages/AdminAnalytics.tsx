@@ -36,6 +36,7 @@ const budgetTierWeights: Record<BudgetTier, number> = {
 type AnalyticsResponse = {
   days: number;
   comparePrevious: boolean;
+  constTotalAffiliateClicksAllSections: number;
   activeAffiliateSectionId: string | null;
   activeAffiliateProductSlug: string | null;
   totalImpressions: number;
@@ -58,6 +59,18 @@ type AnalyticsResponse = {
   affiliatePlacementTotals: Array<{ placement: AffiliatePlacement; clicks: number }>;
   affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
   affiliateSectionTotals: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
+  affiliateSectionComparison: Array<{
+    sectionId: string;
+    sectionTitle: string;
+    clicks: number;
+    cardClicks: number;
+    detailDialogClicks: number;
+    previousClicks: number;
+    delta: number;
+    deltaPercent: number;
+    modalConversionRate: number;
+    shareOfClicks: number;
+  }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
     placement: AffiliatePlacement;
@@ -368,6 +381,13 @@ const AdminAnalytics = () => {
   const topAffiliateCategory = useMemo(() => data?.affiliateCategoryTotals[0] ?? null, [data]);
 
   const topAffiliateSection = useMemo(() => data?.affiliateSectionTotals[0] ?? null, [data]);
+
+  const affiliateSectionComparisonRows = useMemo(() => data?.affiliateSectionComparison ?? [], [data]);
+
+  const leadingAffiliateSectionComparison = useMemo(
+    () => affiliateSectionComparisonRows[0] ?? null,
+    [affiliateSectionComparisonRows],
+  );
 
   const topAffiliatePlacement = useMemo(() => data?.affiliatePlacementTotals[0] ?? null, [data]);
 
@@ -944,6 +964,84 @@ const AdminAnalytics = () => {
               </div>
 
               <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
+                <div className="rounded-2xl border border-border bg-background/70 p-5 lg:col-span-5">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Recommendation block comparison</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">
+                        {leadingAffiliateSectionComparison ? leadingAffiliateSectionComparison.sectionTitle : "No data"}
+                      </p>
+                      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+                        Compare Trucking Essentials against Gear George Recommends by total clicks, card-versus-modal split, and share of affiliate interest.
+                      </p>
+                    </div>
+                    {leadingAffiliateSectionComparison ? (
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {(leadingAffiliateSectionComparison.shareOfClicks * 100).toFixed(1)}% of affiliate clicks
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-5 grid gap-4 md:grid-cols-2">
+                    {affiliateSectionComparisonRows.map((item) => {
+                      const positive = item.delta >= 0;
+                      const isActive = affiliateSectionFilter === "all"
+                        ? item.sectionId === leadingAffiliateSectionComparison?.sectionId
+                        : item.sectionId === affiliateSectionFilter;
+
+                      return (
+                        <div key={item.sectionId} className="rounded-2xl border border-border bg-muted/50 p-5">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Recommendation block</p>
+                              <p className="mt-2 font-display text-2xl leading-tight text-foreground">{item.sectionTitle}</p>
+                            </div>
+                            {isActive ? (
+                              <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                                {affiliateSectionFilter === "all" ? "Leading" : "Active"}
+                              </Badge>
+                            ) : null}
+                          </div>
+
+                          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Total clicks</p>
+                              <p className="mt-2 font-display text-3xl text-brand-red">{item.clicks.toLocaleString()}</p>
+                            </div>
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Card clicks</p>
+                              <p className="mt-2 text-xl font-semibold text-foreground">{item.cardClicks.toLocaleString()}</p>
+                            </div>
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Modal clicks</p>
+                              <p className="mt-2 text-xl font-semibold text-foreground">{item.detailDialogClicks.toLocaleString()}</p>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Modal conversion</p>
+                              <p className="mt-2 text-lg font-semibold text-foreground">{(item.modalConversionRate * 100).toFixed(1)}%</p>
+                            </div>
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Share of clicks</p>
+                              <p className="mt-2 text-lg font-semibold text-foreground">{(item.shareOfClicks * 100).toFixed(1)}%</p>
+                            </div>
+                            <div className="rounded-xl border border-border bg-background/80 px-4 py-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Vs previous</p>
+                              <p className={`mt-2 inline-flex items-center gap-1 text-lg font-semibold ${positive ? "text-brand-red" : "text-muted-foreground"}`}>
+                                {positive ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
+                                {positive ? "+" : ""}{item.delta.toLocaleString()}
+                              </p>
+                              <p className="mt-1 text-xs text-muted-foreground">{positive ? "+" : ""}{(item.deltaPercent * 100).toFixed(1)}% vs previous period</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="rounded-2xl border border-border bg-background/70 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
