@@ -287,6 +287,7 @@ Deno.serve(async (req) => {
       detailDialogClicks: number;
     }>();
     const affiliateSectionPlatformTotals = new Map<string, Record<AffiliatePlatform, number>>();
+    const affiliateSectionPlatformTrendByDate = new Map<string, Record<AffiliatePlatform, Map<string, number>>>();
     const affiliateSectionProductTotals = new Map<string, Map<string, {
       productSlug: string;
       productName: string;
@@ -416,6 +417,17 @@ Deno.serve(async (req) => {
       sectionPlatformTotals[platform] += 1;
       affiliateSectionPlatformTotals.set(row.section_id, sectionPlatformTotals);
 
+      const sectionPlatformTrend = affiliateSectionPlatformTrendByDate.get(row.section_id) ?? {
+        youtube: new Map<string, number>(),
+        tiktok: new Map<string, number>(),
+        facebook: new Map<string, number>(),
+        instagram: new Map<string, number>(),
+        direct: new Map<string, number>(),
+      };
+      const dateKey = row.created_at.slice(0, 10);
+      sectionPlatformTrend[platform].set(dateKey, (sectionPlatformTrend[platform].get(dateKey) ?? 0) + 1);
+      affiliateSectionPlatformTrendByDate.set(row.section_id, sectionPlatformTrend);
+
       const sectionProducts = affiliateSectionProductTotals.get(row.section_id) ?? new Map<string, {
         productSlug: string;
         productName: string;
@@ -432,7 +444,6 @@ Deno.serve(async (req) => {
       sectionProducts.set(row.product_slug, sectionProduct);
       affiliateSectionProductTotals.set(row.section_id, sectionProducts);
 
-      const dateKey = row.created_at.slice(0, 10);
       const trendBucket = affiliateSectionTrendByDate.get(row.section_id) ?? new Map<string, {
         sectionId: string;
         sectionTitle: string;
@@ -682,11 +693,22 @@ Deno.serve(async (req) => {
             };
           });
           const placementTrendSource = affiliateSectionPlacementTrendByDate.get(item.sectionId);
+          const sectionPlatformTrendSource = affiliateSectionPlatformTrendByDate.get(item.sectionId);
           const sourceBreakdown = affiliatePlatforms
             .map((platform) => ({
               platform,
               clicks: affiliateSectionPlatformTotals.get(item.sectionId)?.[platform] ?? 0,
               shareOfSectionClicks: item.clicks === 0 ? 0 : (affiliateSectionPlatformTotals.get(item.sectionId)?.[platform] ?? 0) / item.clicks,
+              trend: Array.from({ length: days }, (_, index) => {
+                const current = new Date(startDate);
+                current.setUTCDate(startDate.getUTCDate() + index);
+                const key = current.toISOString().slice(0, 10);
+
+                return {
+                  date: new Date(`${key}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+                  value: sectionPlatformTrendSource?.[platform].get(key) ?? 0,
+                };
+              }),
             }))
             .sort((a, b) => b.clicks - a.clicks || a.platform.localeCompare(b.platform));
           const cardTrend = Array.from({ length: days }, (_, index) => {
