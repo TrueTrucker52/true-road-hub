@@ -628,7 +628,7 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
   const displayAlt = activeVariant.imageAlt;
 
   // Build a merchItem override with the selected variant's image
-  const merchItemWithVariant = { ...item, image: displayImage, imageAlt: displayAlt };
+  const merchItemWithVariant = { ...item, image: displayImage, imageAlt: displayAlt } as typeof item;
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
