@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
+import { ArrowLeft, ArrowDownRight, ArrowUpRight, Download, LogOut, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -221,6 +221,15 @@ const buildSparklinePath = (values: number[], width = 120, height = 36) => {
     .join(" ");
 };
 
+const escapeCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+
+const slugifyFilenamePart = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "all";
+
 type SparklinePoint = {
   date: string;
   value: number;
@@ -360,6 +369,37 @@ const AdminAnalytics = () => {
       return placementMatches && queryMatches;
     });
   }, [affiliateEventPlacementFilter, affiliateEventSearch, data]);
+
+  const exportAffiliateEventsCsv = () => {
+    if (!filteredRecentAffiliateClicks.length) return;
+
+    const headers = ["clicked_at", "section_title", "section_id", "placement", "product_name", "product_slug", "target_url"];
+    const rows = filteredRecentAffiliateClicks.map((item) => [
+      item.createdAt,
+      item.sectionTitle,
+      item.sectionId,
+      affiliatePlacementLabels[item.placement],
+      item.productName,
+      item.productSlug,
+      item.targetUrl,
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => escapeCsvValue(String(value))).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const searchLabel = affiliateEventSearch.trim() ? slugifyFilenamePart(affiliateEventSearch) : "all";
+
+    link.href = downloadUrl;
+    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlacementFilter}-${searchLabel}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(downloadUrl);
+  };
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
@@ -1059,13 +1099,25 @@ const AdminAnalytics = () => {
                   ))}
                 </div>
 
-                <div className="max-w-md">
-                  <Input
-                    value={affiliateEventSearch}
-                    onChange={(event) => setAffiliateEventSearch(event.target.value)}
-                    placeholder="Search product name or slug"
-                    aria-label="Search affiliate events by product name or slug"
-                  />
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div className="max-w-md flex-1">
+                    <Input
+                      value={affiliateEventSearch}
+                      onChange={(event) => setAffiliateEventSearch(event.target.value)}
+                      placeholder="Search product name or slug"
+                      aria-label="Search affiliate events by product name or slug"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={exportAffiliateEventsCsv}
+                    disabled={!filteredRecentAffiliateClicks.length}
+                    className="md:self-end"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Export CSV
+                  </Button>
                 </div>
               </div>
 
