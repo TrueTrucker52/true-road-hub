@@ -17,14 +17,14 @@ export const openAffiliatePreviewPage = async (page: Page) => {
 
 export const getRecommendationSection = (page: Page, sectionDomId: string) => page.locator(`section#${sectionDomId}`);
 
-export const clickFirstAffiliateCardCta = async (section: Locator) => {
+export const clickAffiliateCardCta = async (section: Locator, productIndex = 0) => {
   await section.scrollIntoViewIfNeeded();
-  await section.getByRole("link", { name: /get best price on amazon/i }).first().click();
+  await section.getByRole("link", { name: /get best price on amazon/i }).nth(productIndex).click();
 };
 
-export const clickFirstAffiliateModalCta = async (page: Page, section: Locator) => {
+export const clickAffiliateModalCta = async (page: Page, section: Locator, productIndex = 0) => {
   await section.scrollIntoViewIfNeeded();
-  await section.getByRole("button", { name: /view details/i }).first().click();
+  await section.getByRole("button", { name: /view details/i }).nth(productIndex).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
