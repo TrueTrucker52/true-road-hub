@@ -710,6 +710,28 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
             </Button>
           </a>
         </div>
+
+        {/* Cross-sell */}
+        <div className="mt-5 border-t border-border pt-4">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Complete the look</p>
+          <div className="flex gap-3">
+            {getCrossSells(item.name).map((cs) => (
+              <a
+                key={cs.name}
+                href={cs.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-1 flex-col items-center gap-1.5 rounded-xl border border-border bg-background p-2.5 transition-all duration-200 hover:border-brand-red/30 hover:shadow-md"
+              >
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-lg">
+                  <img src={cs.image} alt={cs.name} className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-110" loading="lazy" />
+                </div>
+                <span className="text-center text-[11px] font-semibold leading-tight text-card-foreground">{cs.name}</span>
+                <span className="text-[10px] font-bold text-brand-orange">{cs.price}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </article>
   );
