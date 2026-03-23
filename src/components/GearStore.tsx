@@ -44,6 +44,7 @@ type ColorVariant = {
   image: string;
   imageAlt: string;
   trending?: boolean;
+  soldThisWeek?: number;
 };
 
 const merch = [
