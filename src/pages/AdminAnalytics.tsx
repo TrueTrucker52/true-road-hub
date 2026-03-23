@@ -442,6 +442,15 @@ const AdminAnalytics = () => {
     scrollToAffiliateEvents();
   };
 
+  const handleSectionPlacementDrilldown = (sectionId: string, placement: AffiliatePlacement) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter("all");
+    setAffiliateEventPlacementFilter(placement);
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
+
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
     const rows = data?.recentAffiliateClicks ?? [];
@@ -1031,10 +1040,17 @@ const AdminAnalytics = () => {
                         : item.sectionId === affiliateSectionFilter;
 
                       return (
-                        <button
+                        <div
                           key={item.sectionId}
-                          type="button"
                           onClick={() => handleSectionDrilldown(item.sectionId)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              handleSectionDrilldown(item.sectionId);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
                           className={`rounded-2xl border bg-muted/50 p-5 text-left transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-brand-red/40 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isActive ? "border-brand-red/40 shadow-lg" : "border-border"}`}
                         >
                           <div className="flex items-start justify-between gap-3">
@@ -1099,7 +1115,14 @@ const AdminAnalytics = () => {
                               <p className="mt-1 text-sm text-muted-foreground">Compare how card clicks and modal clicks change over time inside this block.</p>
                             </div>
                             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3">
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleSectionPlacementDrilldown(item.sectionId, "card");
+                                }}
+                                className={`rounded-xl border px-4 py-3 text-left transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${affiliateSectionFilter === item.sectionId && affiliateEventPlacementFilter === "card" && affiliateProductFilter === "all" ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
+                              >
                                 <div className="flex items-end justify-between gap-3">
                                   <div>
                                     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Card CTA trend</p>
@@ -1107,8 +1130,15 @@ const AdminAnalytics = () => {
                                   </div>
                                   <SummarySparkline data={item.cardTrend} className="text-brand-red" />
                                 </div>
-                              </div>
-                              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3">
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleSectionPlacementDrilldown(item.sectionId, "detail_dialog");
+                                }}
+                                className={`rounded-xl border px-4 py-3 text-left transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${affiliateSectionFilter === item.sectionId && affiliateEventPlacementFilter === "detail_dialog" && affiliateProductFilter === "all" ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
+                              >
                                 <div className="flex items-end justify-between gap-3">
                                   <div>
                                     <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Modal CTA trend</p>
@@ -1116,7 +1146,7 @@ const AdminAnalytics = () => {
                                   </div>
                                   <SummarySparkline data={item.detailDialogTrend} className="text-foreground" />
                                 </div>
-                              </div>
+                              </button>
                             </div>
                           </div>
 
@@ -1154,7 +1184,7 @@ const AdminAnalytics = () => {
                               })}
                             </div>
                           </div>
-                        </button>
+                        </div>
                       );
                     })}
                   </div>
