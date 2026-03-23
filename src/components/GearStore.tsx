@@ -311,7 +311,7 @@ const GearStore = () => {
               <h3 className="font-display text-xl font-bold">Trucking Essentials</h3>
             </div>
             <p className="mb-6 max-w-3xl text-sm leading-6 text-muted-foreground">
-              Real working Amazon affiliate picks for core truck gear, each with a clickable product card, full detail popup, and buy button that opens in a new tab.
+              Gear George personally recommends for every professional truck driver. Hand picked for quality and value.
             </p>
             <div className="grid gap-6 sm:grid-cols-2">
               {truckingEssentials.map((product) => (
