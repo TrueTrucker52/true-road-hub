@@ -313,7 +313,7 @@ const GearStore = () => {
             <p className="mb-6 max-w-3xl text-sm leading-6 text-muted-foreground">
               Real working Amazon affiliate picks for core truck gear, each with a clickable product card, full detail popup, and buy button that opens in a new tab.
             </p>
-            <div className="grid gap-5 xl:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2">
               {truckingEssentials.map((product) => (
                 <AffiliateProductCard
                   key={product.slug}
@@ -325,6 +325,7 @@ const GearStore = () => {
                   product={product}
                   sectionId="gear-store-trucking-essentials"
                   sectionTitle="Trucking Essentials"
+                  variant="store"
                 />
               ))}
             </div>
