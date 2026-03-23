@@ -652,22 +652,33 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             Color: <span className="text-card-foreground">{activeVariant.label}</span>
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {variants.map((v, i) => (
-              <button
-                key={v.label}
-                type="button"
-                onClick={() => setVariantIdx(i)}
-                aria-label={`Select ${v.label} color`}
-                className={`h-7 w-7 rounded-full border-2 transition-all duration-200 ${
-                  i === variantIdx
-                    ? "border-brand-red scale-110 ring-2 ring-brand-red/30"
-                    : "border-border hover:border-muted-foreground hover:scale-105"
-                }`}
-                style={{ backgroundColor: v.color }}
-              />
+              <div key={v.label} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setVariantIdx(i)}
+                  aria-label={`Select ${v.label} color${v.trending ? " — best seller" : ""}`}
+                  className={`h-7 w-7 rounded-full border-2 transition-all duration-200 ${
+                    i === variantIdx
+                      ? "border-brand-red scale-110 ring-2 ring-brand-red/30"
+                      : "border-border hover:border-muted-foreground hover:scale-105"
+                  }`}
+                  style={{ backgroundColor: v.color }}
+                />
+                {v.trending && (
+                  <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand-red text-[7px] font-black text-primary-foreground shadow-sm" title="Best Seller">
+                    ★
+                  </span>
+                )}
+              </div>
             ))}
           </div>
+          {activeVariant.trending && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
+              ★ Best Seller
+            </span>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col">
