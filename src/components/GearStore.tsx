@@ -1,7 +1,23 @@
 import { Button } from "@/components/ui/button";
 import AffiliateProductCard from "@/components/affiliate/AffiliateProductCard";
 import ReferralIFTAButton from "@/components/ReferralIFTAButton";
-import { ShoppingBag, Truck, Smartphone } from "lucide-react";
+import {
+  ArrowRight,
+  ShoppingBag,
+  Shirt,
+  Smartphone,
+  Sparkles,
+  Ruler,
+  Truck,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 import type { Product } from "@/components/gear/types";
@@ -17,6 +33,11 @@ const merch = [
     price: "$29.99",
     description:
       "Official True Trucking TV branded snapback hat. One size fits most with a road-ready red, black, and white colorway.",
+    conversionTitle: "Top off the look with gear that travels as hard as you do.",
+    conversionCopy:
+      "Built for drivers who want a clean everyday fit on fuel stops, off-duty runs, and camera days without losing the True Trucking TV identity.",
+    sizingNotes: ["One size fits most", "Adjustable snapback closure", "Structured crown keeps its shape"],
+    materialHighlights: ["Breathable mesh back panels", "Durable curved brim", "Road-ready stitched front panel"],
     image: merchSnapbackHat,
     imageAlt: "True Trucking TV snapback hat in red, black, and white.",
     badge: "Merch Favorite",
@@ -27,6 +48,11 @@ const merch = [
     price: "$24.99",
     description:
       "Rep the True Trucking TV brand on the road and off with soft everyday comfort, sizes S through 3XL, and multiple color options.",
+    conversionTitle: "The everyday tee that puts the brand on your back without overdoing it.",
+    conversionCopy:
+      "Easy to wear under a jacket, in the cab, or off the clock—this is the grab-and-go shirt for drivers who want comfort and clean branding every day.",
+    sizingNotes: ["Sizes S through 3XL", "Relaxed everyday fit", "Great for layering under hoodies or jackets"],
+    materialHighlights: ["Soft 100% cotton feel", "Breathable all-day comfort", "Easy-care fabric for repeat wear"],
     image: merchClassicTshirt,
     imageAlt: "True Trucking TV classic t-shirt with bold trucking graphic.",
     badge: "Everyday Wear",
@@ -37,12 +63,119 @@ const merch = [
     price: "$49.99",
     description:
       "Stay warm on early morning pre-trips and dock waits with the official True Trucking TV hoodie in premium heavyweight fleece.",
+    conversionTitle: "Cold-morning comfort for pre-trips, dock waits, and late-night fuel stops.",
+    conversionCopy:
+      "This heavyweight layer is made for drivers who want warmth, presence, and premium feel the second the weather turns or the A/C gets aggressive.",
+    sizingNotes: ["Comfortable unisex fit", "Roomy enough for layering", "Choose your usual size for a relaxed feel"],
+    materialHighlights: ["Premium heavyweight fleece", "Warm kangaroo pocket", "Soft interior made for long wear"],
     image: merchPulloverHoodie,
     imageAlt: "True Trucking TV pullover hoodie in red and black.",
     badge: "Cold Weather",
     url: merchStoreUrl,
   },
 ] as const;
+
+const MerchDetailDialog = ({
+  merchItem,
+}: {
+  merchItem: (typeof merch)[number];
+}) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <button
+        type="button"
+        className="group block rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        aria-label={`View details for ${merchItem.name}`}
+      >
+        <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background p-4 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
+          <img src={merchItem.image} alt={merchItem.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+        </div>
+      </button>
+    </DialogTrigger>
+    <DialogContent className="max-h-[85vh] overflow-y-auto border-border bg-card p-0 sm:max-w-3xl">
+      <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+        <div className="border-b border-border bg-background p-6 md:border-b-0 md:border-r">
+          <div className="flex h-[280px] items-center justify-center rounded-2xl bg-background p-6">
+            <img src={merchItem.image} alt={merchItem.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+          </div>
+          <div className="mt-5 flex items-center justify-between gap-3">
+            <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">
+              {merchItem.badge}
+            </span>
+            <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">
+              {merchItem.price}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-6 md:p-7">
+          <DialogHeader className="text-left">
+            <DialogTitle className="font-display text-3xl leading-tight text-card-foreground">{merchItem.name}</DialogTitle>
+            <DialogDescription className="mt-2 text-base leading-7 text-muted-foreground">
+              {merchItem.description}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-6 rounded-2xl border border-border bg-muted/40 p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-5 w-5 text-brand-red" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-red">Why drivers buy it</p>
+                <p className="mt-2 text-lg font-semibold leading-snug text-card-foreground">{merchItem.conversionTitle}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{merchItem.conversionCopy}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-background p-4">
+              <div className="flex items-center gap-2">
+                <Ruler className="h-4 w-4 text-brand-red" aria-hidden="true" />
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-card-foreground">Sizing notes</p>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+                {merchItem.sizingNotes.map((note) => (
+                  <li key={note} className="flex gap-2">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red" aria-hidden="true" />
+                    <span>{note}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-background p-4">
+              <div className="flex items-center gap-2">
+                <Shirt className="h-4 w-4 text-brand-red" aria-hidden="true" />
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-card-foreground">Material highlights</p>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+                {merchItem.materialHighlights.map((highlight) => (
+                  <li key={highlight} className="flex gap-2">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red" aria-hidden="true" />
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Button asChild variant="subscribe" className="flex-1">
+              <a href={merchItem.url} target="_blank" rel="noopener noreferrer">
+                Shop This Item <ArrowRight />
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="flex-1 border-border bg-background text-card-foreground hover:bg-muted">
+              <a href={merchStoreUrl} target="_blank" rel="noopener noreferrer">
+                Browse Full Merch Store
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+);
 
 const truckingEssentials: Product[] = [
   {
@@ -321,17 +454,9 @@ const GearStore = () => {
                   key={m.name}
                   className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <a
-                    href={m.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block border-b border-border bg-background p-4"
-                    aria-label={`Shop ${m.name}`}
-                  >
-                    <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background">
-                      <img src={m.image} alt={m.imageAlt} className="h-full w-full object-contain" loading="lazy" />
-                    </div>
-                  </a>
+                  <div className="border-b border-border bg-background p-4">
+                    <MerchDetailDialog merchItem={m} />
+                  </div>
 
                   <div className="flex flex-1 flex-col p-5">
                     <div className="mb-4 flex items-center justify-between gap-3">
@@ -348,11 +473,14 @@ const GearStore = () => {
                       <p className="mt-3 text-sm leading-6 text-muted-foreground">{m.description}</p>
                     </div>
 
-                    <a href={m.url} target="_blank" rel="noopener noreferrer" className="mt-5 block">
-                      <Button variant="subscribe" className="w-full">
-                        Shop Now →
-                      </Button>
-                    </a>
+                    <div className="mt-5 grid gap-3">
+                      <MerchDetailDialog merchItem={m} />
+                      <a href={m.url} target="_blank" rel="noopener noreferrer" className="block">
+                        <Button variant="subscribe" className="w-full">
+                          Shop Now →
+                        </Button>
+                      </a>
+                    </div>
                   </div>
                 </article>
               ))}
