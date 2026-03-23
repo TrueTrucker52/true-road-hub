@@ -44,6 +44,7 @@ type ColorVariant = {
   image: string;
   imageAlt: string;
   trending?: boolean;
+  soldThisWeek?: number;
 };
 
 const merch = [
@@ -62,7 +63,7 @@ const merch = [
     badge: "Merch Favorite",
     url: merchStoreUrl,
     variants: [
-      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true },
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true, soldThisWeek: 127 },
       { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
       { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
     ] as ColorVariant[],
@@ -83,7 +84,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
-      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true, soldThisWeek: 214 },
       { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
     ] as ColorVariant[],
   },
@@ -103,7 +104,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
-      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true, soldThisWeek: 89 },
       { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
     ] as ColorVariant[],
   },
@@ -675,9 +676,16 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
             ))}
           </div>
           {activeVariant.trending && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
-              ★ Best Seller
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
+                ★ Best Seller
+              </span>
+              {activeVariant.soldThisWeek && (
+                <span className="inline-flex items-center gap-1 rounded-md bg-brand-orange/10 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
+                  🔥 {activeVariant.soldThisWeek} sold this week
+                </span>
+              )}
+            </div>
           )}
         </div>
 
