@@ -29,6 +29,7 @@ const budgetTierWeights: Record<BudgetTier, number> = {
 type AnalyticsResponse = {
   days: number;
   comparePrevious: boolean;
+  activeAffiliateSectionId: string | null;
   totalImpressions: number;
   totalClicks: number;
   totalAffiliateProductClicks: number;
@@ -44,6 +45,7 @@ type AnalyticsResponse = {
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
+  availableAffiliateSections: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
   affiliatePlatformTotals: Array<{ platform: AffiliateSourcePlatform; clicks: number }>;
   affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
   affiliateSectionTotals: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
@@ -264,12 +266,13 @@ const AdminAnalytics = () => {
   const { user, signOut } = useAuth();
   const [days, setDays] = useState<(typeof ranges)[number]>(30);
   const [comparePrevious, setComparePrevious] = useState(true);
+  const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["referral-analytics", days, comparePrevious],
+    queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("referral-platform-analytics", {
-        body: { days, comparePrevious },
+        body: { days, comparePrevious, affiliateSectionId: affiliateSectionFilter },
       });
 
       if (error) throw new Error(error.message);
@@ -297,6 +300,11 @@ const AdminAnalytics = () => {
   const topAffiliateCategory = useMemo(() => data?.affiliateCategoryTotals[0] ?? null, [data]);
 
   const topAffiliateSection = useMemo(() => data?.affiliateSectionTotals[0] ?? null, [data]);
+
+  const activeAffiliateSectionTitle = useMemo(() => {
+    if (!data?.activeAffiliateSectionId) return "All recommendation blocks";
+    return data.availableAffiliateSections.find((item) => item.sectionId === data.activeAffiliateSectionId)?.sectionTitle ?? "Selected block";
+  }, [data]);
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
@@ -753,9 +761,29 @@ const AdminAnalytics = () => {
           <Card className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
             <CardHeader>
               <CardTitle className="font-display text-3xl">Gear affiliate product interest</CardTitle>
-              <CardDescription>See which gear recommendations generate the most outbound Amazon clicks.</CardDescription>
+              <CardDescription>Filter by recommendation block to isolate which section drives affiliate interest.</CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-4 flex flex-wrap gap-3">
+                <Button
+                  variant={affiliateSectionFilter === "all" ? "hero" : "outline"}
+                  size="sm"
+                  onClick={() => setAffiliateSectionFilter("all")}
+                >
+                  All sections
+                </Button>
+                {(data?.availableAffiliateSections ?? []).map((item) => (
+                  <Button
+                    key={item.sectionId}
+                    variant={affiliateSectionFilter === item.sectionId ? "hero" : "outline"}
+                    size="sm"
+                    onClick={() => setAffiliateSectionFilter(item.sectionId)}
+                  >
+                    {item.sectionTitle}
+                  </Button>
+                ))}
+              </div>
+
               <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
                 <div className="rounded-2xl border border-border bg-background/70 p-5">
                   <div className="flex items-start justify-between gap-3">
@@ -807,27 +835,40 @@ const AdminAnalytics = () => {
                 <div className="rounded-2xl border border-border bg-background/70 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top section</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Active section</p>
                       <p className="mt-2 font-display text-3xl text-foreground">
-                        {topAffiliateSection ? topAffiliateSection.sectionTitle : "No data"}
+                        {activeAffiliateSectionTitle}
                       </p>
                     </div>
                     {topAffiliateSection ? (
                       <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
-                        {topAffiliateSection.clicks.toLocaleString()} clicks
+                        {data?.totalAffiliateProductClicks.toLocaleString() ?? "0"} clicks
                       </Badge>
                     ) : null}
                   </div>
 
                   <div className="mt-5 space-y-3">
-                    {(data?.affiliateSectionTotals ?? []).map((item) => (
+                    {(data?.availableAffiliateSections ?? []).map((item) => {
+                      const isActive = affiliateSectionFilter === "all"
+                        ? item.sectionId === topAffiliateSection?.sectionId
+                        : item.sectionId === affiliateSectionFilter;
+
+                      return (
                       <div key={item.sectionId} className="rounded-2xl border border-border bg-muted/50 p-4">
-                        <p className="text-sm font-semibold text-foreground">{item.sectionTitle}</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-sm font-semibold text-foreground">{item.sectionTitle}</p>
+                          {isActive ? (
+                            <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                              {affiliateSectionFilter === "all" ? "Top now" : "Active"}
+                            </Badge>
+                          ) : null}
+                        </div>
                         <p className="mt-2 text-sm text-muted-foreground">
                           <span className="font-semibold text-brand-red">{item.clicks.toLocaleString()}</span> outbound clicks
                         </p>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 

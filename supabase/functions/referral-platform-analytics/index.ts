@@ -90,6 +90,9 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const requestedDays = Number(body?.days ?? 30);
     const comparePrevious = Boolean(body?.comparePrevious);
+    const requestedAffiliateSectionId = typeof body?.affiliateSectionId === "string" && body.affiliateSectionId !== "all"
+      ? body.affiliateSectionId
+      : null;
     const days = allowedDays.has(requestedDays) ? requestedDays : 30;
     const startDate = new Date();
     startDate.setUTCDate(startDate.getUTCDate() - (days - 1));
@@ -269,6 +272,12 @@ Deno.serve(async (req) => {
       clicks: number;
     }>();
 
+    const availableAffiliateSections = new Map<string, {
+      sectionId: string;
+      sectionTitle: string;
+      clicks: number;
+    }>();
+
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
       current.setUTCDate(startDate.getUTCDate() + offset);
@@ -322,6 +331,16 @@ Deno.serve(async (req) => {
     }
 
     for (const row of affiliateClickRows ?? []) {
+      const availableSection = availableAffiliateSections.get(row.section_id) ?? {
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        clicks: 0,
+      };
+      availableSection.clicks += 1;
+      availableAffiliateSections.set(row.section_id, availableSection);
+
+      if (requestedAffiliateSectionId && row.section_id !== requestedAffiliateSectionId) continue;
+
       const platform = affiliatePlatforms.includes(row.platform as AffiliatePlatform)
         ? (row.platform as AffiliatePlatform)
         : "direct";
@@ -356,6 +375,7 @@ Deno.serve(async (req) => {
     }
 
     for (const row of previousAffiliateClickRows ?? []) {
+      if (requestedAffiliateSectionId && row.section_id !== requestedAffiliateSectionId) continue;
       previousAffiliateProductTotals.set(row.product_slug, (previousAffiliateProductTotals.get(row.product_slug) ?? 0) + 1);
     }
 
@@ -492,6 +512,10 @@ Deno.serve(async (req) => {
         placement,
         downloads: mediaKitPlacementTotals[placement],
       })),
+      activeAffiliateSectionId: requestedAffiliateSectionId,
+      availableAffiliateSections: [...availableAffiliateSections.values()].sort(
+        (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
+      ),
       affiliatePlatformTotals: affiliatePlatforms.map((platform) => ({
         platform,
         clicks: affiliateClickTotalsByPlatform[platform],
