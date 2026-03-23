@@ -2,7 +2,7 @@ import AffiliateProductSection from "@/components/affiliate/AffiliateProductSect
 import { categories } from "@/components/gear/gearData";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-const categoryDescription = "Clean picks, practical price ranges, and placeholder affiliate buttons ready for your Amazon links.";
+const categoryDescription = "Road-tested gear picks with practical price ranges for drivers building a smarter cab setup.";
 
 const GearGeorgeRecommends = () => {
   const ref = useScrollReveal();
