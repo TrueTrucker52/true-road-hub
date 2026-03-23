@@ -565,7 +565,7 @@ Deno.serve(async (req) => {
       recentAffiliateClicks: [...recentAffiliateClicks]
         .filter((item) => !requestedAffiliateProductSlug || item.productSlug === requestedAffiliateProductSlug)
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-        .slice(0, 12),
+        .slice(0, 100),
       affiliateProductTotals: [...affiliateProductTotals.values()]
         .map((item) => {
           const previousClicks = previousAffiliateProductTotals.get(item.productSlug) ?? 0;
