@@ -622,6 +622,14 @@ const MerchSpotlight = () => {
     </div>
   );
 };
+const getCrossSells = (currentName: string) =>
+  merch.filter((m) => m.name !== currentName).map((m) => ({
+    name: m.name,
+    price: m.price,
+    image: m.image,
+    url: m.url,
+  }));
+
 const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
   const [variantIdx, setVariantIdx] = useState(0);
   const variants = item.variants;
