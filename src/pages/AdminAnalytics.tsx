@@ -101,6 +101,7 @@ type AnalyticsResponse = {
   }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
+    platform: AffiliateSourcePlatform;
     placement: AffiliatePlacement;
     productName: string;
     productSlug: string;
@@ -361,6 +362,7 @@ const AdminAnalytics = () => {
   const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
   const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
+  const [affiliateEventPlatformFilter, setAffiliateEventPlatformFilter] = useState<AffiliateSourcePlatform | "all">("all");
   const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
   const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
   const [affiliateEventFromDate, setAffiliateEventFromDate] = useState<Date>();
@@ -386,7 +388,7 @@ const AdminAnalytics = () => {
 
   useEffect(() => {
     setAffiliateEventPage(1);
-  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventFromDate, affiliateEventToDate, affiliateEventSearch]);
+  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlatformFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventFromDate, affiliateEventToDate, affiliateEventSearch]);
 
   useEffect(() => {
     if (affiliateProductFilter === "all") return;
@@ -462,7 +464,18 @@ const AdminAnalytics = () => {
   const handleSectionPlacementDrilldown = (sectionId: string, placement: AffiliatePlacement) => {
     setAffiliateSectionFilter(sectionId);
     setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter("all");
     setAffiliateEventPlacementFilter(placement);
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
+
+  const handleSectionSourceDrilldown = (sectionId: string, platform: AffiliateSourcePlatform) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter(platform);
+    setAffiliateEventPlacementFilter("all");
     setAffiliateEventSearch("");
     setAffiliateEventPage(1);
     scrollToAffiliateEvents();
@@ -471,12 +484,13 @@ const AdminAnalytics = () => {
   const resetAffiliateEventDrilldownFilters = () => {
     setAffiliateSectionFilter("all");
     setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter("all");
     setAffiliateEventPlacementFilter("all");
     setAffiliateEventPage(1);
   };
 
   const hasActiveAffiliateEventDrilldownFilters =
-    affiliateSectionFilter !== "all" || affiliateProductFilter !== "all" || affiliateEventPlacementFilter !== "all";
+    affiliateSectionFilter !== "all" || affiliateProductFilter !== "all" || affiliateEventPlatformFilter !== "all" || affiliateEventPlacementFilter !== "all";
 
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
@@ -493,6 +507,7 @@ const AdminAnalytics = () => {
 
     return rows.filter((item) => {
       const createdAt = new Date(item.createdAt);
+      const platformMatches = affiliateEventPlatformFilter === "all" || item.platform === affiliateEventPlatformFilter;
       const placementMatches = affiliateEventPlacementFilter === "all" || item.placement === affiliateEventPlacementFilter;
       const name = item.productName.toLowerCase();
       const slug = item.productSlug.toLowerCase();
@@ -501,9 +516,9 @@ const AdminAnalytics = () => {
       const fromMatches = !fromThreshold || createdAt >= fromThreshold;
       const toMatches = !toThreshold || createdAt <= toThreshold;
       const dateMatches = presetMatches && fromMatches && toMatches;
-      return placementMatches && queryMatches && dateMatches;
+      return platformMatches && placementMatches && queryMatches && dateMatches;
     });
-  }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
+  }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlatformFilter, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
 
   const affiliateEventTotalPages = Math.max(1, Math.ceil(filteredRecentAffiliateClicks.length / affiliateEventPageSize));
 
@@ -531,11 +546,12 @@ const AdminAnalytics = () => {
   const exportAffiliateEventsCsv = () => {
     if (!paginatedRecentAffiliateClicks.length) return;
 
-    const headers = ["clicked_at", "section_title", "section_id", "placement", "product_name", "product_slug", "target_url"];
+    const headers = ["clicked_at", "section_title", "section_id", "platform", "placement", "product_name", "product_slug", "target_url"];
     const rows = paginatedRecentAffiliateClicks.map((item) => [
       item.createdAt,
       item.sectionTitle,
       item.sectionId,
+      affiliateSourcePlatformLabels[item.platform],
       affiliatePlacementLabels[item.placement],
       item.productName,
       item.productSlug,
@@ -555,7 +571,7 @@ const AdminAnalytics = () => {
       : affiliateEventDateFilter;
 
     link.href = downloadUrl;
-    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlacementFilter}-${dateLabel}-${searchLabel}.csv`;
+    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlatformFilter}-${affiliateEventPlacementFilter}-${dateLabel}-${searchLabel}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1187,20 +1203,32 @@ const AdminAnalytics = () => {
                             </div>
 
                             <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                              {item.sourceBreakdown.map((source) => (
-                                <div key={`${item.sectionId}-${source.platform}`} className="rounded-xl border border-border bg-muted/50 px-3 py-3">
-                                  <div className="flex items-center justify-between gap-3">
-                                    <div>
-                                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
-                                      <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
+                              {item.sourceBreakdown.map((source) => {
+                                const isSourceActive = affiliateSectionFilter === item.sectionId && affiliateEventPlatformFilter === source.platform && affiliateProductFilter === "all";
+
+                                return (
+                                  <button
+                                    key={`${item.sectionId}-${source.platform}`}
+                                    type="button"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleSectionSourceDrilldown(item.sectionId, source.platform);
+                                    }}
+                                    className={`rounded-xl border px-3 py-3 text-left transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isSourceActive ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
+                                  >
+                                    <div className="flex items-center justify-between gap-3">
+                                      <div>
+                                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
+                                        <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
+                                      </div>
+                                      <div className="flex items-center gap-3">
+                                        <SummarySparkline data={source.trend} className="h-8 w-20 text-brand-red" />
+                                        <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                      <SummarySparkline data={source.trend} className="h-8 w-20 text-brand-red" />
-                                      <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
 
@@ -1460,6 +1488,26 @@ const AdminAnalytics = () => {
 
                 <div className="flex flex-wrap gap-3">
                   <Button
+                    variant={affiliateEventPlatformFilter === "all" ? "hero" : "outline"}
+                    size="sm"
+                    onClick={() => setAffiliateEventPlatformFilter("all")}
+                  >
+                    All sources
+                  </Button>
+                  {(data?.affiliatePlatformTotals ?? []).map((item) => (
+                    <Button
+                      key={item.platform}
+                      variant={affiliateEventPlatformFilter === item.platform ? "hero" : "outline"}
+                      size="sm"
+                      onClick={() => setAffiliateEventPlatformFilter(item.platform)}
+                    >
+                      {affiliateSourcePlatformLabels[item.platform]}
+                    </Button>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Button
                     variant={affiliateEventPlacementFilter === "all" ? "hero" : "outline"}
                     size="sm"
                     onClick={() => setAffiliateEventPlacementFilter("all")}
@@ -1625,6 +1673,7 @@ const AdminAnalytics = () => {
                       <TableRow>
                         <TableHead>Clicked</TableHead>
                         <TableHead>Section</TableHead>
+                          <TableHead>Source</TableHead>
                         <TableHead>Placement</TableHead>
                         <TableHead>Product</TableHead>
                         <TableHead>Target URL</TableHead>
@@ -1641,6 +1690,11 @@ const AdminAnalytics = () => {
                               <p className="font-medium text-foreground">{item.sectionTitle}</p>
                               <p className="text-xs text-muted-foreground">{item.sectionId}</p>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="border-border bg-muted/50 text-foreground">
+                              {affiliateSourcePlatformLabels[item.platform]}
+                            </Badge>
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="border-border bg-muted/50 text-foreground">
