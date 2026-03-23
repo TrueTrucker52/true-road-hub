@@ -26,9 +26,9 @@ const HeroSection = () => {
             <h1 className="font-display text-6xl sm:text-7xl md:text-8xl font-bold leading-[0.9] tracking-tight text-primary-foreground animate-reveal">
               TRUE TRUCKING TV
             </h1>
-            <p className="mt-4 font-display text-xl sm:text-2xl md:text-3xl font-semibold text-brand-red uppercase tracking-wider animate-reveal animate-reveal-delay-1">
+            <h2 className="mt-4 font-display text-xl sm:text-2xl md:text-3xl font-semibold text-brand-red uppercase tracking-wider animate-reveal animate-reveal-delay-1">
               #1 Channel For Logistics Worldwide
-            </p>
+            </h2>
             <p className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-xl animate-reveal animate-reveal-delay-2">
               Real trucking. Real talk. Real money. 15 years on the road. Built for drivers, by a driver.
             </p>

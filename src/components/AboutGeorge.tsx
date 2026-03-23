@@ -40,7 +40,7 @@ const AboutGeorge = () => {
           <div className="animate-reveal animate-reveal-delay-2">
             <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Built from the driver seat</p>
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-6 text-foreground">
-              About <span className="text-brand-red">Your Host</span>
+              About <span className="text-brand-red">George Williams</span> — Truck Driver
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
               I'm George Williams, a professional truck driver with 15+ years of experience hauling across the US. I created True Trucking TV to give real drivers real information about logistics, freight markets, road reports, and trucking news. No fluff. No nonsense. Just real trucking from someone who lives it every single day.
