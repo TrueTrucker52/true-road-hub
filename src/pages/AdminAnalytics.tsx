@@ -288,6 +288,7 @@ const AdminAnalytics = () => {
   const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
   const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
+  const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
@@ -351,14 +352,14 @@ const AdminAnalytics = () => {
     const query = affiliateEventSearch.trim().toLowerCase();
     const rows = data?.recentAffiliateClicks ?? [];
 
-    if (!query) return rows;
-
     return rows.filter((item) => {
+      const placementMatches = affiliateEventPlacementFilter === "all" || item.placement === affiliateEventPlacementFilter;
       const name = item.productName.toLowerCase();
       const slug = item.productSlug.toLowerCase();
-      return name.includes(query) || slug.includes(query);
+      const queryMatches = !query || name.includes(query) || slug.includes(query);
+      return placementMatches && queryMatches;
     });
-  }, [affiliateEventSearch, data]);
+  }, [affiliateEventPlacementFilter, affiliateEventSearch, data]);
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
@@ -1034,6 +1035,26 @@ const AdminAnalytics = () => {
                       onClick={() => setAffiliateProductFilter(item.productSlug)}
                     >
                       {item.productSlug}
+                    </Button>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    variant={affiliateEventPlacementFilter === "all" ? "hero" : "outline"}
+                    size="sm"
+                    onClick={() => setAffiliateEventPlacementFilter("all")}
+                  >
+                    All placements
+                  </Button>
+                  {(data?.affiliatePlacementTotals ?? []).map((item) => (
+                    <Button
+                      key={item.placement}
+                      variant={affiliateEventPlacementFilter === item.placement ? "hero" : "outline"}
+                      size="sm"
+                      onClick={() => setAffiliateEventPlacementFilter(item.placement)}
+                    >
+                      {affiliatePlacementLabels[item.placement]}
                     </Button>
                   ))}
                 </div>
