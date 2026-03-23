@@ -14,6 +14,6 @@ export type Product = {
 
 export type Category = {
   id: string;
-  products: [Product, Product];
+  products: Product[];
   title: string;
 };

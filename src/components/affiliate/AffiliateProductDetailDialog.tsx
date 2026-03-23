@@ -1,4 +1,4 @@
-import { MouseEvent } from "react";
+import { MouseEvent, type ReactNode } from "react";
 import { CheckCircle2, Gauge, ShieldCheck } from "lucide-react";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ type AffiliateProductDetailDialogProps = {
   product: Product;
   sectionId: string;
   sectionTitle: string;
+  trigger?: ReactNode;
 };
 
 const AffiliateProductDetailDialog = ({
@@ -32,6 +33,7 @@ const AffiliateProductDetailDialog = ({
   product,
   sectionId,
   sectionTitle,
+  trigger,
 }: AffiliateProductDetailDialogProps) => {
   const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
   const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
@@ -59,9 +61,11 @@ const AffiliateProductDetailDialog = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="w-full border-primary/20 bg-background/5 text-primary-foreground hover:bg-background/10 hover:text-primary-foreground">
-          View details
-        </Button>
+        {trigger ?? (
+          <Button variant="outline" size="lg" className="w-full border-primary/20 bg-background/5 text-primary-foreground hover:bg-background/10 hover:text-primary-foreground">
+            View details
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="max-h-[80vh] max-w-5xl overflow-y-auto border-primary/15 bg-secondary p-6 text-primary-foreground shadow-[0_30px_90px_hsl(var(--tt-black)/0.55)] [&>button]:right-4 [&>button]:top-4 [&>button]:h-11 [&>button]:w-11 [&>button]:rounded-full [&>button]:border [&>button]:border-primary/15 [&>button]:bg-secondary/95 [&>button]:text-primary-foreground [&>button]:opacity-100 [&>button]:shadow-lg [&>button]:ring-offset-secondary hover:[&>button]:bg-secondary [&>button_svg]:h-5 [&>button_svg]:w-5">

@@ -9,6 +9,7 @@ import { isAffiliateNavigationSuppressed, trackAffiliateProductClick } from "@/l
 
 type AffiliateProductCardProps = {
   badgeLabel?: string;
+  cardClickOpensDetail?: boolean;
   categoryId: string;
   categoryTitle: string;
   ctaLabel?: string;
@@ -19,6 +20,7 @@ type AffiliateProductCardProps = {
 
 const AffiliateProductCard = ({
   badgeLabel = "George recommends",
+  cardClickOpensDetail = false,
   categoryId,
   categoryTitle,
   ctaLabel = "Get Best Price on Amazon",
@@ -49,8 +51,8 @@ const AffiliateProductCard = ({
     window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
 
-  return (
-    <article className="rounded-[1.75rem] border border-primary/15 bg-background/5 p-5 shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)] backdrop-blur-sm animate-reveal">
+  const cardContent = (
+    <>
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[1.5rem] border border-primary/15 bg-white p-4">
         <img
           src={product.image}
@@ -81,7 +83,13 @@ const AffiliateProductCard = ({
             <p key={line}>{line}</p>
           ))}
         </div>
+      </div>
+    </>
+  );
 
+  return (
+    <article className="rounded-[1.75rem] border border-primary/15 bg-background/5 p-5 shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)] backdrop-blur-sm animate-reveal">
+      {cardClickOpensDetail ? (
         <AffiliateProductDetailDialog
           badgeLabel={badgeLabel}
           categoryId={categoryId}
@@ -90,8 +98,32 @@ const AffiliateProductCard = ({
           product={product}
           sectionId={sectionId}
           sectionTitle={sectionTitle}
+          trigger={
+            <button
+              type="button"
+              className="block w-full rounded-[1.5rem] text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              aria-label={`Open product details for ${product.name}`}
+            >
+              {cardContent}
+            </button>
+          }
         />
+      ) : (
+        <>
+          {cardContent}
+          <AffiliateProductDetailDialog
+            badgeLabel={badgeLabel}
+            categoryId={categoryId}
+            categoryTitle={categoryTitle}
+            ctaLabel={ctaLabel}
+            product={product}
+            sectionId={sectionId}
+            sectionTitle={sectionTitle}
+          />
+        </>
+      )}
 
+      <div className="mt-5 space-y-4">
         <a
           href={affiliateUrl}
           onClick={handleAffiliateClick}
