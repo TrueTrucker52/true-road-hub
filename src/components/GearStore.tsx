@@ -27,10 +27,23 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 import type { Product } from "@/components/gear/types";
 import merchClassicTshirt from "@/assets/merch-classic-tshirt.png";
+import merchClassicTshirtBlack from "@/assets/merch-classic-tshirt-black.png";
+import merchClassicTshirtGray from "@/assets/merch-classic-tshirt-gray.png";
 import merchPulloverHoodie from "@/assets/merch-pullover-hoodie.png";
+import merchPulloverHoodieBlack from "@/assets/merch-pullover-hoodie-black.png";
+import merchPulloverHoodieNavy from "@/assets/merch-pullover-hoodie-navy.png";
 import merchSnapbackHat from "@/assets/merch-snapback-hat.png";
+import merchSnapbackHatBlack from "@/assets/merch-snapback-hat-black.png";
+import merchSnapbackHatWhite from "@/assets/merch-snapback-hat-white.png";
 
 const merchStoreUrl = "https://truetrucker.printify.me";
+
+type ColorVariant = {
+  label: string;
+  color: string; // tailwind-safe HSL token or hex for the swatch
+  image: string;
+  imageAlt: string;
+};
 
 const merch = [
   {
@@ -47,6 +60,11 @@ const merch = [
     imageAlt: "True Trucking TV snapback hat in red, black, and white.",
     badge: "Merch Favorite",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black." },
+      { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
+      { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
+    ] as ColorVariant[],
   },
   {
     name: "TT Classic T-Shirt",
@@ -62,6 +80,11 @@ const merch = [
     imageAlt: "True Trucking TV classic t-shirt with bold trucking graphic.",
     badge: "Everyday Wear",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black." },
+      { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
+    ] as ColorVariant[],
   },
   {
     name: "TT Pullover Hoodie",
@@ -77,6 +100,11 @@ const merch = [
     imageAlt: "True Trucking TV pullover hoodie in red and black.",
     badge: "Cold Weather",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black." },
+      { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
+    ] as ColorVariant[],
   },
 ] as const;
 
@@ -592,6 +620,73 @@ const MerchSpotlight = () => {
     </div>
   );
 };
+const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
+  const [variantIdx, setVariantIdx] = useState(0);
+  const variants = item.variants;
+  const activeVariant = variants[variantIdx];
+  const displayImage = activeVariant.image;
+  const displayAlt = activeVariant.imageAlt;
+
+  // Build a merchItem override with the selected variant's image
+  const merchItemWithVariant = { ...item, image: displayImage, imageAlt: displayAlt } as typeof item;
+
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
+      <div className="border-b border-border bg-background p-4">
+        <MerchDetailDialog merchItem={merchItemWithVariant} />
+      </div>
+
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">
+            {item.badge}
+          </span>
+          <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">
+            {item.price}
+          </span>
+        </div>
+
+        {/* Color variant selector */}
+        <div className="mb-4">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            Color: <span className="text-card-foreground">{activeVariant.label}</span>
+          </p>
+          <div className="flex gap-2">
+            {variants.map((v, i) => (
+              <button
+                key={v.label}
+                type="button"
+                onClick={() => setVariantIdx(i)}
+                aria-label={`Select ${v.label} color`}
+                className={`h-7 w-7 rounded-full border-2 transition-all duration-200 ${
+                  i === variantIdx
+                    ? "border-brand-red scale-110 ring-2 ring-brand-red/30"
+                    : "border-border hover:border-muted-foreground hover:scale-105"
+                }`}
+                style={{ backgroundColor: v.color }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col">
+          <h4 className="text-xl font-extrabold leading-tight text-card-foreground">{item.name}</h4>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+        </div>
+
+        <div className="mt-5 grid gap-3">
+          <MerchDetailDialog merchItem={merchItemWithVariant} triggerVariant="button" />
+          <a href={item.url} target="_blank" rel="noopener noreferrer" className="block">
+            <Button variant="subscribe" className="w-full">
+              Shop Now →
+            </Button>
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+};
+
 const GearStore = () => {
   const ref = useScrollReveal();
   const referralCode = getReferralDiscountCode();
@@ -614,39 +709,7 @@ const GearStore = () => {
             <MerchSpotlight />
             <div className="grid gap-5">
               {merch.map((m) => (
-                <article
-                  key={m.name}
-                  className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-lg shadow-black/5 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
-                >
-                  <div className="border-b border-border bg-background p-4">
-                    <MerchDetailDialog merchItem={m} />
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">
-                        {m.badge}
-                      </span>
-                      <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">
-                        {m.price}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-1 flex-col">
-                      <h4 className="text-xl font-extrabold leading-tight text-card-foreground">{m.name}</h4>
-                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{m.description}</p>
-                    </div>
-
-                    <div className="mt-5 grid gap-3">
-                      <MerchDetailDialog merchItem={m} triggerVariant="button" />
-                      <a href={m.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <Button variant="subscribe" className="w-full">
-                          Shop Now →
-                        </Button>
-                      </a>
-                    </div>
-                  </div>
-                </article>
+                <MerchCard key={m.name} item={m} />
               ))}
             </div>
             <a href={merchStoreUrl} target="_blank" rel="noopener noreferrer" className="block mt-6">
