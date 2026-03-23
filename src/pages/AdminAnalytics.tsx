@@ -81,6 +81,10 @@ type AnalyticsResponse = {
       platform: AffiliateSourcePlatform;
       clicks: number;
       shareOfSectionClicks: number;
+      trend: Array<{
+        date: string;
+        value: number;
+      }>;
     }>;
     trend: Array<{
       date: string;
@@ -1186,10 +1190,15 @@ const AdminAnalytics = () => {
                               {item.sourceBreakdown.map((source) => (
                                 <div key={`${item.sectionId}-${source.platform}`} className="rounded-xl border border-border bg-muted/50 px-3 py-3">
                                   <div className="flex items-center justify-between gap-3">
-                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
-                                    <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
+                                    <div>
+                                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
+                                      <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      <SummarySparkline data={source.trend} className="h-8 w-20 text-brand-red" />
+                                      <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
+                                    </div>
                                   </div>
-                                  <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
                                 </div>
                               ))}
                             </div>
