@@ -4,7 +4,9 @@ type AffiliatePlacement = "card" | "detail_dialog";
 
 type AffiliateTrackingExpectation = {
   placement: AffiliatePlacement;
+  productSlug: string;
   sectionId: string;
+  targetUrl: string;
 };
 
 const affiliateTrackingEndpoint = "/functions/v1/track-affiliate-product-click";
@@ -49,6 +51,6 @@ export const expectAffiliateTrackingRequest = async (
   expect(response.ok()).toBeTruthy();
   expect(payload.sectionId).toBe(expected.sectionId);
   expect(payload.placement).toBe(expected.placement);
-  expect(payload.productSlug).toBeTruthy();
-  expect(payload.targetUrl).toBeTruthy();
+  expect(payload.productSlug).toBe(expected.productSlug);
+  expect(payload.targetUrl).toBe(expected.targetUrl);
 };
