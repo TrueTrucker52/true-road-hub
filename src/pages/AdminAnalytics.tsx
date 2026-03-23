@@ -355,6 +355,84 @@ const SummarySparkline = ({
   );
 };
 
+const sourceMixChartColors: Record<AffiliateSourcePlatform, string> = {
+  youtube: "hsl(var(--platform-youtube))",
+  tiktok: "hsl(var(--platform-tiktok))",
+  facebook: "hsl(var(--platform-facebook))",
+  instagram: "hsl(var(--platform-instagram))",
+  direct: "hsl(var(--muted-foreground))",
+};
+
+const SourceMixMicroChart = ({
+  sourceBreakdown,
+}: {
+  sourceBreakdown: AnalyticsResponse["affiliateSectionComparison"][number]["sourceBreakdown"];
+}) => {
+  const dayCount = sourceBreakdown[0]?.trend.length ?? 0;
+
+  if (!dayCount) {
+    return <div className="h-24 rounded-xl border border-dashed border-border bg-muted/40" aria-hidden="true" />;
+  }
+
+  const columns = Array.from({ length: dayCount }, (_, index) => {
+    const segments = sourceBreakdown.map((source) => ({
+      platform: source.platform,
+      value: source.trend[index]?.value ?? 0,
+      date: source.trend[index]?.date ?? "",
+    }));
+    const total = segments.reduce((sum, segment) => sum + segment.value, 0);
+
+    return {
+      date: segments[0]?.date ?? "",
+      total,
+      segments,
+    };
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex h-24 items-end gap-1" aria-hidden="true">
+        {columns.map((column) => (
+          <div key={column.date} className="flex min-w-0 flex-1 flex-col justify-end overflow-hidden rounded-sm bg-muted/40">
+            {column.total === 0 ? (
+              <div className="h-full w-full bg-muted/50" />
+            ) : (
+              column.segments.map((segment) => {
+                const height = `${Math.max((segment.value / column.total) * 100, segment.value > 0 ? 6 : 0)}%`;
+
+                return (
+                  <div
+                    key={`${column.date}-${segment.platform}`}
+                    className="w-full"
+                    style={{
+                      height,
+                      backgroundColor: sourceMixChartColors[segment.platform],
+                    }}
+                    title={`${column.date}: ${affiliateSourcePlatformLabels[segment.platform]} ${segment.value.toLocaleString()} clicks`}
+                  />
+                );
+              })
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {sourceBreakdown.map((source) => (
+          <div key={source.platform} className="inline-flex items-center gap-2 rounded-full bg-muted/50 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: sourceMixChartColors[source.platform] }}
+              aria-hidden="true"
+            />
+            {affiliateSourcePlatformLabels[source.platform]}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const AdminAnalytics = () => {
   const { user, signOut } = useAuth();
   const [days, setDays] = useState<(typeof ranges)[number]>(30);
@@ -1190,6 +1268,17 @@ const AdminAnalytics = () => {
                                   <SummarySparkline data={item.detailDialogTrend} className="text-foreground" />
                                 </div>
                               </button>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div>
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Source mix over time</p>
+                              <p className="mt-1 text-sm text-muted-foreground">Compare how this block’s traffic composition shifts across referral sources.</p>
+                            </div>
+
+                            <div className="mt-4">
+                              <SourceMixMicroChart sourceBreakdown={item.sourceBreakdown} />
                             </div>
                           </div>
 
