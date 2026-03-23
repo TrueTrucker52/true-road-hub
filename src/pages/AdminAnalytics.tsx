@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -301,6 +302,11 @@ const slugifyFilenamePart = (value: string) =>
 
 const formatAffiliateDateInput = (value?: Date) => (value ? format(value, "MMM d, yyyy") : "Pick a date");
 
+const formatCompactChartDate = (value: string) => {
+  const parsed = new Date(`${value}T00:00:00`);
+  return Number.isNaN(parsed.getTime()) ? value : format(parsed, "MMM d");
+};
+
 type SparklinePoint = {
   date: string;
   value: number;
@@ -339,11 +345,6 @@ const SummarySparkline = ({
   const path = buildSparklinePath(values);
   const points = buildSparklinePoints(data);
 
-  const formatSparklineDate = (value: string) => {
-    const parsed = new Date(`${value}T00:00:00`);
-    return Number.isNaN(parsed.getTime()) ? value : format(parsed, "MMM d");
-  };
-
   return (
     <div className={`h-10 w-32 ${className}`} aria-hidden="true">
       <svg viewBox="0 0 120 36" className="h-full w-full overflow-visible" fill="none">
@@ -352,7 +353,7 @@ const SummarySparkline = ({
           <g key={`${point.date}-${point.value}`}>
             <circle cx={point.x} cy={point.y} r="2.5" fill="currentColor" className="opacity-80" />
             <circle cx={point.x} cy={point.y} r="6" fill="transparent">
-              <title>{`${formatSparklineDate(point.date)}: ${point.value.toLocaleString()} clicks`}</title>
+              <title>{`${formatCompactChartDate(point.date)}: ${point.value.toLocaleString()} clicks`}</title>
             </circle>
           </g>
         ))}
@@ -397,29 +398,65 @@ const SourceMixMicroChart = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex h-24 items-end gap-1" aria-hidden="true">
+      <div className="flex h-24 items-end gap-1">
         {columns.map((column) => (
-          <div key={column.date} className="flex min-w-0 flex-1 flex-col justify-end overflow-hidden rounded-sm bg-muted/40">
-            {column.total === 0 ? (
-              <div className="h-full w-full bg-muted/50" />
-            ) : (
-              column.segments.map((segment) => {
-                const height = `${Math.max((segment.value / column.total) * 100, segment.value > 0 ? 6 : 0)}%`;
+          <HoverCard key={column.date} openDelay={40} closeDelay={80}>
+            <HoverCardTrigger asChild>
+              <button
+                type="button"
+                className="flex min-w-0 flex-1 flex-col justify-end overflow-hidden rounded-sm bg-muted/40 transition-all hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label={`${formatCompactChartDate(column.date)} source mix with ${column.total.toLocaleString()} total clicks`}
+              >
+                {column.total === 0 ? (
+                  <div className="h-full w-full bg-muted/50" />
+                ) : (
+                  column.segments.map((segment) => {
+                    const height = `${Math.max((segment.value / column.total) * 100, segment.value > 0 ? 6 : 0)}%`;
 
-                return (
-                  <div
-                    key={`${column.date}-${segment.platform}`}
-                    className="w-full"
-                    style={{
-                      height,
-                      backgroundColor: sourceMixChartColors[segment.platform],
-                    }}
-                    title={`${column.date}: ${affiliateSourcePlatformLabels[segment.platform]} ${segment.value.toLocaleString()} clicks`}
-                  />
-                );
-              })
-            )}
-          </div>
+                    return (
+                      <div
+                        key={`${column.date}-${segment.platform}`}
+                        className="w-full"
+                        style={{
+                          height,
+                          backgroundColor: sourceMixChartColors[segment.platform],
+                        }}
+                      />
+                    );
+                  })
+                )}
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent align="center" side="top" className="w-56 space-y-3 p-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">{formatCompactChartDate(column.date)}</p>
+                <p className="text-xs text-muted-foreground">{column.total.toLocaleString()} total affiliate clicks</p>
+              </div>
+
+              <div className="space-y-2">
+                {column.segments.map((segment) => {
+                  const share = column.total > 0 ? Math.round((segment.value / column.total) * 100) : 0;
+
+                  return (
+                    <div key={`${column.date}-${segment.platform}-tooltip`} className="flex items-center justify-between gap-3 text-xs">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: sourceMixChartColors[segment.platform] }}
+                          aria-hidden="true"
+                        />
+                        <span className="truncate text-foreground">{affiliateSourcePlatformLabels[segment.platform]}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold tabular-nums text-foreground">{segment.value.toLocaleString()}</p>
+                        <p className="text-[11px] text-muted-foreground">{share}%</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         ))}
       </div>
 
