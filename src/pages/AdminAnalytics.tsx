@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { endOfDay, format, startOfDay, subDays } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, CalendarIcon, Download, LogOut, TrendingUp, X } from "lucide-react";
@@ -1372,7 +1372,7 @@ const AdminAnalytics = () => {
                         const showGap = previousPage && page - previousPage > 1;
 
                         return (
-                          <React.Fragment key={page}>
+                          <Fragment key={page}>
                             {showGap ? <span className="px-1 text-sm text-muted-foreground">…</span> : null}
                             <Button
                               type="button"
@@ -1382,7 +1382,7 @@ const AdminAnalytics = () => {
                             >
                               {page}
                             </Button>
-                          </React.Fragment>
+                          </Fragment>
                         );
                       })}
                       <Button
