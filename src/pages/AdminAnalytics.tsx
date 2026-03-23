@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, LogOut, TrendingUp } from "lucide-react";
@@ -32,6 +32,7 @@ type AnalyticsResponse = {
   days: number;
   comparePrevious: boolean;
   activeAffiliateSectionId: string | null;
+  activeAffiliateProductSlug: string | null;
   totalImpressions: number;
   totalClicks: number;
   totalAffiliateProductClicks: number;
@@ -284,18 +285,32 @@ const AdminAnalytics = () => {
   const [days, setDays] = useState<(typeof ranges)[number]>(30);
   const [comparePrevious, setComparePrevious] = useState(true);
   const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
+  const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter],
+    queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("referral-platform-analytics", {
-        body: { days, comparePrevious, affiliateSectionId: affiliateSectionFilter },
+        body: { days, comparePrevious, affiliateSectionId: affiliateSectionFilter, affiliateProductSlug: affiliateProductFilter },
       });
 
       if (error) throw new Error(error.message);
       return data as AnalyticsResponse;
     },
   });
+
+  useEffect(() => {
+    setAffiliateProductFilter("all");
+  }, [affiliateSectionFilter]);
+
+  useEffect(() => {
+    if (affiliateProductFilter === "all") return;
+
+    const productStillAvailable = (data?.affiliateProductTotals ?? []).some((item) => item.productSlug === affiliateProductFilter);
+    if (!productStillAvailable) {
+      setAffiliateProductFilter("all");
+    }
+  }, [affiliateProductFilter, data]);
 
   const topPlatform = useMemo(() => {
     if (!data?.totals.length) return null;
@@ -319,6 +334,11 @@ const AdminAnalytics = () => {
   const topAffiliateSection = useMemo(() => data?.affiliateSectionTotals[0] ?? null, [data]);
 
   const topAffiliatePlacement = useMemo(() => data?.affiliatePlacementTotals[0] ?? null, [data]);
+
+  const activeAffiliateProductTitle = useMemo(() => {
+    if (!data?.activeAffiliateProductSlug) return "All products";
+    return data.affiliateProductTotals.find((item) => item.productSlug === data.activeAffiliateProductSlug)?.productName ?? "Selected product";
+  }, [data]);
 
   const activeAffiliateSectionTitle = useMemo(() => {
     if (!data?.activeAffiliateSectionId) return "All recommendation blocks";
@@ -982,9 +1002,29 @@ const AdminAnalytics = () => {
               <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-4 flex flex-wrap gap-3">
+                <Button
+                  variant={affiliateProductFilter === "all" ? "hero" : "outline"}
+                  size="sm"
+                  onClick={() => setAffiliateProductFilter("all")}
+                >
+                  All products
+                </Button>
+                {(data?.affiliateProductTotals ?? []).slice(0, 8).map((item) => (
+                  <Button
+                    key={item.productSlug}
+                    variant={affiliateProductFilter === item.productSlug ? "hero" : "outline"}
+                    size="sm"
+                    onClick={() => setAffiliateProductFilter(item.productSlug)}
+                  >
+                    {item.productSlug}
+                  </Button>
+                ))}
+              </div>
+
               {!data?.recentAffiliateClicks.length ? (
                 <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
-                  No affiliate click events have been tracked for this section yet.
+                  No affiliate click events have been tracked for {activeAffiliateProductTitle.toLowerCase()} in this section yet.
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-background/70">

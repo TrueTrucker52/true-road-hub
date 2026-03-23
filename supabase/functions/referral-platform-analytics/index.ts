@@ -95,6 +95,9 @@ Deno.serve(async (req) => {
     const requestedAffiliateSectionId = typeof body?.affiliateSectionId === "string" && body.affiliateSectionId !== "all"
       ? body.affiliateSectionId
       : null;
+    const requestedAffiliateProductSlug = typeof body?.affiliateProductSlug === "string" && body.affiliateProductSlug !== "all"
+      ? body.affiliateProductSlug
+      : null;
     const days = allowedDays.has(requestedDays) ? requestedDays : 30;
     const startDate = new Date();
     startDate.setUTCDate(startDate.getUTCDate() - (days - 1));
@@ -541,6 +544,7 @@ Deno.serve(async (req) => {
         downloads: mediaKitPlacementTotals[placement],
       })),
       activeAffiliateSectionId: requestedAffiliateSectionId,
+      activeAffiliateProductSlug: requestedAffiliateProductSlug,
       availableAffiliateSections: [...availableAffiliateSections.values()].sort(
         (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
       ),
@@ -559,6 +563,7 @@ Deno.serve(async (req) => {
         (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
       ),
       recentAffiliateClicks: [...recentAffiliateClicks]
+        .filter((item) => !requestedAffiliateProductSlug || item.productSlug === requestedAffiliateProductSlug)
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
         .slice(0, 12),
       affiliateProductTotals: [...affiliateProductTotals.values()]
