@@ -27,10 +27,23 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 import type { Product } from "@/components/gear/types";
 import merchClassicTshirt from "@/assets/merch-classic-tshirt.png";
+import merchClassicTshirtBlack from "@/assets/merch-classic-tshirt-black.png";
+import merchClassicTshirtGray from "@/assets/merch-classic-tshirt-gray.png";
 import merchPulloverHoodie from "@/assets/merch-pullover-hoodie.png";
+import merchPulloverHoodieBlack from "@/assets/merch-pullover-hoodie-black.png";
+import merchPulloverHoodieNavy from "@/assets/merch-pullover-hoodie-navy.png";
 import merchSnapbackHat from "@/assets/merch-snapback-hat.png";
+import merchSnapbackHatBlack from "@/assets/merch-snapback-hat-black.png";
+import merchSnapbackHatWhite from "@/assets/merch-snapback-hat-white.png";
 
 const merchStoreUrl = "https://truetrucker.printify.me";
+
+type ColorVariant = {
+  label: string;
+  color: string; // tailwind-safe HSL token or hex for the swatch
+  image: string;
+  imageAlt: string;
+};
 
 const merch = [
   {
@@ -47,6 +60,11 @@ const merch = [
     imageAlt: "True Trucking TV snapback hat in red, black, and white.",
     badge: "Merch Favorite",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black." },
+      { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
+      { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
+    ] as ColorVariant[],
   },
   {
     name: "TT Classic T-Shirt",
@@ -62,6 +80,11 @@ const merch = [
     imageAlt: "True Trucking TV classic t-shirt with bold trucking graphic.",
     badge: "Everyday Wear",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black." },
+      { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
+    ] as ColorVariant[],
   },
   {
     name: "TT Pullover Hoodie",
@@ -77,6 +100,11 @@ const merch = [
     imageAlt: "True Trucking TV pullover hoodie in red and black.",
     badge: "Cold Weather",
     url: merchStoreUrl,
+    variants: [
+      { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black." },
+      { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
+    ] as ColorVariant[],
   },
 ] as const;
 
