@@ -451,6 +451,16 @@ const AdminAnalytics = () => {
     scrollToAffiliateEvents();
   };
 
+  const resetAffiliateEventDrilldownFilters = () => {
+    setAffiliateSectionFilter("all");
+    setAffiliateProductFilter("all");
+    setAffiliateEventPlacementFilter("all");
+    setAffiliateEventPage(1);
+  };
+
+  const hasActiveAffiliateEventDrilldownFilters =
+    affiliateSectionFilter !== "all" || affiliateProductFilter !== "all" || affiliateEventPlacementFilter !== "all";
+
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
     const rows = data?.recentAffiliateClicks ?? [];
@@ -1364,8 +1374,23 @@ const AdminAnalytics = () => {
 
           <Card ref={affiliateEventsCardRef} className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
             <CardHeader>
-              <CardTitle className="font-display text-3xl">Recent affiliate click events</CardTitle>
-              <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <CardTitle className="font-display text-3xl">Recent affiliate click events</CardTitle>
+                  <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={resetAffiliateEventDrilldownFilters}
+                  disabled={!hasActiveAffiliateEventDrilldownFilters}
+                  className="self-start"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Reset drill-down
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="mb-4 space-y-4">
