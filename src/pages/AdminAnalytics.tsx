@@ -46,6 +46,7 @@ type AnalyticsResponse = {
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
   affiliatePlatformTotals: Array<{ platform: AffiliateSourcePlatform; clicks: number }>;
   affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
+  affiliateSectionTotals: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
   affiliateProductTotals: Array<{
     productSlug: string;
     productName: string;
@@ -294,6 +295,8 @@ const AdminAnalytics = () => {
   const topAffiliateProduct = useMemo(() => data?.affiliateProductTotals[0] ?? null, [data]);
 
   const topAffiliateCategory = useMemo(() => data?.affiliateCategoryTotals[0] ?? null, [data]);
+
+  const topAffiliateSection = useMemo(() => data?.affiliateSectionTotals[0] ?? null, [data]);
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
@@ -753,7 +756,7 @@ const AdminAnalytics = () => {
               <CardDescription>See which gear recommendations generate the most outbound Amazon clicks.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 lg:grid-cols-[1.5fr_0.8fr_0.8fr]">
+              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
                 <div className="rounded-2xl border border-border bg-background/70 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -798,6 +801,33 @@ const AdminAnalytics = () => {
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-background/70 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top section</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">
+                        {topAffiliateSection ? topAffiliateSection.sectionTitle : "No data"}
+                      </p>
+                    </div>
+                    {topAffiliateSection ? (
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {topAffiliateSection.clicks.toLocaleString()} clicks
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {(data?.affiliateSectionTotals ?? []).map((item) => (
+                      <div key={item.sectionId} className="rounded-2xl border border-border bg-muted/50 p-4">
+                        <p className="text-sm font-semibold text-foreground">{item.sectionTitle}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          <span className="font-semibold text-brand-red">{item.clicks.toLocaleString()}</span> outbound clicks
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

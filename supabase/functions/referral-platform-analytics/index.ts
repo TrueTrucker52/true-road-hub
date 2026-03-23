@@ -129,14 +129,14 @@ Deno.serve(async (req) => {
 
     const { data: affiliateClickRows, error: affiliateClicksError } = await adminClient
       .from("affiliate_product_clicks")
-      .select("product_slug, product_name, category_id, category_title, platform, created_at")
+      .select("product_slug, product_name, category_id, category_title, section_id, section_title, platform, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
     const { data: previousAffiliateClickRows, error: previousAffiliateClicksError } = comparePrevious
       ? await adminClient
           .from("affiliate_product_clicks")
-          .select("product_slug")
+          .select("product_slug, section_id")
           .gte("created_at", previousStartDate.toISOString())
           .lte("created_at", previousEndDate.toISOString())
       : { data: [], error: null };
@@ -263,6 +263,11 @@ Deno.serve(async (req) => {
       categoryTitle: string;
       clicks: number;
     }>();
+    const affiliateSectionTotals = new Map<string, {
+      sectionId: string;
+      sectionTitle: string;
+      clicks: number;
+    }>();
 
     for (let offset = 0; offset < days; offset += 1) {
       const current = new Date(startDate);
@@ -340,6 +345,14 @@ Deno.serve(async (req) => {
       };
       category.clicks += 1;
       affiliateCategoryTotals.set(row.category_id, category);
+
+      const section = affiliateSectionTotals.get(row.section_id) ?? {
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        clicks: 0,
+      };
+      section.clicks += 1;
+      affiliateSectionTotals.set(row.section_id, section);
     }
 
     for (const row of previousAffiliateClickRows ?? []) {
@@ -485,6 +498,9 @@ Deno.serve(async (req) => {
       })),
       affiliateCategoryTotals: [...affiliateCategoryTotals.values()].sort(
         (a, b) => b.clicks - a.clicks || a.categoryTitle.localeCompare(b.categoryTitle),
+      ),
+      affiliateSectionTotals: [...affiliateSectionTotals.values()].sort(
+        (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
       ),
       affiliateProductTotals: [...affiliateProductTotals.values()]
         .map((item) => {

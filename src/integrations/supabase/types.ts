@@ -26,6 +26,8 @@ export type Database = {
           product_name: string
           product_slug: string
           referrer: string | null
+          section_id: string
+          section_title: string
           session_id: string | null
           target_url: string
           user_agent: string | null
@@ -41,6 +43,8 @@ export type Database = {
           product_name: string
           product_slug: string
           referrer?: string | null
+          section_id?: string
+          section_title?: string
           session_id?: string | null
           target_url: string
           user_agent?: string | null
@@ -56,6 +60,8 @@ export type Database = {
           product_name?: string
           product_slug?: string
           referrer?: string | null
+          section_id?: string
+          section_title?: string
           session_id?: string | null
           target_url?: string
           user_agent?: string | null

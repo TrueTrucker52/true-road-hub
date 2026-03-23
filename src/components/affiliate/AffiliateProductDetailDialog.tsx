@@ -20,6 +20,8 @@ type AffiliateProductDetailDialogProps = {
   categoryTitle: string;
   ctaLabel?: string;
   product: Product;
+  sectionId: string;
+  sectionTitle: string;
 };
 
 const AffiliateProductDetailDialog = ({
@@ -28,6 +30,8 @@ const AffiliateProductDetailDialog = ({
   categoryTitle,
   ctaLabel = "Get Best Price on Amazon",
   product,
+  sectionId,
+  sectionTitle,
 }: AffiliateProductDetailDialogProps) => {
   const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
   const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
@@ -43,6 +47,8 @@ const AffiliateProductDetailDialog = ({
       placement: "detail_dialog",
       productName: product.name,
       productSlug: product.slug,
+      sectionId,
+      sectionTitle,
     });
 
     window.open(targetUrl, "_blank", "noopener,noreferrer");
