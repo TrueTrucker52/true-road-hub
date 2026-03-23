@@ -81,6 +81,14 @@ type AnalyticsResponse = {
       date: string;
       value: number;
     }>;
+    cardTrend: Array<{
+      date: string;
+      value: number;
+    }>;
+    detailDialogTrend: Array<{
+      date: string;
+      value: number;
+    }>;
   }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
@@ -1055,6 +1063,33 @@ const AdminAnalytics = () => {
                                 <p className="mt-1 text-sm text-muted-foreground">Daily outbound click momentum for this recommendation block.</p>
                               </div>
                               <SummarySparkline data={item.trend} className="text-brand-red" />
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div>
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Placement trend split</p>
+                              <p className="mt-1 text-sm text-muted-foreground">Compare how card clicks and modal clicks change over time inside this block.</p>
+                            </div>
+                            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3">
+                                <div className="flex items-end justify-between gap-3">
+                                  <div>
+                                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Card CTA trend</p>
+                                    <p className="mt-1 text-sm font-semibold text-foreground">{item.cardClicks.toLocaleString()} clicks</p>
+                                  </div>
+                                  <SummarySparkline data={item.cardTrend} className="text-brand-red" />
+                                </div>
+                              </div>
+                              <div className="rounded-xl border border-border bg-muted/50 px-4 py-3">
+                                <div className="flex items-end justify-between gap-3">
+                                  <div>
+                                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Modal CTA trend</p>
+                                    <p className="mt-1 text-sm font-semibold text-foreground">{item.detailDialogClicks.toLocaleString()} clicks</p>
+                                  </div>
+                                  <SummarySparkline data={item.detailDialogTrend} className="text-foreground" />
+                                </div>
+                              </div>
                             </div>
                           </div>
 

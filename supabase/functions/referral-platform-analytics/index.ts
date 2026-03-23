@@ -297,6 +297,12 @@ Deno.serve(async (req) => {
       sectionTitle: string;
       countsByDate: Map<string, number>;
     }>>();
+    const affiliateSectionPlacementTrendByDate = new Map<string, {
+      sectionId: string;
+      sectionTitle: string;
+      cardCountsByDate: Map<string, number>;
+      detailDialogCountsByDate: Map<string, number>;
+    }>();
     const previousAffiliateSectionTotals = new Map<string, number>();
     const recentAffiliateClicks: Array<{
       createdAt: string;
@@ -429,6 +435,19 @@ Deno.serve(async (req) => {
       trendEntry.countsByDate.set(dateKey, (trendEntry.countsByDate.get(dateKey) ?? 0) + 1);
       trendBucket.set(row.section_id, trendEntry);
       affiliateSectionTrendByDate.set(row.section_id, trendBucket);
+
+      const placementTrend = affiliateSectionPlacementTrendByDate.get(row.section_id) ?? {
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        cardCountsByDate: new Map<string, number>(),
+        detailDialogCountsByDate: new Map<string, number>(),
+      };
+      if (placement === "detail_dialog") {
+        placementTrend.detailDialogCountsByDate.set(dateKey, (placementTrend.detailDialogCountsByDate.get(dateKey) ?? 0) + 1);
+      } else {
+        placementTrend.cardCountsByDate.set(dateKey, (placementTrend.cardCountsByDate.get(dateKey) ?? 0) + 1);
+      }
+      affiliateSectionPlacementTrendByDate.set(row.section_id, placementTrend);
 
       affiliateClickTotalsByPlatform[platform] += 1;
       affiliatePlacementTotals[placement] += 1;
@@ -651,6 +670,27 @@ Deno.serve(async (req) => {
               value: trendSource?.countsByDate.get(key) ?? 0,
             };
           });
+          const placementTrendSource = affiliateSectionPlacementTrendByDate.get(item.sectionId);
+          const cardTrend = Array.from({ length: days }, (_, index) => {
+            const current = new Date(startDate);
+            current.setUTCDate(startDate.getUTCDate() + index);
+            const key = current.toISOString().slice(0, 10);
+
+            return {
+              date: new Date(`${key}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+              value: placementTrendSource?.cardCountsByDate.get(key) ?? 0,
+            };
+          });
+          const detailDialogTrend = Array.from({ length: days }, (_, index) => {
+            const current = new Date(startDate);
+            current.setUTCDate(startDate.getUTCDate() + index);
+            const key = current.toISOString().slice(0, 10);
+
+            return {
+              date: new Date(`${key}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+              value: placementTrendSource?.detailDialogCountsByDate.get(key) ?? 0,
+            };
+          });
 
           return {
             ...item,
@@ -661,6 +701,8 @@ Deno.serve(async (req) => {
             shareOfClicks: (affiliateClickRows ?? []).length === 0 ? 0 : item.clicks / (affiliateClickRows ?? []).length,
             topProducts,
             trend,
+            cardTrend,
+            detailDialogTrend,
           };
         })
         .sort((a, b) => b.clicks - a.clicks || b.modalConversionRate - a.modalConversionRate || a.sectionTitle.localeCompare(b.sectionTitle)),
