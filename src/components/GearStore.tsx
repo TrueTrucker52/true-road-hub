@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import AffiliateProductCard from "@/components/affiliate/AffiliateProductCard";
 import ReferralIFTAButton from "@/components/ReferralIFTAButton";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ArrowRight,
   ChevronLeft,
