@@ -203,7 +203,7 @@ const BrandDeals = () => {
             <p className="text-[0.65rem] font-bold uppercase tracking-[0.28em] text-brand-red">Sponsorship packages</p>
             <h3 className="mt-3 font-display text-3xl md:text-4xl text-primary-foreground">Simple tiers for brands ready to reach real truckers</h3>
             <p className="mt-4 text-sm leading-relaxed text-primary-foreground/70 md:text-base">
-              Placeholder ranges are live now so sponsors can understand placement options while exact pricing evolves.
+              Clear package ranges help brand partners quickly understand the scale and fit of each campaign option.
             </p>
           </div>
 
