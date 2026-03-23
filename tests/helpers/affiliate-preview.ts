@@ -10,11 +10,7 @@ type AffiliateTrackingExpectation = {
 const affiliateTrackingEndpoint = "/functions/v1/track-affiliate-product-click";
 
 export const openAffiliatePreviewPage = async (page: Page) => {
-  await page.addInitScript(() => {
-    window.open = () => null;
-  });
-
-  await page.goto("/");
+  await page.goto("/?affiliateTestMode=1");
 };
 
 export const getRecommendationSection = (page: Page, sectionDomId: string) => page.locator(`section#${sectionDomId}`);

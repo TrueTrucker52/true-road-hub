@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
 import AffiliateProductDetailDialog from "@/components/affiliate/AffiliateProductDetailDialog";
 import type { Product } from "@/components/gear/types";
-import { trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
+import { isAffiliateNavigationSuppressed, trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
 
 type AffiliateProductCardProps = {
   badgeLabel?: string;
@@ -43,6 +43,8 @@ const AffiliateProductCard = ({
       sectionId,
       sectionTitle,
     });
+
+    if (isAffiliateNavigationSuppressed()) return;
 
     window.open(targetUrl, "_blank", "noopener,noreferrer");
   };

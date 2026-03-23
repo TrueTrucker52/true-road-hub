@@ -14,6 +14,12 @@ type TrackAffiliateProductClickParams = {
   sectionTitle: string;
 };
 
+export const isAffiliateNavigationSuppressed = () => {
+  if (typeof window === "undefined") return false;
+
+  return new URLSearchParams(window.location.search).get("affiliateTestMode") === "1";
+};
+
 export const trackAffiliateProductClick = async ({
   affiliateUrl,
   categoryId,
