@@ -104,7 +104,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
-      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true, soldThisWeek: 89 },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true, soldThisWeek: 31 },
       { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
     ] as ColorVariant[],
   },
