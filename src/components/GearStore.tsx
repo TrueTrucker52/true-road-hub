@@ -84,7 +84,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
-      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true, soldThisWeek: 214 },
       { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
     ] as ColorVariant[],
   },
