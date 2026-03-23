@@ -70,6 +70,13 @@ type AnalyticsResponse = {
     deltaPercent: number;
     modalConversionRate: number;
     shareOfClicks: number;
+    topProducts: Array<{
+      productSlug: string;
+      productName: string;
+      categoryTitle: string;
+      clicks: number;
+      shareOfSectionClicks: number;
+    }>;
   }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
@@ -1034,6 +1041,29 @@ const AdminAnalytics = () => {
                                 {positive ? "+" : ""}{item.delta.toLocaleString()}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">{positive ? "+" : ""}{(item.deltaPercent * 100).toFixed(1)}% vs previous period</p>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Top products in this block</p>
+                              <span className="text-xs text-muted-foreground">By outbound clicks</span>
+                            </div>
+
+                            <div className="mt-3 space-y-2">
+                              {item.topProducts.map((product) => (
+                                <div key={`${item.sectionId}-${product.productSlug}`} className="flex items-start justify-between gap-3 rounded-xl border border-border bg-muted/50 px-3 py-3">
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{product.categoryTitle}</p>
+                                    <p className="mt-1 text-sm font-semibold leading-5 text-foreground">{product.productName}</p>
+                                    <p className="mt-1 text-xs text-muted-foreground">{product.productSlug}</p>
+                                  </div>
+                                  <div className="shrink-0 text-right">
+                                    <p className="text-sm font-semibold text-brand-red">{product.clicks.toLocaleString()}</p>
+                                    <p className="mt-1 text-xs text-muted-foreground">{(product.shareOfSectionClicks * 100).toFixed(1)}%</p>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>

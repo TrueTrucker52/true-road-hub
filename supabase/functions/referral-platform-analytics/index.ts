@@ -286,6 +286,12 @@ Deno.serve(async (req) => {
       cardClicks: number;
       detailDialogClicks: number;
     }>();
+    const affiliateSectionProductTotals = new Map<string, Map<string, {
+      productSlug: string;
+      productName: string;
+      categoryTitle: string;
+      clicks: number;
+    }>>();
     const previousAffiliateSectionTotals = new Map<string, number>();
     const recentAffiliateClicks: Array<{
       createdAt: string;
@@ -387,6 +393,22 @@ Deno.serve(async (req) => {
         sectionComparison.cardClicks += 1;
       }
       affiliateSectionComparisonTotals.set(row.section_id, sectionComparison);
+
+      const sectionProducts = affiliateSectionProductTotals.get(row.section_id) ?? new Map<string, {
+        productSlug: string;
+        productName: string;
+        categoryTitle: string;
+        clicks: number;
+      }>();
+      const sectionProduct = sectionProducts.get(row.product_slug) ?? {
+        productSlug: row.product_slug,
+        productName: row.product_name,
+        categoryTitle: row.category_title,
+        clicks: 0,
+      };
+      sectionProduct.clicks += 1;
+      sectionProducts.set(row.product_slug, sectionProduct);
+      affiliateSectionProductTotals.set(row.section_id, sectionProducts);
 
       affiliateClickTotalsByPlatform[platform] += 1;
       affiliatePlacementTotals[placement] += 1;
@@ -591,6 +613,13 @@ Deno.serve(async (req) => {
         .map((item) => {
           const previousClicks = previousAffiliateSectionTotals.get(item.sectionId) ?? 0;
           const delta = item.clicks - previousClicks;
+          const topProducts = [...(affiliateSectionProductTotals.get(item.sectionId)?.values() ?? [])]
+            .sort((a, b) => b.clicks - a.clicks || a.productName.localeCompare(b.productName))
+            .slice(0, 4)
+            .map((product) => ({
+              ...product,
+              shareOfSectionClicks: item.clicks === 0 ? 0 : product.clicks / item.clicks,
+            }));
 
           return {
             ...item,
@@ -599,6 +628,7 @@ Deno.serve(async (req) => {
             deltaPercent: previousClicks === 0 ? (item.clicks > 0 ? 1 : 0) : delta / previousClicks,
             modalConversionRate: item.clicks === 0 ? 0 : item.detailDialogClicks / item.clicks,
             shareOfClicks: (affiliateClickRows ?? []).length === 0 ? 0 : item.clicks / (affiliateClickRows ?? []).length,
+            topProducts,
           };
         })
         .sort((a, b) => b.clicks - a.clicks || b.modalConversionRate - a.modalConversionRate || a.sectionTitle.localeCompare(b.sectionTitle)),
