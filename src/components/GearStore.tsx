@@ -459,6 +459,7 @@ const GearStore = () => {
               <ShoppingBag className="text-brand-red" size={24} />
               <h3 className="font-display text-xl font-bold">True Trucking Merch</h3>
             </div>
+            <MerchSpotlight />
             <div className="grid gap-5">
               {merch.map((m) => (
                 <article
