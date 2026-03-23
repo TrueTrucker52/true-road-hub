@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -51,6 +52,15 @@ type AnalyticsResponse = {
   affiliatePlacementTotals: Array<{ placement: AffiliatePlacement; clicks: number }>;
   affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
   affiliateSectionTotals: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
+  recentAffiliateClicks: Array<{
+    createdAt: string;
+    placement: AffiliatePlacement;
+    productName: string;
+    productSlug: string;
+    sectionId: string;
+    sectionTitle: string;
+    targetUrl: string;
+  }>;
   affiliateProductTotals: Array<{
     productSlug: string;
     productName: string;
@@ -963,6 +973,70 @@ const AdminAnalytics = () => {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Recent affiliate click events</CardTitle>
+              <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!data?.recentAffiliateClicks.length ? (
+                <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
+                  No affiliate click events have been tracked for this section yet.
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-border bg-background/70">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Clicked</TableHead>
+                        <TableHead>Section</TableHead>
+                        <TableHead>Placement</TableHead>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Target URL</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {data.recentAffiliateClicks.map((item) => (
+                        <TableRow key={`${item.createdAt}-${item.productSlug}-${item.placement}`}>
+                          <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                            {format(new Date(item.createdAt), "MMM d, h:mm a")}
+                          </TableCell>
+                          <TableCell>
+                            <div className="min-w-0">
+                              <p className="font-medium text-foreground">{item.sectionTitle}</p>
+                              <p className="text-xs text-muted-foreground">{item.sectionId}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="border-border bg-muted/50 text-foreground">
+                              {affiliatePlacementLabels[item.placement]}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="min-w-0 max-w-[22rem]">
+                              <p className="truncate font-medium text-foreground">{item.productName}</p>
+                              <p className="text-xs text-muted-foreground">{item.productSlug}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <a
+                              href={item.targetUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-block max-w-[16rem] truncate text-sm text-brand-red underline-offset-4 hover:underline"
+                            >
+                              {item.targetUrl}
+                            </a>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
 

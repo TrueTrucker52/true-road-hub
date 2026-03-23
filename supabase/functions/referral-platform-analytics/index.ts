@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
 
     const { data: affiliateClickRows, error: affiliateClicksError } = await adminClient
       .from("affiliate_product_clicks")
-      .select("product_slug, product_name, category_id, category_title, section_id, section_title, platform, placement, created_at")
+      .select("product_slug, product_name, category_id, category_title, section_id, section_title, platform, placement, target_url, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
@@ -276,6 +276,15 @@ Deno.serve(async (req) => {
       sectionTitle: string;
       clicks: number;
     }>();
+    const recentAffiliateClicks: Array<{
+      createdAt: string;
+      placement: AffiliatePlacement;
+      productName: string;
+      productSlug: string;
+      sectionId: string;
+      sectionTitle: string;
+      targetUrl: string;
+    }> = [];
 
     const availableAffiliateSections = new Map<string, {
       sectionId: string;
@@ -381,6 +390,16 @@ Deno.serve(async (req) => {
       };
       section.clicks += 1;
       affiliateSectionTotals.set(row.section_id, section);
+
+      recentAffiliateClicks.push({
+        createdAt: row.created_at,
+        placement,
+        productName: row.product_name,
+        productSlug: row.product_slug,
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        targetUrl: row.target_url,
+      });
     }
 
     for (const row of previousAffiliateClickRows ?? []) {
@@ -539,6 +558,9 @@ Deno.serve(async (req) => {
       affiliateSectionTotals: [...affiliateSectionTotals.values()].sort(
         (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
       ),
+      recentAffiliateClicks: [...recentAffiliateClicks]
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .slice(0, 12),
       affiliateProductTotals: [...affiliateProductTotals.values()]
         .map((item) => {
           const previousClicks = previousAffiliateProductTotals.get(item.productSlug) ?? 0;
