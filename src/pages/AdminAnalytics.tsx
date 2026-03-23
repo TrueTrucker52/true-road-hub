@@ -77,6 +77,11 @@ type AnalyticsResponse = {
       clicks: number;
       shareOfSectionClicks: number;
     }>;
+    sourceBreakdown: Array<{
+      platform: AffiliateSourcePlatform;
+      clicks: number;
+      shareOfSectionClicks: number;
+    }>;
     trend: Array<{
       date: string;
       value: number;
@@ -207,6 +212,14 @@ const mediaKitPlacementLabels: Record<MediaKitPlacement, string> = {
 const affiliatePlacementLabels: Record<AffiliatePlacement, string> = {
   card: "Card CTA",
   detail_dialog: "Modal CTA",
+};
+
+const affiliateSourcePlatformLabels: Record<AffiliateSourcePlatform, string> = {
+  youtube: "YouTube",
+  tiktok: "TikTok",
+  facebook: "Facebook",
+  instagram: "Instagram",
+  direct: "Direct",
 };
 
 const affiliateEventDateFilterLabels: Record<AffiliateEventDateFilter, string> = {
@@ -1157,6 +1170,28 @@ const AdminAnalytics = () => {
                                   <SummarySparkline data={item.detailDialogTrend} className="text-foreground" />
                                 </div>
                               </button>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Traffic source breakdown</p>
+                                <p className="mt-1 text-sm text-muted-foreground">See which source is driving clicks inside this recommendation block.</p>
+                              </div>
+                              <span className="text-xs text-muted-foreground">Share of block clicks</span>
+                            </div>
+
+                            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                              {item.sourceBreakdown.map((source) => (
+                                <div key={`${item.sectionId}-${source.platform}`} className="rounded-xl border border-border bg-muted/50 px-3 py-3">
+                                  <div className="flex items-center justify-between gap-3">
+                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
+                                    <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
+                                  </div>
+                                  <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
+                                </div>
+                              ))}
                             </div>
                           </div>
 
