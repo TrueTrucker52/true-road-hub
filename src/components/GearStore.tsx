@@ -756,6 +756,11 @@ const GearStore = () => {
               <ShoppingBag className="text-brand-red" size={24} />
               <h3 className="font-display text-xl font-bold">True Trucking Merch</h3>
             </div>
+            <div className="mb-5 flex items-center justify-center gap-4 rounded-lg bg-brand-orange/10 px-4 py-2.5 text-[11px] font-semibold text-brand-orange">
+              <span>🛒 161+ orders</span>
+              <span className="text-brand-orange/40">•</span>
+              <span>🚛 500+ happy truckers</span>
+            </div>
             <MerchSpotlight />
             <div className="grid gap-5">
               {merch.map((m) => (
