@@ -181,6 +181,8 @@ const affiliateEventDateFilterLabels: Record<AffiliateEventDateFilter, string> =
   all: "All recent",
 };
 
+const AFFILIATE_EVENT_PAGE_SIZE = 20;
+
 const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
   general: "General contact",
   brand_deal: "Brand deal inquiries",
@@ -307,6 +309,7 @@ const AdminAnalytics = () => {
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
   const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
   const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
+  const [affiliateEventsVisibleCount, setAffiliateEventsVisibleCount] = useState(AFFILIATE_EVENT_PAGE_SIZE);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
@@ -323,6 +326,10 @@ const AdminAnalytics = () => {
   useEffect(() => {
     setAffiliateProductFilter("all");
   }, [affiliateSectionFilter]);
+
+  useEffect(() => {
+    setAffiliateEventsVisibleCount(AFFILIATE_EVENT_PAGE_SIZE);
+  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventSearch]);
 
   useEffect(() => {
     if (affiliateProductFilter === "all") return;
@@ -387,11 +394,18 @@ const AdminAnalytics = () => {
     });
   }, [affiliateEventDateFilter, affiliateEventPlacementFilter, affiliateEventSearch, data]);
 
+  const visibleRecentAffiliateClicks = useMemo(
+    () => filteredRecentAffiliateClicks.slice(0, affiliateEventsVisibleCount),
+    [affiliateEventsVisibleCount, filteredRecentAffiliateClicks],
+  );
+
+  const hasMoreAffiliateEvents = visibleRecentAffiliateClicks.length < filteredRecentAffiliateClicks.length;
+
   const exportAffiliateEventsCsv = () => {
-    if (!filteredRecentAffiliateClicks.length) return;
+    if (!visibleRecentAffiliateClicks.length) return;
 
     const headers = ["clicked_at", "section_title", "section_id", "placement", "product_name", "product_slug", "target_url"];
-    const rows = filteredRecentAffiliateClicks.map((item) => [
+    const rows = visibleRecentAffiliateClicks.map((item) => [
       item.createdAt,
       item.sectionTitle,
       item.sectionId,
@@ -1142,7 +1156,7 @@ const AdminAnalytics = () => {
                     type="button"
                     variant="outline"
                     onClick={exportAffiliateEventsCsv}
-                    disabled={!filteredRecentAffiliateClicks.length}
+                    disabled={!visibleRecentAffiliateClicks.length}
                     className="md:self-end"
                   >
                     <Download className="mr-2 h-4 w-4" />
@@ -1156,7 +1170,13 @@ const AdminAnalytics = () => {
                   No affiliate click events match {affiliateEventSearch.trim() ? `“${affiliateEventSearch.trim()}”` : activeAffiliateProductTitle.toLowerCase()} for {affiliateEventDateFilterLabels[affiliateEventDateFilter].toLowerCase()} in this section yet.
                 </div>
               ) : (
-                <div className="rounded-2xl border border-border bg-background/70">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+                    <span>
+                      Showing {visibleRecentAffiliateClicks.length.toLocaleString()} of {filteredRecentAffiliateClicks.length.toLocaleString()} filtered events
+                    </span>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-background/70">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -1168,7 +1188,7 @@ const AdminAnalytics = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredRecentAffiliateClicks.map((item) => (
+                      {visibleRecentAffiliateClicks.map((item) => (
                         <TableRow key={`${item.createdAt}-${item.productSlug}-${item.placement}`}>
                           <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                             {format(new Date(item.createdAt), "MMM d, h:mm a")}
@@ -1204,6 +1224,18 @@ const AdminAnalytics = () => {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
+                  {hasMoreAffiliateEvents ? (
+                    <div className="flex justify-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setAffiliateEventsVisibleCount((current) => current + AFFILIATE_EVENT_PAGE_SIZE)}
+                      >
+                        Load 20 more events
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               )}
             </CardContent>
