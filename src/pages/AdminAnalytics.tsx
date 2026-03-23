@@ -420,7 +420,7 @@ const AdminAnalytics = () => {
     return data.availableAffiliateSections.find((item) => item.sectionId === data.activeAffiliateSectionId)?.sectionTitle ?? "Selected block";
   }, [data]);
 
-  const affiliateEventsCardRef = useRef<HTMLElement | null>(null);
+  const affiliateEventsCardRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToAffiliateEvents = () => {
     affiliateEventsCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
