@@ -9,6 +9,7 @@ import AboutGeorge from "@/components/AboutGeorge";
 import Newsletter from "@/components/Newsletter";
 import SocialMedia from "@/components/SocialMedia";
 import Footer from "@/components/Footer";
+import StickyMerchCTA from "@/components/StickyMerchCTA";
 import { useReferralImpressionTracking } from "@/hooks/useReferralImpressionTracking";
 
 const Index = () => {
@@ -29,6 +30,7 @@ const Index = () => {
         <SocialMedia />
       </main>
       <Footer />
+      <StickyMerchCTA />
     </>
   );
 };
