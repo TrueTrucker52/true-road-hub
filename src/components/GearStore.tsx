@@ -550,8 +550,7 @@ const MerchSpotlight = () => {
     </div>
   );
 };
-
-
+const GearStore = () => {
   const ref = useScrollReveal();
   const referralCode = getReferralDiscountCode();
   const referralPlatform = getReferralPlatformLabel();
