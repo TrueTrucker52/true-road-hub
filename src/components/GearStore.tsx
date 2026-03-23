@@ -440,7 +440,118 @@ const truckingEssentials: Product[] = [
   },
 ];
 
-const GearStore = () => {
+const MerchSpotlight = () => {
+  const [active, setActive] = useState(0);
+  const count = merch.length;
+
+  const next = useCallback(() => setActive((i) => (i + 1) % count), [count]);
+  const prev = useCallback(() => setActive((i) => (i - 1 + count) % count), [count]);
+
+  useEffect(() => {
+    const id = setInterval(next, 4500);
+    return () => clearInterval(id);
+  }, [next]);
+
+  const item = merch[active];
+
+  return (
+    <div className="relative mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-gradient-to-br from-brand-red/10 via-background to-brand-orange/10 p-5">
+      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-red">
+        ★ Featured Merch
+      </p>
+
+      <div className="flex items-center gap-4">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="group shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`View details for ${item.name}`}
+            >
+              <div className="flex h-[120px] w-[120px] items-center justify-center overflow-hidden rounded-xl border border-border bg-background p-2 transition-transform duration-300 group-hover:scale-105">
+                <img
+                  src={item.image}
+                  alt={item.imageAlt}
+                  className="h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-h-[85vh] overflow-y-auto border-border bg-card p-0 sm:max-w-3xl">
+            <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+              <div className="border-b border-border bg-background p-6 md:border-b-0 md:border-r">
+                <div className="flex h-[280px] items-center justify-center rounded-2xl bg-background p-6">
+                  <img src={item.image} alt={item.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+                </div>
+                <div className="mt-5 flex items-center justify-between gap-3">
+                  <span className="inline-flex rounded-md bg-foreground px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-background">{item.badge}</span>
+                  <span className="inline-flex rounded-full bg-brand-orange px-3 py-1 text-sm font-extrabold text-primary-foreground">{item.price}</span>
+                </div>
+              </div>
+              <div className="p-6 md:p-7">
+                <DialogHeader className="text-left">
+                  <DialogTitle className="font-display text-3xl leading-tight text-card-foreground">{item.name}</DialogTitle>
+                  <DialogDescription className="mt-2 text-base leading-7 text-muted-foreground">{item.description}</DialogDescription>
+                </DialogHeader>
+                <div className="mt-6 rounded-2xl border border-border bg-muted/40 p-4">
+                  <div className="flex items-start gap-3">
+                    <Sparkles className="mt-0.5 h-5 w-5 text-brand-red" aria-hidden="true" />
+                    <div>
+                      <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand-red">Why drivers buy it</p>
+                      <p className="mt-2 text-lg font-semibold leading-snug text-card-foreground">{item.conversionTitle}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.conversionCopy}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <Button asChild variant="subscribe" className="flex-1">
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">Shop This Item <ArrowRight /></a>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <div className="min-w-0 flex-1">
+          <span className="inline-flex rounded-full bg-brand-orange px-2.5 py-0.5 text-xs font-extrabold text-primary-foreground">
+            {item.price}
+          </span>
+          <h4 className="mt-1.5 text-lg font-extrabold leading-tight text-card-foreground">{item.name}</h4>
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">{item.conversionTitle}</p>
+          <a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-brand-red hover:underline">
+            Shop Now <ArrowRight className="h-3 w-3" />
+          </a>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        <div className="flex gap-1.5">
+          {merch.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`Show ${merch[i].name}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${i === active ? "w-6 bg-brand-red" : "w-1.5 bg-border hover:bg-muted-foreground/40"}`}
+            />
+          ))}
+        </div>
+        <div className="flex gap-1">
+          <button type="button" onClick={prev} aria-label="Previous item" className="rounded-full border border-border bg-background p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+          <button type="button" onClick={next} aria-label="Next item" className="rounded-full border border-border bg-background p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
   const ref = useScrollReveal();
   const referralCode = getReferralDiscountCode();
   const referralPlatform = getReferralPlatformLabel();
