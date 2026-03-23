@@ -77,20 +77,28 @@ const merch = [
 
 const MerchDetailDialog = ({
   merchItem,
+  triggerVariant = "image",
 }: {
   merchItem: (typeof merch)[number];
+  triggerVariant?: "image" | "button";
 }) => (
   <Dialog>
     <DialogTrigger asChild>
-      <button
-        type="button"
-        className="group block rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        aria-label={`View details for ${merchItem.name}`}
-      >
-        <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background p-4 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
-          <img src={merchItem.image} alt={merchItem.imageAlt} className="h-full w-full object-contain" loading="lazy" />
-        </div>
-      </button>
+      {triggerVariant === "image" ? (
+        <button
+          type="button"
+          className="group block rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          aria-label={`View details for ${merchItem.name}`}
+        >
+          <div className="flex h-[200px] items-center justify-center overflow-hidden rounded-xl bg-background p-4 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
+            <img src={merchItem.image} alt={merchItem.imageAlt} className="h-full w-full object-contain" loading="lazy" />
+          </div>
+        </button>
+      ) : (
+        <Button variant="outline" className="w-full border-border bg-background text-card-foreground hover:bg-muted">
+          View Details
+        </Button>
+      )}
     </DialogTrigger>
     <DialogContent className="max-h-[85vh] overflow-y-auto border-border bg-card p-0 sm:max-w-3xl">
       <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
@@ -474,7 +482,7 @@ const GearStore = () => {
                     </div>
 
                     <div className="mt-5 grid gap-3">
-                      <MerchDetailDialog merchItem={m} />
+                      <MerchDetailDialog merchItem={m} triggerVariant="button" />
                       <a href={m.url} target="_blank" rel="noopener noreferrer" className="block">
                         <Button variant="subscribe" className="w-full">
                           Shop Now →
