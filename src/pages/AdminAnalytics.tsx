@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format, subDays } from "date-fns";
-import { ArrowLeft, ArrowDownRight, ArrowUpRight, Download, LogOut, TrendingUp } from "lucide-react";
+import { endOfDay, format, startOfDay, subDays } from "date-fns";
+import { ArrowLeft, ArrowDownRight, ArrowUpRight, CalendarIcon, Download, LogOut, TrendingUp, X } from "lucide-react";
 import { CartesianGrid, Line, LineChart, Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -240,6 +242,8 @@ const slugifyFilenamePart = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "all";
 
+const formatAffiliateDateInput = (value?: Date) => (value ? format(value, "MMM d, yyyy") : "Pick a date");
+
 type SparklinePoint = {
   date: string;
   value: number;
@@ -309,6 +313,8 @@ const AdminAnalytics = () => {
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
   const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
   const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
+  const [affiliateEventFromDate, setAffiliateEventFromDate] = useState<Date>();
+  const [affiliateEventToDate, setAffiliateEventToDate] = useState<Date>();
   const [affiliateEventsVisibleCount, setAffiliateEventsVisibleCount] = useState(AFFILIATE_EVENT_PAGE_SIZE);
 
   const { data, isLoading, error } = useQuery({
@@ -377,22 +383,28 @@ const AdminAnalytics = () => {
     const query = affiliateEventSearch.trim().toLowerCase();
     const rows = data?.recentAffiliateClicks ?? [];
     const now = new Date();
-    const threshold =
+    const presetThreshold =
       affiliateEventDateFilter === "all"
         ? null
         : affiliateEventDateFilter === "1d"
           ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
           : subDays(now, Number.parseInt(affiliateEventDateFilter, 10));
+    const fromThreshold = affiliateEventFromDate ? startOfDay(affiliateEventFromDate) : null;
+    const toThreshold = affiliateEventToDate ? endOfDay(affiliateEventToDate) : null;
 
     return rows.filter((item) => {
+      const createdAt = new Date(item.createdAt);
       const placementMatches = affiliateEventPlacementFilter === "all" || item.placement === affiliateEventPlacementFilter;
       const name = item.productName.toLowerCase();
       const slug = item.productSlug.toLowerCase();
       const queryMatches = !query || name.includes(query) || slug.includes(query);
-      const dateMatches = !threshold || new Date(item.createdAt) >= threshold;
+      const presetMatches = !presetThreshold || createdAt >= presetThreshold;
+      const fromMatches = !fromThreshold || createdAt >= fromThreshold;
+      const toMatches = !toThreshold || createdAt <= toThreshold;
+      const dateMatches = presetMatches && fromMatches && toMatches;
       return placementMatches && queryMatches && dateMatches;
     });
-  }, [affiliateEventDateFilter, affiliateEventPlacementFilter, affiliateEventSearch, data]);
+  }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
 
   const visibleRecentAffiliateClicks = useMemo(
     () => filteredRecentAffiliateClicks.slice(0, affiliateEventsVisibleCount),
@@ -423,9 +435,12 @@ const AdminAnalytics = () => {
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     const searchLabel = affiliateEventSearch.trim() ? slugifyFilenamePart(affiliateEventSearch) : "all";
+    const dateLabel = affiliateEventFromDate || affiliateEventToDate
+      ? `${affiliateEventFromDate ? format(affiliateEventFromDate, "yyyy-MM-dd") : "start"}-${affiliateEventToDate ? format(affiliateEventToDate, "yyyy-MM-dd") : "end"}`
+      : affiliateEventDateFilter;
 
     link.href = downloadUrl;
-    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlacementFilter}-${searchLabel}.csv`;
+    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlacementFilter}-${dateLabel}-${searchLabel}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1136,11 +1151,81 @@ const AdminAnalytics = () => {
                       key={range}
                       variant={affiliateEventDateFilter === range ? "hero" : "outline"}
                       size="sm"
-                      onClick={() => setAffiliateEventDateFilter(range)}
+                      onClick={() => {
+                        setAffiliateEventDateFilter(range);
+                        setAffiliateEventFromDate(undefined);
+                        setAffiliateEventToDate(undefined);
+                      }}
                     >
                       {affiliateEventDateFilterLabels[range]}
                     </Button>
                   ))}
+                </div>
+
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left font-normal sm:w-[220px]">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <span>{affiliateEventFromDate ? formatAffiliateDateInput(affiliateEventFromDate) : "From date"}</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={affiliateEventFromDate}
+                          onSelect={(date) => {
+                            setAffiliateEventFromDate(date);
+                            setAffiliateEventDateFilter("all");
+                            if (affiliateEventToDate && date && affiliateEventToDate < date) {
+                              setAffiliateEventToDate(date);
+                            }
+                          }}
+                          disabled={(date) => affiliateEventToDate ? date > affiliateEventToDate : false}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left font-normal sm:w-[220px]">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          <span>{affiliateEventToDate ? formatAffiliateDateInput(affiliateEventToDate) : "To date"}</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={affiliateEventToDate}
+                          onSelect={(date) => {
+                            setAffiliateEventToDate(date);
+                            setAffiliateEventDateFilter("all");
+                            if (affiliateEventFromDate && date && affiliateEventFromDate > date) {
+                              setAffiliateEventFromDate(date);
+                            }
+                          }}
+                          disabled={(date) => affiliateEventFromDate ? date < affiliateEventFromDate : false}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setAffiliateEventFromDate(undefined);
+                      setAffiliateEventToDate(undefined);
+                    }}
+                    disabled={!affiliateEventFromDate && !affiliateEventToDate}
+                    className="justify-start text-muted-foreground lg:justify-center"
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Clear custom dates
+                  </Button>
                 </div>
 
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -1175,6 +1260,11 @@ const AdminAnalytics = () => {
                     <span>
                       Showing {visibleRecentAffiliateClicks.length.toLocaleString()} of {filteredRecentAffiliateClicks.length.toLocaleString()} filtered events
                     </span>
+                  {(affiliateEventFromDate || affiliateEventToDate) ? (
+                    <span className="text-xs sm:text-sm">
+                      {affiliateEventFromDate ? format(affiliateEventFromDate, "MMM d, yyyy") : "Start"} → {affiliateEventToDate ? format(affiliateEventToDate, "MMM d, yyyy") : "Now"}
+                    </span>
+                  ) : null}
                   </div>
                   <div className="rounded-2xl border border-border bg-background/70">
                   <Table>
