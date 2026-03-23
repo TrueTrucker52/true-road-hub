@@ -1,11 +1,33 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import ReferralIFTAButton from "@/components/ReferralIFTAButton";
 import { Button } from "@/components/ui/button";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
+import { useCallback } from "react";
 
 const Footer = () => {
   const referralCode = getReferralDiscountCode();
   const referralPlatform = getReferralPlatformLabel();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToSection = useCallback((hash: string) => {
+    const id = hash.replace("#", "");
+    const scrollTo = () => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    };
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(scrollTo, 300);
+    } else {
+      scrollTo();
+    }
+  }, [location.pathname, navigate]);
+
+  const handleHashClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    scrollToSection(href);
+  };
 
   return (
     <footer className="section-dark pt-16 pb-8">
@@ -23,10 +45,10 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">Quick Links</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><a href="#videos" className="hover:text-primary-foreground transition-colors">Videos</a></li>
-              <li><a href="#gear" className="hover:text-primary-foreground transition-colors">Gear Store</a></li>
+              <li><a href="#videos" onClick={(e) => handleHashClick(e, "#videos")} className="hover:text-primary-foreground transition-colors cursor-pointer">Videos</a></li>
+              <li><a href="#gear" onClick={(e) => handleHashClick(e, "#gear")} className="hover:text-primary-foreground transition-colors cursor-pointer">Gear Store</a></li>
               <li><ReferralIFTAButton placement="footer" className="hover:text-primary-foreground transition-colors">IFTA App</ReferralIFTAButton></li>
-              <li><a href="#about" className="hover:text-primary-foreground transition-colors">About</a></li>
+              <li><a href="#about" onClick={(e) => handleHashClick(e, "#about")} className="hover:text-primary-foreground transition-colors cursor-pointer">About</a></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
             </ul>
           </div>
