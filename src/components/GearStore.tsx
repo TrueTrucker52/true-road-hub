@@ -676,9 +676,16 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
             ))}
           </div>
           {activeVariant.trending && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
-              ★ Best Seller
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
+                ★ Best Seller
+              </span>
+              {activeVariant.soldThisWeek && (
+                <span className="inline-flex items-center gap-1 rounded-md bg-brand-orange/10 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
+                  🔥 {activeVariant.soldThisWeek} sold this week
+                </span>
+              )}
+            </div>
           )}
         </div>
 
