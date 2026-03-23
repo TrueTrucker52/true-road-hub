@@ -77,6 +77,10 @@ type AnalyticsResponse = {
       clicks: number;
       shareOfSectionClicks: number;
     }>;
+    trend: Array<{
+      date: string;
+      value: number;
+    }>;
   }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
@@ -1041,6 +1045,16 @@ const AdminAnalytics = () => {
                                 {positive ? "+" : ""}{item.delta.toLocaleString()}
                               </p>
                               <p className="mt-1 text-xs text-muted-foreground">{positive ? "+" : ""}{(item.deltaPercent * 100).toFixed(1)}% vs previous period</p>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 rounded-xl border border-border bg-background/80 p-4">
+                            <div className="flex items-end justify-between gap-3">
+                              <div>
+                                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Trend</p>
+                                <p className="mt-1 text-sm text-muted-foreground">Daily outbound click momentum for this recommendation block.</p>
+                              </div>
+                              <SummarySparkline data={item.trend} className="text-brand-red" />
                             </div>
                           </div>
 
