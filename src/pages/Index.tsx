@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import LatestVideos from "@/components/LatestVideos";
 import GearStore from "@/components/GearStore";
 import GearGeorgeRecommends from "@/components/GearGeorgeRecommends";
+import RoadsideEssentials from "@/components/RoadsideEssentials";
 import BrandDeals from "@/components/BrandDeals";
 import AboutGeorge from "@/components/AboutGeorge";
 import Newsletter from "@/components/Newsletter";
@@ -21,6 +22,7 @@ const Index = () => {
         <LatestVideos />
         <GearStore />
         <GearGeorgeRecommends />
+        <RoadsideEssentials />
         <BrandDeals />
         <AboutGeorge />
         <Newsletter />
