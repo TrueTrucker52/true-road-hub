@@ -15,6 +15,31 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToSection = useCallback((hash: string) => {
+    const id = hash.replace("#", "");
+    const scrollTo = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(scrollTo, 300);
+    } else {
+      scrollTo();
+    }
+  }, [location.pathname, navigate]);
+
+  const handleHashClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    setOpen(false);
+    scrollToSection(href);
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-brand-dark border-b border-primary/20 backdrop-blur-sm">
@@ -43,7 +68,7 @@ const Navbar = () => {
                 {link.label}
               </a>
             ) : (
-              <a key={link.label} href={link.href} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              <a key={link.label} href={link.href} onClick={(e) => handleHashClick(e, link.href)} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors cursor-pointer">
                 {link.label}
               </a>
             )
@@ -76,7 +101,7 @@ const Navbar = () => {
                 {link.label}
               </a>
             ) : (
-              <a key={link.label} href={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
+              <a key={link.label} href={link.href} onClick={(e) => handleHashClick(e, link.href)} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2 cursor-pointer">
                 {link.label}
               </a>
             )
