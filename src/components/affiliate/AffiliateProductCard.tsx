@@ -51,14 +51,13 @@ const AffiliateProductCard = ({
 
   return (
     <article className="rounded-[1.75rem] border border-primary/15 bg-background/5 p-5 shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)] backdrop-blur-sm animate-reveal">
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/15 bg-brand-dark-surface aspect-[4/3]">
+      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[1.5rem] border border-primary/15 bg-white p-4">
         <img
           src={product.image}
           alt={product.imageAlt}
           loading="lazy"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-secondary/80 via-secondary/10 to-transparent" />
       </div>
 
       <div className="mt-5 space-y-4">

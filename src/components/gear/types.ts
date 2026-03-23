@@ -3,13 +3,13 @@ export type Product = {
   bestFor: string;
   slug: string;
   comparisonBadge?: string;
-  description: [string, string];
+  description: string[];
   image: string;
   imageAlt: string;
   name: string;
   priceRange: string;
-  pros: [string, string, string];
-  specs: [string, string, string];
+  pros: string[];
+  specs: string[];
 };
 
 export type Category = {
