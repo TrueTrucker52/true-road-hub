@@ -292,6 +292,11 @@ Deno.serve(async (req) => {
       categoryTitle: string;
       clicks: number;
     }>>();
+    const affiliateSectionTrendByDate = new Map<string, Map<string, {
+      sectionId: string;
+      sectionTitle: string;
+      countsByDate: Map<string, number>;
+    }>>();
     const previousAffiliateSectionTotals = new Map<string, number>();
     const recentAffiliateClicks: Array<{
       createdAt: string;
@@ -409,6 +414,21 @@ Deno.serve(async (req) => {
       sectionProduct.clicks += 1;
       sectionProducts.set(row.product_slug, sectionProduct);
       affiliateSectionProductTotals.set(row.section_id, sectionProducts);
+
+      const dateKey = row.created_at.slice(0, 10);
+      const trendBucket = affiliateSectionTrendByDate.get(row.section_id) ?? new Map<string, {
+        sectionId: string;
+        sectionTitle: string;
+        countsByDate: Map<string, number>;
+      }>();
+      const trendEntry = trendBucket.get(row.section_id) ?? {
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        countsByDate: new Map<string, number>(),
+      };
+      trendEntry.countsByDate.set(dateKey, (trendEntry.countsByDate.get(dateKey) ?? 0) + 1);
+      trendBucket.set(row.section_id, trendEntry);
+      affiliateSectionTrendByDate.set(row.section_id, trendBucket);
 
       affiliateClickTotalsByPlatform[platform] += 1;
       affiliatePlacementTotals[placement] += 1;
@@ -620,6 +640,17 @@ Deno.serve(async (req) => {
               ...product,
               shareOfSectionClicks: item.clicks === 0 ? 0 : product.clicks / item.clicks,
             }));
+          const trendSource = affiliateSectionTrendByDate.get(item.sectionId)?.get(item.sectionId);
+          const trend = Array.from({ length: days }, (_, index) => {
+            const current = new Date(startDate);
+            current.setUTCDate(startDate.getUTCDate() + index);
+            const key = current.toISOString().slice(0, 10);
+
+            return {
+              date: new Date(`${key}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+              value: trendSource?.countsByDate.get(key) ?? 0,
+            };
+          });
 
           return {
             ...item,
@@ -629,6 +660,7 @@ Deno.serve(async (req) => {
             modalConversionRate: item.clicks === 0 ? 0 : item.detailDialogClicks / item.clicks,
             shareOfClicks: (affiliateClickRows ?? []).length === 0 ? 0 : item.clicks / (affiliateClickRows ?? []).length,
             topProducts,
+            trend,
           };
         })
         .sort((a, b) => b.clicks - a.clicks || b.modalConversionRate - a.modalConversionRate || a.sectionTitle.localeCompare(b.sectionTitle)),
