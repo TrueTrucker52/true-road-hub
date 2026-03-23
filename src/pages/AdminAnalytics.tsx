@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { ArrowLeft, ArrowDownRight, ArrowUpRight, Download, LogOut, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, Area, AreaChart, XAxis, YAxis } from "recharts";
 import { Link } from "react-router-dom";
@@ -21,6 +21,7 @@ type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Ove
 type SponsorSourcePlatform = Platform | "direct";
 type AffiliateSourcePlatform = Platform | "direct";
 type AffiliatePlacement = "card" | "detail_dialog";
+type AffiliateEventDateFilter = "1d" | "7d" | "30d" | "all";
 const budgetTierValueOrder: BudgetTier[] = ["Over $10,000", "$5,000 - $10,000", "$1,000 - $5,000", "Under $1,000"];
 const budgetTierWeights: Record<BudgetTier, number> = {
   "Under $1,000": 1,
@@ -173,6 +174,13 @@ const affiliatePlacementLabels: Record<AffiliatePlacement, string> = {
   detail_dialog: "Modal CTA",
 };
 
+const affiliateEventDateFilterLabels: Record<AffiliateEventDateFilter, string> = {
+  "1d": "Last 24h",
+  "7d": "Last 7 days",
+  "30d": "Last 30 days",
+  all: "All recent",
+};
+
 const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
   general: "General contact",
   brand_deal: "Brand deal inquiries",
@@ -298,6 +306,7 @@ const AdminAnalytics = () => {
   const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
   const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
+  const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
@@ -360,15 +369,23 @@ const AdminAnalytics = () => {
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
     const rows = data?.recentAffiliateClicks ?? [];
+    const now = new Date();
+    const threshold =
+      affiliateEventDateFilter === "all"
+        ? null
+        : affiliateEventDateFilter === "1d"
+          ? new Date(now.getTime() - 24 * 60 * 60 * 1000)
+          : subDays(now, Number.parseInt(affiliateEventDateFilter, 10));
 
     return rows.filter((item) => {
       const placementMatches = affiliateEventPlacementFilter === "all" || item.placement === affiliateEventPlacementFilter;
       const name = item.productName.toLowerCase();
       const slug = item.productSlug.toLowerCase();
       const queryMatches = !query || name.includes(query) || slug.includes(query);
-      return placementMatches && queryMatches;
+      const dateMatches = !threshold || new Date(item.createdAt) >= threshold;
+      return placementMatches && queryMatches && dateMatches;
     });
-  }, [affiliateEventPlacementFilter, affiliateEventSearch, data]);
+  }, [affiliateEventDateFilter, affiliateEventPlacementFilter, affiliateEventSearch, data]);
 
   const exportAffiliateEventsCsv = () => {
     if (!filteredRecentAffiliateClicks.length) return;
@@ -1099,6 +1116,19 @@ const AdminAnalytics = () => {
                   ))}
                 </div>
 
+                <div className="flex flex-wrap gap-3">
+                  {(["1d", "7d", "30d", "all"] as const).map((range) => (
+                    <Button
+                      key={range}
+                      variant={affiliateEventDateFilter === range ? "hero" : "outline"}
+                      size="sm"
+                      onClick={() => setAffiliateEventDateFilter(range)}
+                    >
+                      {affiliateEventDateFilterLabels[range]}
+                    </Button>
+                  ))}
+                </div>
+
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div className="max-w-md flex-1">
                     <Input
@@ -1123,7 +1153,7 @@ const AdminAnalytics = () => {
 
               {!filteredRecentAffiliateClicks.length ? (
                 <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
-                  No affiliate click events match {affiliateEventSearch.trim() ? `“${affiliateEventSearch.trim()}”` : activeAffiliateProductTitle.toLowerCase()} in this section yet.
+                  No affiliate click events match {affiliateEventSearch.trim() ? `“${affiliateEventSearch.trim()}”` : activeAffiliateProductTitle.toLowerCase()} for {affiliateEventDateFilterLabels[affiliateEventDateFilter].toLowerCase()} in this section yet.
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-background/70">
