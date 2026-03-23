@@ -1296,26 +1296,29 @@ const AdminAnalytics = () => {
                                 const isSourceActive = affiliateSectionFilter === item.sectionId && affiliateEventPlatformFilter === source.platform && affiliateProductFilter === "all";
 
                                 return (
-                                  <button
+                                  <div
                                     key={`${item.sectionId}-${source.platform}`}
-                                    type="button"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleSectionSourceDrilldown(item.sectionId, source.platform);
-                                    }}
-                                    className={`rounded-xl border px-3 py-3 text-left transition-colors hover:border-brand-red/40 hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isSourceActive ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
+                                    className={`rounded-xl border px-3 py-3 ${isSourceActive ? "border-brand-red/40 bg-background/90" : "border-border bg-muted/50"}`}
                                   >
                                     <div className="flex items-center justify-between gap-3">
                                       <div>
                                         <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{affiliateSourcePlatformLabels[source.platform]}</p>
                                         <p className="mt-2 text-sm text-foreground">{(source.shareOfSectionClicks * 100).toFixed(1)}% of this block</p>
                                       </div>
-                                      <div className="flex items-center gap-3">
+                                      <button
+                                        type="button"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleSectionSourceDrilldown(item.sectionId, source.platform);
+                                        }}
+                                        aria-label={`Filter recent affiliate events to ${affiliateSourcePlatformLabels[source.platform]} traffic in ${item.sectionTitle}`}
+                                        className={`inline-flex items-center gap-3 rounded-lg px-2 py-1 text-left transition-colors hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isSourceActive ? "bg-background" : "bg-transparent"}`}
+                                      >
                                         <SummarySparkline data={source.trend} className="h-8 w-20 text-brand-red" />
                                         <p className="text-sm font-semibold text-brand-red">{source.clicks.toLocaleString()}</p>
-                                      </div>
+                                      </button>
                                     </div>
-                                  </button>
+                                  </div>
                                 );
                               })}
                             </div>
