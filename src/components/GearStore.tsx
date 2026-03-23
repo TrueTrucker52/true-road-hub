@@ -63,7 +63,7 @@ const merch = [
     badge: "Merch Favorite",
     url: merchStoreUrl,
     variants: [
-      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true },
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true, soldThisWeek: 127 },
       { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
       { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
     ] as ColorVariant[],
