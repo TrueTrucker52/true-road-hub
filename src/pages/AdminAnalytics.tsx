@@ -17,6 +17,7 @@ type MediaKitPlacement = "brand_deals";
 type ContactSubmissionType = "general" | "brand_deal";
 type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 type SponsorSourcePlatform = Platform | "direct";
+type AffiliateSourcePlatform = Platform | "direct";
 const budgetTierValueOrder: BudgetTier[] = ["Over $10,000", "$5,000 - $10,000", "$1,000 - $5,000", "Under $1,000"];
 const budgetTierWeights: Record<BudgetTier, number> = {
   "Under $1,000": 1,
@@ -30,6 +31,7 @@ type AnalyticsResponse = {
   comparePrevious: boolean;
   totalImpressions: number;
   totalClicks: number;
+  totalAffiliateProductClicks: number;
   totalMediaKitDownloads: number;
   totalContactSubmissions: number;
   totalBrandDealSubmissions: number;
@@ -42,6 +44,18 @@ type AnalyticsResponse = {
   totals: Array<{ platform: Platform; impressions: number; clicks: number; conversionRate: number }>;
   mediaKitTotals: Array<{ platform: Platform | "direct"; downloads: number }>;
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
+  affiliatePlatformTotals: Array<{ platform: AffiliateSourcePlatform; clicks: number }>;
+  affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
+  affiliateProductTotals: Array<{
+    productSlug: string;
+    productName: string;
+    categoryId: string;
+    categoryTitle: string;
+    clicks: number;
+    previousClicks: number;
+    delta: number;
+    deltaPercent: number;
+  }>;
   contactSubmissionTotals: Array<{ submissionType: ContactSubmissionType; submissions: number }>;
   budgetTierTotals: Array<{ budgetTier: BudgetTier; inquiries: number }>;
   sponsorConversionBySource: Array<{
@@ -277,6 +291,10 @@ const AdminAnalytics = () => {
     return [...data.mediaKitPlacementTotals].sort((a, b) => b.downloads - a.downloads)[0] ?? null;
   }, [data]);
 
+  const topAffiliateProduct = useMemo(() => data?.affiliateProductTotals[0] ?? null, [data]);
+
+  const topAffiliateCategory = useMemo(() => data?.affiliateCategoryTotals[0] ?? null, [data]);
+
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
     [data],
@@ -442,6 +460,14 @@ const AdminAnalytics = () => {
               <CardDescription>Best conversion rate</CardDescription>
               <CardTitle className="font-display text-4xl">
                 {bestConversionPlatform ? `${(bestConversionPlatform.conversionRate * 100).toFixed(1)}%` : "—"}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card className="border-primary/15 shadow-lg shadow-primary/5">
+            <CardHeader>
+              <CardDescription>Gear affiliate clicks</CardDescription>
+              <CardTitle className="font-display text-4xl text-brand-red">
+                {data?.totalAffiliateProductClicks.toLocaleString() ?? "—"}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -721,6 +747,106 @@ const AdminAnalytics = () => {
         </section>
 
         <section className="mt-8 grid gap-8 xl:grid-cols-[1.5fr_0.9fr]">
+          <Card className="border-primary/15 shadow-xl shadow-primary/5 xl:col-span-2">
+            <CardHeader>
+              <CardTitle className="font-display text-3xl">Gear affiliate product interest</CardTitle>
+              <CardDescription>See which gear recommendations generate the most outbound Amazon clicks.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 lg:grid-cols-[1.5fr_0.8fr_0.8fr]">
+                <div className="rounded-2xl border border-border bg-background/70 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top product</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">
+                        {topAffiliateProduct ? topAffiliateProduct.productName : "No data"}
+                      </p>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {topAffiliateProduct ? topAffiliateProduct.categoryTitle : "No outbound affiliate clicks have been tracked yet."}
+                      </p>
+                    </div>
+                    {topAffiliateProduct ? (
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {topAffiliateProduct.clicks.toLocaleString()} clicks
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {(data?.affiliateProductTotals ?? []).slice(0, 6).map((item) => {
+                      const positive = item.delta >= 0;
+
+                      return (
+                        <div key={item.productSlug} className="rounded-2xl border border-border bg-muted/50 p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">{item.categoryTitle}</p>
+                              <p className="mt-2 text-base font-semibold leading-6 text-foreground">{item.productName}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-display text-3xl text-brand-red">{item.clicks.toLocaleString()}</p>
+                              {comparePrevious ? (
+                                <p className={`mt-1 text-xs font-medium ${positive ? "text-brand-red" : "text-muted-foreground"}`}>
+                                  {positive ? "+" : ""}
+                                  {item.delta.toLocaleString()} vs prev ({positive ? "+" : ""}{(item.deltaPercent * 100).toFixed(1)}%)
+                                </p>
+                              ) : (
+                                <p className="mt-1 text-xs text-muted-foreground">outbound clicks</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-background/70 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Top category</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">
+                        {topAffiliateCategory ? topAffiliateCategory.categoryTitle : "No data"}
+                      </p>
+                    </div>
+                    {topAffiliateCategory ? (
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {topAffiliateCategory.clicks.toLocaleString()} clicks
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {(data?.affiliateCategoryTotals ?? []).map((item) => (
+                      <div key={item.categoryId} className="rounded-2xl border border-border bg-muted/50 p-4">
+                        <p className="text-sm font-semibold text-foreground">{item.categoryTitle}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          <span className="font-semibold text-brand-red">{item.clicks.toLocaleString()}</span> outbound clicks
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-background/70 p-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Affiliate source mix</p>
+                  <p className="mt-2 text-sm text-muted-foreground">Shows whether gear interest comes from referral traffic or direct visitors.</p>
+
+                  <div className="mt-5 space-y-3">
+                    {(data?.affiliatePlatformTotals ?? []).map((item) => (
+                      <div key={item.platform} className="rounded-2xl border border-border bg-muted/50 p-4">
+                        <p className="text-sm font-semibold text-foreground">{sponsorPlatformLabels[item.platform]}</p>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          <span className="font-semibold text-brand-red">{item.clicks.toLocaleString()}</span> clicks
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="border-primary/15 shadow-xl shadow-primary/5">
             <CardHeader>
               <CardTitle className="font-display text-3xl">Media kit downloads over time</CardTitle>

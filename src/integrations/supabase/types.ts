@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_product_clicks: {
+        Row: {
+          category_id: string
+          category_title: string
+          created_at: string
+          id: string
+          page_path: string
+          placement: string
+          platform: string
+          product_name: string
+          product_slug: string
+          referrer: string | null
+          session_id: string | null
+          target_url: string
+          user_agent: string | null
+        }
+        Insert: {
+          category_id: string
+          category_title: string
+          created_at?: string
+          id?: string
+          page_path: string
+          placement?: string
+          platform?: string
+          product_name: string
+          product_slug: string
+          referrer?: string | null
+          session_id?: string | null
+          target_url: string
+          user_agent?: string | null
+        }
+        Update: {
+          category_id?: string
+          category_title?: string
+          created_at?: string
+          id?: string
+          page_path?: string
+          placement?: string
+          platform?: string
+          product_name?: string
+          product_slug?: string
+          referrer?: string | null
+          session_id?: string | null
+          target_url?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       contact_form_submissions: {
         Row: {
           budget_tier: string | null

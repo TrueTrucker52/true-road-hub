@@ -29,7 +29,14 @@ const AffiliateProductSection = ({
 
     <div className="grid gap-5 xl:grid-cols-2">
       {category.products.map((product) => (
-        <AffiliateProductCard key={product.name} badgeLabel={badgeLabel} ctaLabel={ctaLabel} product={product} />
+        <AffiliateProductCard
+          key={product.slug}
+          badgeLabel={badgeLabel}
+          categoryId={category.id}
+          categoryTitle={category.title}
+          ctaLabel={ctaLabel}
+          product={product}
+        />
       ))}
     </div>
   </section>

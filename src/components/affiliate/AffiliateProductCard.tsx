@@ -1,23 +1,45 @@
+import { MouseEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { affiliatePlaceholderUrl } from "@/components/gear/gearData";
 import AffiliateProductDetailDialog from "@/components/affiliate/AffiliateProductDetailDialog";
 import type { Product } from "@/components/gear/types";
+import { trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
 
 type AffiliateProductCardProps = {
   badgeLabel?: string;
+  categoryId: string;
+  categoryTitle: string;
   ctaLabel?: string;
   product: Product;
 };
 
 const AffiliateProductCard = ({
   badgeLabel = "George recommends",
+  categoryId,
+  categoryTitle,
   ctaLabel = "Get Best Price on Amazon",
   product,
 }: AffiliateProductCardProps) => {
   const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
   const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
+
+  const handleAffiliateClick = async (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (isPlaceholderLink) return;
+
+    const targetUrl = await trackAffiliateProductClick({
+      affiliateUrl,
+      categoryId,
+      categoryTitle,
+      placement: "card",
+      productName: product.name,
+      productSlug: product.slug,
+    });
+
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <article className="rounded-[1.75rem] border border-primary/15 bg-background/5 p-5 shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)] backdrop-blur-sm animate-reveal">
@@ -53,11 +75,17 @@ const AffiliateProductCard = ({
           ))}
         </div>
 
-        <AffiliateProductDetailDialog badgeLabel={badgeLabel} ctaLabel={ctaLabel} product={product} />
+        <AffiliateProductDetailDialog
+          badgeLabel={badgeLabel}
+          categoryId={categoryId}
+          categoryTitle={categoryTitle}
+          ctaLabel={ctaLabel}
+          product={product}
+        />
 
         <a
           href={affiliateUrl}
-          onClick={isPlaceholderLink ? (event) => event.preventDefault() : undefined}
+          onClick={handleAffiliateClick}
           aria-label={`${ctaLabel} for ${product.name}`}
           rel={isPlaceholderLink ? undefined : "noopener noreferrer"}
           target={isPlaceholderLink ? undefined : "_blank"}
