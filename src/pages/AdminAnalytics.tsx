@@ -101,6 +101,7 @@ type AnalyticsResponse = {
   }>;
   recentAffiliateClicks: Array<{
     createdAt: string;
+    platform: AffiliateSourcePlatform;
     placement: AffiliatePlacement;
     productName: string;
     productSlug: string;
@@ -361,6 +362,7 @@ const AdminAnalytics = () => {
   const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
   const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
   const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
+  const [affiliateEventPlatformFilter, setAffiliateEventPlatformFilter] = useState<AffiliateSourcePlatform | "all">("all");
   const [affiliateEventPlacementFilter, setAffiliateEventPlacementFilter] = useState<AffiliatePlacement | "all">("all");
   const [affiliateEventDateFilter, setAffiliateEventDateFilter] = useState<AffiliateEventDateFilter>("7d");
   const [affiliateEventFromDate, setAffiliateEventFromDate] = useState<Date>();
@@ -386,7 +388,7 @@ const AdminAnalytics = () => {
 
   useEffect(() => {
     setAffiliateEventPage(1);
-  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventFromDate, affiliateEventToDate, affiliateEventSearch]);
+  }, [affiliateSectionFilter, affiliateProductFilter, affiliateEventPlatformFilter, affiliateEventPlacementFilter, affiliateEventDateFilter, affiliateEventFromDate, affiliateEventToDate, affiliateEventSearch]);
 
   useEffect(() => {
     if (affiliateProductFilter === "all") return;
@@ -462,7 +464,18 @@ const AdminAnalytics = () => {
   const handleSectionPlacementDrilldown = (sectionId: string, placement: AffiliatePlacement) => {
     setAffiliateSectionFilter(sectionId);
     setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter("all");
     setAffiliateEventPlacementFilter(placement);
+    setAffiliateEventSearch("");
+    setAffiliateEventPage(1);
+    scrollToAffiliateEvents();
+  };
+
+  const handleSectionSourceDrilldown = (sectionId: string, platform: AffiliateSourcePlatform) => {
+    setAffiliateSectionFilter(sectionId);
+    setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter(platform);
+    setAffiliateEventPlacementFilter("all");
     setAffiliateEventSearch("");
     setAffiliateEventPage(1);
     scrollToAffiliateEvents();
@@ -471,12 +484,13 @@ const AdminAnalytics = () => {
   const resetAffiliateEventDrilldownFilters = () => {
     setAffiliateSectionFilter("all");
     setAffiliateProductFilter("all");
+    setAffiliateEventPlatformFilter("all");
     setAffiliateEventPlacementFilter("all");
     setAffiliateEventPage(1);
   };
 
   const hasActiveAffiliateEventDrilldownFilters =
-    affiliateSectionFilter !== "all" || affiliateProductFilter !== "all" || affiliateEventPlacementFilter !== "all";
+    affiliateSectionFilter !== "all" || affiliateProductFilter !== "all" || affiliateEventPlatformFilter !== "all" || affiliateEventPlacementFilter !== "all";
 
   const filteredRecentAffiliateClicks = useMemo(() => {
     const query = affiliateEventSearch.trim().toLowerCase();
@@ -493,6 +507,7 @@ const AdminAnalytics = () => {
 
     return rows.filter((item) => {
       const createdAt = new Date(item.createdAt);
+      const platformMatches = affiliateEventPlatformFilter === "all" || item.platform === affiliateEventPlatformFilter;
       const placementMatches = affiliateEventPlacementFilter === "all" || item.placement === affiliateEventPlacementFilter;
       const name = item.productName.toLowerCase();
       const slug = item.productSlug.toLowerCase();
@@ -501,9 +516,9 @@ const AdminAnalytics = () => {
       const fromMatches = !fromThreshold || createdAt >= fromThreshold;
       const toMatches = !toThreshold || createdAt <= toThreshold;
       const dateMatches = presetMatches && fromMatches && toMatches;
-      return placementMatches && queryMatches && dateMatches;
+      return platformMatches && placementMatches && queryMatches && dateMatches;
     });
-  }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
+  }, [affiliateEventDateFilter, affiliateEventFromDate, affiliateEventPlatformFilter, affiliateEventPlacementFilter, affiliateEventSearch, affiliateEventToDate, data]);
 
   const affiliateEventTotalPages = Math.max(1, Math.ceil(filteredRecentAffiliateClicks.length / affiliateEventPageSize));
 
@@ -531,11 +546,12 @@ const AdminAnalytics = () => {
   const exportAffiliateEventsCsv = () => {
     if (!paginatedRecentAffiliateClicks.length) return;
 
-    const headers = ["clicked_at", "section_title", "section_id", "placement", "product_name", "product_slug", "target_url"];
+    const headers = ["clicked_at", "section_title", "section_id", "platform", "placement", "product_name", "product_slug", "target_url"];
     const rows = paginatedRecentAffiliateClicks.map((item) => [
       item.createdAt,
       item.sectionTitle,
       item.sectionId,
+      affiliateSourcePlatformLabels[item.platform],
       affiliatePlacementLabels[item.placement],
       item.productName,
       item.productSlug,
@@ -555,7 +571,7 @@ const AdminAnalytics = () => {
       : affiliateEventDateFilter;
 
     link.href = downloadUrl;
-    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlacementFilter}-${dateLabel}-${searchLabel}.csv`;
+    link.download = `affiliate-events-${slugifyFilenamePart(activeAffiliateSectionTitle)}-${slugifyFilenamePart(activeAffiliateProductTitle)}-${affiliateEventPlatformFilter}-${affiliateEventPlacementFilter}-${dateLabel}-${searchLabel}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
