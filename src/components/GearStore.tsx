@@ -40,9 +40,10 @@ const merchStoreUrl = "https://truetrucker.printify.me";
 
 type ColorVariant = {
   label: string;
-  color: string; // tailwind-safe HSL token or hex for the swatch
+  color: string;
   image: string;
   imageAlt: string;
+  trending?: boolean;
 };
 
 const merch = [
