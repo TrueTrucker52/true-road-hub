@@ -286,6 +286,7 @@ Deno.serve(async (req) => {
       cardClicks: number;
       detailDialogClicks: number;
     }>();
+    const affiliateSectionPlatformTotals = new Map<string, Record<AffiliatePlatform, number>>();
     const affiliateSectionProductTotals = new Map<string, Map<string, {
       productSlug: string;
       productName: string;
@@ -404,6 +405,16 @@ Deno.serve(async (req) => {
         sectionComparison.cardClicks += 1;
       }
       affiliateSectionComparisonTotals.set(row.section_id, sectionComparison);
+
+      const sectionPlatformTotals = affiliateSectionPlatformTotals.get(row.section_id) ?? {
+        youtube: 0,
+        tiktok: 0,
+        facebook: 0,
+        instagram: 0,
+        direct: 0,
+      };
+      sectionPlatformTotals[platform] += 1;
+      affiliateSectionPlatformTotals.set(row.section_id, sectionPlatformTotals);
 
       const sectionProducts = affiliateSectionProductTotals.get(row.section_id) ?? new Map<string, {
         productSlug: string;
@@ -671,6 +682,13 @@ Deno.serve(async (req) => {
             };
           });
           const placementTrendSource = affiliateSectionPlacementTrendByDate.get(item.sectionId);
+          const sourceBreakdown = affiliatePlatforms
+            .map((platform) => ({
+              platform,
+              clicks: affiliateSectionPlatformTotals.get(item.sectionId)?.[platform] ?? 0,
+              shareOfSectionClicks: item.clicks === 0 ? 0 : (affiliateSectionPlatformTotals.get(item.sectionId)?.[platform] ?? 0) / item.clicks,
+            }))
+            .sort((a, b) => b.clicks - a.clicks || a.platform.localeCompare(b.platform));
           const cardTrend = Array.from({ length: days }, (_, index) => {
             const current = new Date(startDate);
             current.setUTCDate(startDate.getUTCDate() + index);
@@ -701,6 +719,7 @@ Deno.serve(async (req) => {
             shareOfClicks: (affiliateClickRows ?? []).length === 0 ? 0 : item.clicks / (affiliateClickRows ?? []).length,
             topProducts,
             trend,
+            sourceBreakdown,
             cardTrend,
             detailDialogTrend,
           };
