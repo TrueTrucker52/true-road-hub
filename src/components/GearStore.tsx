@@ -6,6 +6,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Eye,
   ShoppingBag,
   Shirt,
   Smartphone,
