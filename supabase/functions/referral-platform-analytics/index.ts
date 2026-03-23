@@ -11,12 +11,14 @@ const placements = ["hero", "navbar", "gear", "footer", "unknown"] as const;
 const mediaKitPlacements = ["brand_deals"] as const;
 const budgetTiers = ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "Over $10,000"] as const;
 const affiliatePlatforms = ["youtube", "tiktok", "facebook", "instagram", "direct"] as const;
+const affiliatePlacements = ["card", "detail_dialog"] as const;
 
 type Platform = (typeof platforms)[number];
 type Placement = (typeof placements)[number];
 type MediaKitPlacement = (typeof mediaKitPlacements)[number];
 type BudgetTier = (typeof budgetTiers)[number];
 type AffiliatePlatform = (typeof affiliatePlatforms)[number];
+type AffiliatePlacement = (typeof affiliatePlacements)[number];
 
 type DailyCounts = Record<Platform, number>;
 type PlacementDailyCounts = Record<Placement, number>;
@@ -132,7 +134,7 @@ Deno.serve(async (req) => {
 
     const { data: affiliateClickRows, error: affiliateClicksError } = await adminClient
       .from("affiliate_product_clicks")
-      .select("product_slug, product_name, category_id, category_title, section_id, section_title, platform, created_at")
+      .select("product_slug, product_name, category_id, category_title, section_id, section_title, platform, placement, created_at")
       .gte("created_at", startDate.toISOString())
       .order("created_at", { ascending: true });
 
@@ -253,6 +255,9 @@ Deno.serve(async (req) => {
     const affiliateClickTotalsByPlatform = Object.fromEntries(
       affiliatePlatforms.map((platform) => [platform, 0]),
     ) as Record<AffiliatePlatform, number>;
+    const affiliatePlacementTotals = Object.fromEntries(
+      affiliatePlacements.map((placement) => [placement, 0]),
+    ) as Record<AffiliatePlacement, number>;
     const affiliateProductTotals = new Map<string, {
       productSlug: string;
       productName: string;
@@ -344,8 +349,12 @@ Deno.serve(async (req) => {
       const platform = affiliatePlatforms.includes(row.platform as AffiliatePlatform)
         ? (row.platform as AffiliatePlatform)
         : "direct";
+      const placement = affiliatePlacements.includes(row.placement as AffiliatePlacement)
+        ? (row.placement as AffiliatePlacement)
+        : "card";
 
       affiliateClickTotalsByPlatform[platform] += 1;
+      affiliatePlacementTotals[placement] += 1;
 
       const product = affiliateProductTotals.get(row.product_slug) ?? {
         productSlug: row.product_slug,
@@ -519,6 +528,10 @@ Deno.serve(async (req) => {
       affiliatePlatformTotals: affiliatePlatforms.map((platform) => ({
         platform,
         clicks: affiliateClickTotalsByPlatform[platform],
+      })),
+      affiliatePlacementTotals: affiliatePlacements.map((placement) => ({
+        placement,
+        clicks: affiliatePlacementTotals[placement],
       })),
       affiliateCategoryTotals: [...affiliateCategoryTotals.values()].sort(
         (a, b) => b.clicks - a.clicks || a.categoryTitle.localeCompare(b.categoryTitle),

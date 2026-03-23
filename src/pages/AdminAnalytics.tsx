@@ -18,6 +18,7 @@ type ContactSubmissionType = "general" | "brand_deal";
 type BudgetTier = "Under $1,000" | "$1,000 - $5,000" | "$5,000 - $10,000" | "Over $10,000";
 type SponsorSourcePlatform = Platform | "direct";
 type AffiliateSourcePlatform = Platform | "direct";
+type AffiliatePlacement = "card" | "detail_dialog";
 const budgetTierValueOrder: BudgetTier[] = ["Over $10,000", "$5,000 - $10,000", "$1,000 - $5,000", "Under $1,000"];
 const budgetTierWeights: Record<BudgetTier, number> = {
   "Under $1,000": 1,
@@ -47,6 +48,7 @@ type AnalyticsResponse = {
   mediaKitPlacementTotals: Array<{ placement: MediaKitPlacement; downloads: number }>;
   availableAffiliateSections: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
   affiliatePlatformTotals: Array<{ platform: AffiliateSourcePlatform; clicks: number }>;
+  affiliatePlacementTotals: Array<{ placement: AffiliatePlacement; clicks: number }>;
   affiliateCategoryTotals: Array<{ categoryId: string; categoryTitle: string; clicks: number }>;
   affiliateSectionTotals: Array<{ sectionId: string; sectionTitle: string; clicks: number }>;
   affiliateProductTotals: Array<{
@@ -152,6 +154,11 @@ const placementLabels = {
 
 const mediaKitPlacementLabels: Record<MediaKitPlacement, string> = {
   brand_deals: "Brand deals section",
+};
+
+const affiliatePlacementLabels: Record<AffiliatePlacement, string> = {
+  card: "Card CTA",
+  detail_dialog: "Modal CTA",
 };
 
 const contactSubmissionLabels: Record<ContactSubmissionType, string> = {
@@ -300,6 +307,8 @@ const AdminAnalytics = () => {
   const topAffiliateCategory = useMemo(() => data?.affiliateCategoryTotals[0] ?? null, [data]);
 
   const topAffiliateSection = useMemo(() => data?.affiliateSectionTotals[0] ?? null, [data]);
+
+  const topAffiliatePlacement = useMemo(() => data?.affiliatePlacementTotals[0] ?? null, [data]);
 
   const activeAffiliateSectionTitle = useMemo(() => {
     if (!data?.activeAffiliateSectionId) return "All recommendation blocks";
@@ -784,7 +793,7 @@ const AdminAnalytics = () => {
                 ))}
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
                 <div className="rounded-2xl border border-border bg-background/70 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -912,6 +921,45 @@ const AdminAnalytics = () => {
                         </p>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-background/70 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Placement breakdown</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">
+                        {topAffiliatePlacement ? affiliatePlacementLabels[topAffiliatePlacement.placement] : "No data"}
+                      </p>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Compare card clicks versus modal clicks for {activeAffiliateSectionTitle.toLowerCase()}.
+                      </p>
+                    </div>
+                    {topAffiliatePlacement ? (
+                      <Badge variant="secondary" className="border-brand-red/20 bg-brand-red/10 text-brand-red">
+                        {topAffiliatePlacement.clicks.toLocaleString()} clicks
+                      </Badge>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {(data?.affiliatePlacementTotals ?? []).map((item) => {
+                      const share = data?.totalAffiliateProductClicks
+                        ? (item.clicks / data.totalAffiliateProductClicks) * 100
+                        : 0;
+
+                      return (
+                        <div key={item.placement} className="rounded-2xl border border-border bg-muted/50 p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm font-semibold text-foreground">{affiliatePlacementLabels[item.placement]}</p>
+                            <span className="text-xs font-medium text-muted-foreground">{share.toFixed(1)}%</span>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            <span className="font-semibold text-brand-red">{item.clicks.toLocaleString()}</span> clicks
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
