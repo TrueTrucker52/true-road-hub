@@ -279,6 +279,14 @@ Deno.serve(async (req) => {
       sectionTitle: string;
       clicks: number;
     }>();
+    const affiliateSectionComparisonTotals = new Map<string, {
+      sectionId: string;
+      sectionTitle: string;
+      clicks: number;
+      cardClicks: number;
+      detailDialogClicks: number;
+    }>();
+    const previousAffiliateSectionTotals = new Map<string, number>();
     const recentAffiliateClicks: Array<{
       createdAt: string;
       placement: AffiliatePlacement;
@@ -365,6 +373,21 @@ Deno.serve(async (req) => {
         ? (row.placement as AffiliatePlacement)
         : "card";
 
+      const sectionComparison = affiliateSectionComparisonTotals.get(row.section_id) ?? {
+        sectionId: row.section_id,
+        sectionTitle: row.section_title,
+        clicks: 0,
+        cardClicks: 0,
+        detailDialogClicks: 0,
+      };
+      sectionComparison.clicks += 1;
+      if (placement === "detail_dialog") {
+        sectionComparison.detailDialogClicks += 1;
+      } else {
+        sectionComparison.cardClicks += 1;
+      }
+      affiliateSectionComparisonTotals.set(row.section_id, sectionComparison);
+
       affiliateClickTotalsByPlatform[platform] += 1;
       affiliatePlacementTotals[placement] += 1;
 
@@ -406,6 +429,7 @@ Deno.serve(async (req) => {
     }
 
     for (const row of previousAffiliateClickRows ?? []) {
+      previousAffiliateSectionTotals.set(row.section_id, (previousAffiliateSectionTotals.get(row.section_id) ?? 0) + 1);
       if (requestedAffiliateSectionId && row.section_id !== requestedAffiliateSectionId) continue;
       previousAffiliateProductTotals.set(row.product_slug, (previousAffiliateProductTotals.get(row.product_slug) ?? 0) + 1);
     }
@@ -516,6 +540,7 @@ Deno.serve(async (req) => {
     }));
 
     const response = {
+      constTotalAffiliateClicksAllSections: (affiliateClickRows ?? []).length,
       days,
       totalImpressions: Object.values(impressionTotals).reduce((sum, value) => sum + value, 0),
       totalClicks: Object.values(clickTotals).reduce((sum, value) => sum + value, 0),
@@ -562,6 +587,21 @@ Deno.serve(async (req) => {
       affiliateSectionTotals: [...affiliateSectionTotals.values()].sort(
         (a, b) => b.clicks - a.clicks || a.sectionTitle.localeCompare(b.sectionTitle),
       ),
+      affiliateSectionComparison: [...affiliateSectionComparisonTotals.values()]
+        .map((item) => {
+          const previousClicks = previousAffiliateSectionTotals.get(item.sectionId) ?? 0;
+          const delta = item.clicks - previousClicks;
+
+          return {
+            ...item,
+            previousClicks,
+            delta,
+            deltaPercent: previousClicks === 0 ? (item.clicks > 0 ? 1 : 0) : delta / previousClicks,
+            modalConversionRate: item.clicks === 0 ? 0 : item.detailDialogClicks / item.clicks,
+            shareOfClicks: (affiliateClickRows ?? []).length === 0 ? 0 : item.clicks / (affiliateClickRows ?? []).length,
+          };
+        })
+        .sort((a, b) => b.clicks - a.clicks || b.modalConversionRate - a.modalConversionRate || a.sectionTitle.localeCompare(b.sectionTitle)),
       recentAffiliateClicks: [...recentAffiliateClicks]
         .filter((item) => !requestedAffiliateProductSlug || item.productSlug === requestedAffiliateProductSlug)
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
