@@ -70,7 +70,7 @@ const AffiliateProductDetailDialog = ({
             <img
               src={product.image}
               alt={product.imageAlt}
-              className="max-h-[200px] w-full max-w-full object-contain md:max-h-[300px] md:max-w-[45%]"
+              className="max-h-[200px] w-full max-w-full object-contain md:max-h-[300px]"
             />
           </div>
 
