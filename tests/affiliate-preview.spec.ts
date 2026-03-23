@@ -23,7 +23,7 @@ test.describe("Affiliate tracking preview coverage", () => {
       await clickFirstAffiliateModalCta(page, section);
     });
 
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/\?affiliateTestMode=1$/);
   });
 
   test("tracks card and modal clicks for Roadside Essentials", async ({ page }) => {
@@ -39,6 +39,6 @@ test.describe("Affiliate tracking preview coverage", () => {
       await clickFirstAffiliateModalCta(page, section);
     });
 
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/\?affiliateTestMode=1$/);
   });
 });

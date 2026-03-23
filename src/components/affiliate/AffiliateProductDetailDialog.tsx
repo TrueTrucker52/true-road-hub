@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/components/gear/types";
-import { trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
+import { isAffiliateNavigationSuppressed, trackAffiliateProductClick } from "@/lib/trackAffiliateProductClick";
 
 type AffiliateProductDetailDialogProps = {
   badgeLabel?: string;
@@ -50,6 +50,8 @@ const AffiliateProductDetailDialog = ({
       sectionId,
       sectionTitle,
     });
+
+    if (isAffiliateNavigationSuppressed()) return;
 
     window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
