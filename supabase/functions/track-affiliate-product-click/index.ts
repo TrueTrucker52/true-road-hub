@@ -41,6 +41,8 @@ Deno.serve(async (req) => {
     const productName = typeof body?.productName === "string" ? body.productName : "";
     const categoryId = typeof body?.categoryId === "string" ? body.categoryId : "";
     const categoryTitle = typeof body?.categoryTitle === "string" ? body.categoryTitle : "";
+    const sectionId = typeof body?.sectionId === "string" ? body.sectionId : "";
+    const sectionTitle = typeof body?.sectionTitle === "string" ? body.sectionTitle : "";
     const referrer = typeof body?.referrer === "string" ? body.referrer : null;
     const userAgent = typeof body?.userAgent === "string" ? body.userAgent : null;
 
@@ -53,7 +55,9 @@ Deno.serve(async (req) => {
       !productSlug ||
       !productName ||
       !categoryId ||
-      !categoryTitle
+      !categoryTitle ||
+      !sectionId ||
+      !sectionTitle
     ) {
       return new Response(JSON.stringify({ error: "Invalid payload" }), {
         status: 400,
@@ -73,6 +77,8 @@ Deno.serve(async (req) => {
       platform,
       product_name: productName,
       product_slug: productSlug,
+      section_id: sectionId,
+      section_title: sectionTitle,
       referrer,
       session_id: sessionId,
       target_url: targetUrl,

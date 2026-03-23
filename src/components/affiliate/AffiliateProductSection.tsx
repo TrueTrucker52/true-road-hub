@@ -3,6 +3,8 @@ import type { Category } from "@/components/gear/types";
 
 type AffiliateProductSectionProps = {
   badgeLabel?: string;
+  sectionId?: string;
+  sectionTitle?: string;
   ctaLabel?: string;
   category: Category;
   description?: string;
@@ -15,6 +17,8 @@ const AffiliateProductSection = ({
   ctaLabel,
   description,
   index = 0,
+  sectionId = "gear-george-recommends",
+  sectionTitle = "Gear George Recommends",
 }: AffiliateProductSectionProps) => (
   <section
     className={`rounded-[2rem] border border-primary/15 bg-background/5 p-6 md:p-8 animate-reveal animate-reveal-delay-${Math.min(index + 1, 5)}`}
@@ -36,6 +40,8 @@ const AffiliateProductSection = ({
           categoryTitle={category.title}
           ctaLabel={ctaLabel}
           product={product}
+          sectionId={sectionId}
+          sectionTitle={sectionTitle}
         />
       ))}
     </div>

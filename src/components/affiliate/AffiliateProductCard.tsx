@@ -13,6 +13,8 @@ type AffiliateProductCardProps = {
   categoryTitle: string;
   ctaLabel?: string;
   product: Product;
+  sectionId: string;
+  sectionTitle: string;
 };
 
 const AffiliateProductCard = ({
@@ -21,6 +23,8 @@ const AffiliateProductCard = ({
   categoryTitle,
   ctaLabel = "Get Best Price on Amazon",
   product,
+  sectionId,
+  sectionTitle,
 }: AffiliateProductCardProps) => {
   const affiliateUrl = product.affiliateUrl ?? affiliatePlaceholderUrl;
   const isPlaceholderLink = affiliateUrl === affiliatePlaceholderUrl;
@@ -36,6 +40,8 @@ const AffiliateProductCard = ({
       placement: "card",
       productName: product.name,
       productSlug: product.slug,
+      sectionId,
+      sectionTitle,
     });
 
     window.open(targetUrl, "_blank", "noopener,noreferrer");
@@ -81,6 +87,8 @@ const AffiliateProductCard = ({
           categoryTitle={categoryTitle}
           ctaLabel={ctaLabel}
           product={product}
+          sectionId={sectionId}
+          sectionTitle={sectionTitle}
         />
 
         <a

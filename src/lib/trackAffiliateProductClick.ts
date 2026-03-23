@@ -10,6 +10,8 @@ type TrackAffiliateProductClickParams = {
   placement: AffiliateProductClickPlacement;
   productName: string;
   productSlug: string;
+  sectionId: string;
+  sectionTitle: string;
 };
 
 export const trackAffiliateProductClick = async ({
@@ -19,6 +21,8 @@ export const trackAffiliateProductClick = async ({
   placement,
   productName,
   productSlug,
+  sectionId,
+  sectionTitle,
 }: TrackAffiliateProductClickParams) => {
   if (typeof window === "undefined") return affiliateUrl;
 
@@ -35,6 +39,8 @@ export const trackAffiliateProductClick = async ({
         platform: getReferralPlatform() ?? "direct",
         productName,
         productSlug,
+        sectionId,
+        sectionTitle,
         referrer: document.referrer || null,
         sessionId,
         targetUrl: affiliateUrl,
