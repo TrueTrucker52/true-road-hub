@@ -40,9 +40,10 @@ const merchStoreUrl = "https://truetrucker.printify.me";
 
 type ColorVariant = {
   label: string;
-  color: string; // tailwind-safe HSL token or hex for the swatch
+  color: string;
   image: string;
   imageAlt: string;
+  trending?: boolean;
 };
 
 const merch = [
@@ -61,7 +62,7 @@ const merch = [
     badge: "Merch Favorite",
     url: merchStoreUrl,
     variants: [
-      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black." },
+      { label: "Red/Black", color: "#dc2626", image: merchSnapbackHat, imageAlt: "TT Snapback Hat in red and black.", trending: true },
       { label: "Black", color: "#1c1c1c", image: merchSnapbackHatBlack, imageAlt: "TT Snapback Hat in black." },
       { label: "White", color: "#f5f5f5", image: merchSnapbackHatWhite, imageAlt: "TT Snapback Hat in white." },
     ] as ColorVariant[],
@@ -82,7 +83,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red", color: "#dc2626", image: merchClassicTshirt, imageAlt: "TT Classic T-Shirt in red." },
-      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black." },
+      { label: "Black", color: "#1c1c1c", image: merchClassicTshirtBlack, imageAlt: "TT Classic T-Shirt in black.", trending: true },
       { label: "Gray", color: "#9ca3af", image: merchClassicTshirtGray, imageAlt: "TT Classic T-Shirt in gray." },
     ] as ColorVariant[],
   },
@@ -102,7 +103,7 @@ const merch = [
     url: merchStoreUrl,
     variants: [
       { label: "Red/Black", color: "#dc2626", image: merchPulloverHoodie, imageAlt: "TT Pullover Hoodie in red and black." },
-      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black." },
+      { label: "Black", color: "#1c1c1c", image: merchPulloverHoodieBlack, imageAlt: "TT Pullover Hoodie in black.", trending: true },
       { label: "Navy", color: "#1e3a5f", image: merchPulloverHoodieNavy, imageAlt: "TT Pullover Hoodie in navy." },
     ] as ColorVariant[],
   },
@@ -651,22 +652,33 @@ const MerchCard = ({ item }: { item: (typeof merch)[number] }) => {
           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
             Color: <span className="text-card-foreground">{activeVariant.label}</span>
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {variants.map((v, i) => (
-              <button
-                key={v.label}
-                type="button"
-                onClick={() => setVariantIdx(i)}
-                aria-label={`Select ${v.label} color`}
-                className={`h-7 w-7 rounded-full border-2 transition-all duration-200 ${
-                  i === variantIdx
-                    ? "border-brand-red scale-110 ring-2 ring-brand-red/30"
-                    : "border-border hover:border-muted-foreground hover:scale-105"
-                }`}
-                style={{ backgroundColor: v.color }}
-              />
+              <div key={v.label} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setVariantIdx(i)}
+                  aria-label={`Select ${v.label} color${v.trending ? " — best seller" : ""}`}
+                  className={`h-7 w-7 rounded-full border-2 transition-all duration-200 ${
+                    i === variantIdx
+                      ? "border-brand-red scale-110 ring-2 ring-brand-red/30"
+                      : "border-border hover:border-muted-foreground hover:scale-105"
+                  }`}
+                  style={{ backgroundColor: v.color }}
+                />
+                {v.trending && (
+                  <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand-red text-[7px] font-black text-primary-foreground shadow-sm" title="Best Seller">
+                    ★
+                  </span>
+                )}
+              </div>
             ))}
           </div>
+          {activeVariant.trending && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-brand-red/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-red">
+              ★ Best Seller
+            </span>
+          )}
         </div>
 
         <div className="flex flex-1 flex-col">
