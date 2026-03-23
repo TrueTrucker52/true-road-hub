@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -286,6 +287,7 @@ const AdminAnalytics = () => {
   const [comparePrevious, setComparePrevious] = useState(true);
   const [affiliateSectionFilter, setAffiliateSectionFilter] = useState<string>("all");
   const [affiliateProductFilter, setAffiliateProductFilter] = useState<string>("all");
+  const [affiliateEventSearch, setAffiliateEventSearch] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["referral-analytics", days, comparePrevious, affiliateSectionFilter, affiliateProductFilter],
@@ -344,6 +346,19 @@ const AdminAnalytics = () => {
     if (!data?.activeAffiliateSectionId) return "All recommendation blocks";
     return data.availableAffiliateSections.find((item) => item.sectionId === data.activeAffiliateSectionId)?.sectionTitle ?? "Selected block";
   }, [data]);
+
+  const filteredRecentAffiliateClicks = useMemo(() => {
+    const query = affiliateEventSearch.trim().toLowerCase();
+    const rows = data?.recentAffiliateClicks ?? [];
+
+    if (!query) return rows;
+
+    return rows.filter((item) => {
+      const name = item.productName.toLowerCase();
+      const slug = item.productSlug.toLowerCase();
+      return name.includes(query) || slug.includes(query);
+    });
+  }, [affiliateEventSearch, data]);
 
   const sortedBudgetTierTotals = useMemo(
     () => [...(data?.budgetTierTotals ?? [])].sort((a, b) => b.inquiries - a.inquiries),
@@ -1002,29 +1017,40 @@ const AdminAnalytics = () => {
               <CardDescription>Quickly inspect the latest tracked outbound clicks for the active recommendation section filter.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-4 flex flex-wrap gap-3">
-                <Button
-                  variant={affiliateProductFilter === "all" ? "hero" : "outline"}
-                  size="sm"
-                  onClick={() => setAffiliateProductFilter("all")}
-                >
-                  All products
-                </Button>
-                {(data?.affiliateProductTotals ?? []).slice(0, 8).map((item) => (
+              <div className="mb-4 space-y-4">
+                <div className="flex flex-wrap gap-3">
                   <Button
-                    key={item.productSlug}
-                    variant={affiliateProductFilter === item.productSlug ? "hero" : "outline"}
+                    variant={affiliateProductFilter === "all" ? "hero" : "outline"}
                     size="sm"
-                    onClick={() => setAffiliateProductFilter(item.productSlug)}
+                    onClick={() => setAffiliateProductFilter("all")}
                   >
-                    {item.productSlug}
+                    All products
                   </Button>
-                ))}
+                  {(data?.affiliateProductTotals ?? []).slice(0, 8).map((item) => (
+                    <Button
+                      key={item.productSlug}
+                      variant={affiliateProductFilter === item.productSlug ? "hero" : "outline"}
+                      size="sm"
+                      onClick={() => setAffiliateProductFilter(item.productSlug)}
+                    >
+                      {item.productSlug}
+                    </Button>
+                  ))}
+                </div>
+
+                <div className="max-w-md">
+                  <Input
+                    value={affiliateEventSearch}
+                    onChange={(event) => setAffiliateEventSearch(event.target.value)}
+                    placeholder="Search product name or slug"
+                    aria-label="Search affiliate events by product name or slug"
+                  />
+                </div>
               </div>
 
-              {!data?.recentAffiliateClicks.length ? (
+              {!filteredRecentAffiliateClicks.length ? (
                 <div className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 text-sm text-muted-foreground">
-                  No affiliate click events have been tracked for {activeAffiliateProductTitle.toLowerCase()} in this section yet.
+                  No affiliate click events match {affiliateEventSearch.trim() ? `“${affiliateEventSearch.trim()}”` : activeAffiliateProductTitle.toLowerCase()} in this section yet.
                 </div>
               ) : (
                 <div className="rounded-2xl border border-border bg-background/70">
@@ -1039,7 +1065,7 @@ const AdminAnalytics = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {data.recentAffiliateClicks.map((item) => (
+                      {filteredRecentAffiliateClicks.map((item) => (
                         <TableRow key={`${item.createdAt}-${item.productSlug}-${item.placement}`}>
                           <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                             {format(new Date(item.createdAt), "MMM d, h:mm a")}
