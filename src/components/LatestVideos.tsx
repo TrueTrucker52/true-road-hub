@@ -92,7 +92,7 @@ const LatestVideos = () => {
     <section id="videos" className="section-dark py-20 md:py-28">
       <div className="container mx-auto px-4" ref={ref}>
         <h2 className="font-display text-4xl md:text-5xl font-bold text-center mb-12 animate-reveal">
-          Latest From <span className="text-brand-red">The Channel</span>
+          Trucking News <span className="text-brand-red">& Road Reports</span>
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading

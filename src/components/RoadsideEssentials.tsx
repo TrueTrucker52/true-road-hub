@@ -14,7 +14,7 @@ const RoadsideEssentials = () => {
           <div className="animate-reveal">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-red/80">Quick picks</p>
             <h2 className="mt-4 text-5xl font-bold leading-none text-foreground md:text-6xl md:leading-[0.95]">
-              Roadside <span className="text-brand-red">Essentials</span>
+              TrueTrucker <span className="text-brand-red">IFTA Pro</span> Picks
             </h2>
           </div>
 

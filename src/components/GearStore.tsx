@@ -746,7 +746,7 @@ const GearStore = () => {
     <section id="gear" className="bg-background py-20 md:py-28">
       <div className="container mx-auto px-4" ref={ref}>
         <h2 className="font-display text-4xl md:text-5xl font-bold text-center mb-14 text-foreground animate-reveal">
-          Trucker <span className="text-brand-red">Gear & Equipment</span>
+          Best Gear <span className="text-brand-red">For Truck Drivers</span>
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
