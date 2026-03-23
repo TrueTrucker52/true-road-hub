@@ -64,16 +64,19 @@ const AffiliateProductDetailDialog = ({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto border-primary/15 bg-secondary p-0 text-primary-foreground shadow-[0_30px_90px_hsl(var(--tt-black)/0.55)]">
-        <div className="grid gap-0 md:grid-cols-[1.15fr_0.85fr]">
-          <div className="relative min-h-[18rem] border-b border-primary/10 md:min-h-full md:border-b-0 md:border-r">
-            <img src={product.image} alt={product.imageAlt} className="h-full w-full object-cover" />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent" />
+      <DialogContent className="max-h-[80vh] max-w-5xl overflow-y-auto border-primary/15 bg-secondary p-6 text-primary-foreground shadow-[0_30px_90px_hsl(var(--tt-black)/0.55)] [&>button]:right-4 [&>button]:top-4 [&>button]:h-11 [&>button]:w-11 [&>button]:rounded-full [&>button]:border [&>button]:border-primary/15 [&>button]:bg-secondary/95 [&>button]:text-primary-foreground [&>button]:opacity-100 [&>button]:shadow-lg [&>button]:ring-offset-secondary hover:[&>button]:bg-secondary [&>button_svg]:h-5 [&>button_svg]:w-5">
+        <div className="grid gap-6 md:grid-cols-[minmax(0,40%)_minmax(0,60%)]">
+          <div className="flex min-h-[15rem] items-center justify-center overflow-hidden rounded-xl border border-primary/10 bg-white p-4 md:min-h-[18rem] md:p-6">
+            <img
+              src={product.image}
+              alt={product.imageAlt}
+              className="max-h-[200px] w-full max-w-full object-contain md:max-h-[300px] md:max-w-[45%]"
+            />
           </div>
 
-          <div className="p-6 md:p-8">
+          <div className="min-w-0 md:pr-2">
             <DialogHeader className="space-y-4 text-left">
-                <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-brand-red/80">{badgeLabel}</p>
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-brand-red/80">{badgeLabel}</p>
               {product.comparisonBadge ? (
                 <Badge className="w-fit border-accent/30 bg-accent/12 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-accent-foreground hover:bg-accent/12">
                   {product.comparisonBadge}
@@ -92,7 +95,7 @@ const AffiliateProductDetailDialog = ({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="mt-8 space-y-6">
+            <div className="mt-6 space-y-5 md:mt-8">
               <section className="rounded-[1.5rem] border border-primary/10 bg-background/5 p-5">
                 <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary-foreground/65">
                   <Gauge className="h-4 w-4 text-brand-red" />
