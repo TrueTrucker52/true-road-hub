@@ -26,6 +26,7 @@ const Index = () => {
         <GearGeorgeRecommends />
         <RoadsideEssentials />
         <BrandDeals />
+        <DispatcherPartnerProgram />
         <AboutGeorge />
         <Newsletter />
         <SocialMedia />
