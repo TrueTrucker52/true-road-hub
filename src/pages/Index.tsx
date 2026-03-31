@@ -5,6 +5,7 @@ import GearStore from "@/components/GearStore";
 import GearGeorgeRecommends from "@/components/GearGeorgeRecommends";
 import RoadsideEssentials from "@/components/RoadsideEssentials";
 import BrandDeals from "@/components/BrandDeals";
+import DispatcherPartnerProgram from "@/components/DispatcherPartnerProgram";
 import AboutGeorge from "@/components/AboutGeorge";
 import Newsletter from "@/components/Newsletter";
 import SocialMedia from "@/components/SocialMedia";
