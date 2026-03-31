@@ -101,7 +101,7 @@ const AffiliateProductCard = ({
           </div>
         </div>
 
-        <div className={`space-y-1 text-sm leading-6 ${isStoreCard ? "text-muted-foreground" : "text-primary-foreground/72"}`}>
+        <div className={`space-y-1 text-sm leading-6 overflow-hidden ${isStoreCard ? "text-muted-foreground" : "text-primary-foreground/72"}`}>
           {product.description.map((line) => (
             <p key={line}>{line}</p>
           ))}
