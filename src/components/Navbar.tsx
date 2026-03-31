@@ -9,6 +9,7 @@ const navLinks = [
   { label: "Gear", href: "#gear" },
   { label: "IFTA App", href: "https://true-trucker-ifta-pro.com", external: true },
   { label: "Brand Deals", href: "#brand-deals" },
+  { label: "Partner Program", href: "https://partner.truetruckingtv.com", external: true },
   { label: "About", href: "#about" },
   { label: "Contact", href: "/contact", isRoute: true },
 ];
