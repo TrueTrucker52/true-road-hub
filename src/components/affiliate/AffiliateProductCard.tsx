@@ -101,7 +101,7 @@ const AffiliateProductCard = ({
           </div>
         </div>
 
-        <div className={`space-y-1 text-sm leading-6 ${isStoreCard ? "text-muted-foreground" : "text-primary-foreground/72"}`}>
+        <div className={`space-y-1 text-sm leading-6 overflow-hidden ${isStoreCard ? "text-muted-foreground" : "text-primary-foreground/72"}`}>
           {product.description.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -122,7 +122,7 @@ const AffiliateProductCard = ({
   );
 
   return (
-    <article className={`group flex h-full flex-col rounded-xl border p-5 shadow-sm animate-reveal transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_20px_45px_hsl(var(--foreground)/0.10)] ${isStoreCard ? "border-border bg-card text-card-foreground" : "border-primary/15 bg-background/5 backdrop-blur-sm shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)]"}`}>
+    <article className={`group flex h-full flex-col overflow-hidden rounded-xl border p-5 shadow-sm animate-reveal transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_20px_45px_hsl(var(--foreground)/0.10)] ${isStoreCard ? "border-border bg-card text-card-foreground" : "border-primary/15 bg-background/5 backdrop-blur-sm shadow-[0_24px_60px_hsl(var(--tt-black)/0.2)]"}`}>
       {cardClickOpensDetail ? (
         <AffiliateProductDetailDialog
           badgeLabel={badgeLabel}
