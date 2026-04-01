@@ -88,8 +88,33 @@ const LatestVideos = () => {
       }))
     : fallbackVideos;
 
+  const videoJsonLd = videos.map((v) => ({
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": v.title,
+    "description": `${v.title} - Trucking content from True Trucking TV with George Williams.`,
+    "thumbnailUrl": v.thumbnail,
+    "uploadDate": v.date,
+    "contentUrl": v.href,
+    "embedUrl": v.href.replace("watch?v=", "embed/").replace("/shorts/", "/embed/"),
+    "publisher": {
+      "@type": "Organization",
+      "name": "True Trucking TV",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://truetruckingtv.com/favicon.png"
+      }
+    }
+  }));
+
   return (
     <section id="videos" className="section-dark py-20 md:py-28">
+      {videos.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+        />
+      )}
       <div className="container mx-auto px-4" ref={ref}>
         <h2 className="font-display text-4xl md:text-5xl font-bold text-center mb-12 animate-reveal">
           Trucking News <span className="text-brand-red">& Road Reports</span>
