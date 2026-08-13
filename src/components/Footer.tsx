@@ -49,6 +49,7 @@ const Footer = () => {
               <li><a href="#gear" onClick={(e) => handleHashClick(e, "#gear")} className="hover:text-primary-foreground transition-colors cursor-pointer">Gear Store</a></li>
               <li><ReferralIFTAButton placement="footer" className="hover:text-primary-foreground transition-colors">IFTA App</ReferralIFTAButton></li>
               <li><a href="#about" onClick={(e) => handleHashClick(e, "#about")} className="hover:text-primary-foreground transition-colors cursor-pointer">About</a></li>
+              <li><Link to="/courses" className="hover:text-primary-foreground transition-colors">Courses</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
             </ul>
           </div>

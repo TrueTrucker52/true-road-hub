@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import georgeImg from "@/assets/george-williams-news-studio.png";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-const highlights = ["15+ years on the road", "Freight market insights", "Road reports & trucking news"];
+const highlights = ["25+ years on the road", "Freight market insights", "Road reports & trucking news"];
 
 const AboutGeorge = () => {
   const ref = useScrollReveal();
@@ -43,7 +43,7 @@ const AboutGeorge = () => {
               About <span className="text-brand-red">George Williams</span> — Truck Driver
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              I'm George Williams, a professional truck driver with 15+ years of experience hauling across the US. I created True Trucking TV to give real drivers real information about logistics, freight markets, road reports, and trucking news. No fluff. No nonsense. Just real trucking from someone who lives it every single day.
+              I'm George Williams, a professional truck driver with 25+ years of experience hauling across the US. I created True Trucking TV to give real drivers real information about logistics, freight markets, road reports, and trucking news. No fluff. No nonsense. Just real trucking from someone who lives it every single day.
             </p>
             <div className="mb-8 grid gap-3 sm:grid-cols-3">
               {highlights.map((item) => (

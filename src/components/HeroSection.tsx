@@ -5,7 +5,7 @@ import georgeStudioImg from "@/assets/george-williams-news-studio.png";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
 const stats = [
-  { value: "15+", label: "Years Experience" },
+  { value: "25+", label: "Years Experience" },
   { value: "500K+", label: "Views" },
   { value: "10,000+", label: "Truckers Nationwide" },
 ];
@@ -30,7 +30,7 @@ const HeroSection = () => {
               #1 Channel For Logistics Worldwide
             </h2>
             <p className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-xl animate-reveal animate-reveal-delay-2">
-              Real trucking. Real talk. Real money. 15 years on the road. Built for drivers, by a driver.
+              Real trucking. Real talk. Real money. 25 years on the road. Built for drivers, by a driver.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4 animate-reveal animate-reveal-delay-3">

@@ -11,6 +11,7 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminSetup from "./pages/AdminSetup.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Courses from "./pages/Courses.tsx";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/courses" element={<Courses />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/setup" element={<AdminSetup />} />
             <Route element={<RequireAdmin />}>

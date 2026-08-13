@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Brand Deals", href: "#brand-deals" },
   { label: "Partner Program", href: "https://partner.truetruckingtv.com", external: true },
   { label: "About", href: "#about" },
+  { label: "Courses", href: "/courses", isRoute: true },
   { label: "Contact", href: "/contact", isRoute: true },
 ];
 
