@@ -1,4 +1,5 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -124,6 +125,9 @@ const services = [
 ];
 
 const Courses = () => {
+  useEffect(() => {
+    document.title = "Courses | True Trucking TV";
+  }, []);
   const heroRef = useScrollReveal();
   const gridRef = useScrollReveal();
   const servicesRef = useScrollReveal();
