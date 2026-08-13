@@ -11,6 +11,7 @@ import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminSetup from "./pages/AdminSetup.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Courses from "./pages/Courses.tsx";
 
 const queryClient = new QueryClient();
 
