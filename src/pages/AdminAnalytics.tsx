@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import CourseClicksCard from "@/components/admin/CourseClicksCard";
 
 type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
@@ -2242,6 +2243,8 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
         </section>
+
+        <CourseClicksCard days={days} />
       </div>
     </main>
   );
