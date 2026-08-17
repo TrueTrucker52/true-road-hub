@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Star, CheckCircle, Truck, BookOpen, Clock, Building2, DollarSign, CreditCard, Shield, Users, Phone } from "lucide-react";
+import { trackCourseClick } from "@/lib/trackCourseClick";
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+
 
 const courses = [
   {
@@ -193,6 +202,16 @@ const Courses = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-6"
+                      onClick={() =>
+                        trackCourseClick({
+                          itemName: course.title,
+                          itemSlug: slugify(course.title),
+                          itemType: "course",
+                          price: course.price,
+                          sectionId: "courses",
+                          targetUrl: course.buttonUrl,
+                        })
+                      }
                     >
                       <Button
                         variant={course.available ? "hero" : "outline"}
@@ -232,7 +251,22 @@ const Courses = () => {
                     {service.description}
                   </p>
                   <p className="mt-3 text-xs text-primary-foreground/50">{service.note}</p>
-                  <a href={service.buttonUrl} target="_blank" rel="noopener noreferrer" className="mt-6">
+                  <a
+                    href={service.buttonUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6"
+                    onClick={() =>
+                      trackCourseClick({
+                        itemName: service.title,
+                        itemSlug: slugify(service.title),
+                        itemType: "service",
+                        price: service.price,
+                        sectionId: "work-with-me",
+                        targetUrl: service.buttonUrl,
+                      })
+                    }
+                  >
                     <Button variant="hero" className="w-full">
                       {service.buttonText}
                     </Button>
@@ -258,7 +292,22 @@ const Courses = () => {
                   <p className="mt-4 text-primary-foreground/70">
                     Free 7-day trial. Quarterly IFTA filed in 10 minutes, GPS mileage, and ELD integration.
                   </p>
-                  <a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer" className="mt-6 inline-block">
+                  <a
+                    href="https://true-trucker-ifta-pro.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-block"
+                    onClick={() =>
+                      trackCourseClick({
+                        itemName: "TrueTrucker IFTA Pro",
+                        itemSlug: "truetrucker-ifta-pro",
+                        itemType: "app",
+                        price: "$39/month",
+                        sectionId: "app",
+                        targetUrl: "https://true-trucker-ifta-pro.com",
+                      })
+                    }
+                  >
                     <Button variant="hero" size="lg">Start the Free Trial</Button>
                   </a>
                 </div>
@@ -292,7 +341,22 @@ const Courses = () => {
               <p className="mt-4 text-lg text-primary-foreground/70">
                 Oilfield Trucking: How To Get Hired With No Experience — <span className="font-bold text-brand-red">$6.99 on Amazon</span>
               </p>
-              <a href="https://www.amazon.com/dp/B0HDK97XF8" target="_blank" rel="noopener noreferrer" className="mt-6 inline-block">
+              <a
+                href="https://www.amazon.com/dp/B0HDK97XF8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block"
+                onClick={() =>
+                  trackCourseClick({
+                    itemName: "Oilfield Trucking: How To Get Hired With No Experience",
+                    itemSlug: "oilfield-trucking-book",
+                    itemType: "book",
+                    price: "$6.99",
+                    sectionId: "book",
+                    targetUrl: "https://www.amazon.com/dp/B0HDK97XF8",
+                  })
+                }
+              >
                 <Button variant="hero-outline" size="lg">Buy on Amazon</Button>
               </a>
             </div>

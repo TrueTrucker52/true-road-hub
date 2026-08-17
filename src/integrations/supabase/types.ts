@@ -101,6 +101,54 @@ export type Database = {
         }
         Relationships: []
       }
+      course_clicks: {
+        Row: {
+          created_at: string
+          id: string
+          item_name: string
+          item_slug: string
+          item_type: string
+          page_path: string
+          platform: string
+          price: string | null
+          referrer: string | null
+          section_id: string
+          session_id: string | null
+          target_url: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_name: string
+          item_slug: string
+          item_type?: string
+          page_path: string
+          platform?: string
+          price?: string | null
+          referrer?: string | null
+          section_id: string
+          session_id?: string | null
+          target_url: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_name?: string
+          item_slug?: string
+          item_type?: string
+          page_path?: string
+          platform?: string
+          price?: string | null
+          referrer?: string | null
+          section_id?: string
+          session_id?: string | null
+          target_url?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       media_kit_downloads: {
         Row: {
           downloaded_at: string
