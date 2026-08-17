@@ -109,38 +109,41 @@ const courses = [
 ];
 
 
+const FIT_CALL_URL = "https://stan.store/True1Trucker/p/free-mentoring-fit-call";
+const FIT_CALL_NOTE = "Free 30-minute call first. Nothing to pay until we both agree it's a fit.";
+
 const services = [
   {
     title: "1-on-1 Strategy Call",
     price: "$250",
-    description: "One focused call to solve the biggest bottleneck in your trucking career or business.",
-    note: "Pay over time with Klarna or Afterpay at checkout.",
+    description: "Pick your time, then pay. 60 minutes on video, one on one. Mon-Fri, 9:00 AM - 5:00 PM Eastern.",
+    footnote: "or 4 interest-free payments of $62.50 with Klarna or Afterpay",
     buttonText: "Book a Call",
-    buttonUrl: "https://buy.stripe.com/9B65kE4O9gKebJCeMl6c007",
+    buttonUrl: "https://stan.store/True1Trucker/p/1on1-strategy-call-th5osm1a",
   },
   {
     title: "Personal Mentoring — 30 Days",
     price: "$750",
     description: "Direct access to George for 30 days. Application only.",
-    note: "Pay over time with Klarna or Afterpay at checkout.",
-    buttonText: "Apply Now",
-    buttonUrl: "https://buy.stripe.com/bJeeVedkF8dI5lefQp6c005",
+    footnote: FIT_CALL_NOTE,
+    buttonText: "Start With a Free Call",
+    buttonUrl: FIT_CALL_URL,
   },
   {
     title: "Personal Mentoring — 90 Days",
     price: "$1,500",
     description: "Three months of hands-on mentorship for serious drivers and owners. Application only.",
-    note: "Pay over time with Klarna or Afterpay at checkout.",
-    buttonText: "Apply Now",
-    buttonUrl: "https://buy.stripe.com/fZu28sfsN65A6pigUt6c006",
+    footnote: FIT_CALL_NOTE,
+    buttonText: "Start With a Free Call",
+    buttonUrl: FIT_CALL_URL,
   },
   {
     title: "Done-With-You: Your Trucking Company Website & Landing Page",
     price: "$497",
     description: "A professional website and landing page built for your trucking company.",
-    note: "Pay over time with Klarna or Afterpay at checkout.",
-    buttonText: "Get Your Site",
-    buttonUrl: "https://buy.stripe.com/4gM3cweoJ79E14Y8nX6c004",
+    footnote: FIT_CALL_NOTE,
+    buttonText: "Start With a Free Call",
+    buttonUrl: FIT_CALL_URL,
   },
 ];
 
@@ -256,7 +259,7 @@ const Courses = () => {
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Work With Me</p>
               <h2 className="font-display text-3xl font-bold text-primary-foreground md:text-4xl">Done-With-You Help</h2>
               <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/70">
-                Live offers for drivers who want direct access. Book a call or apply for mentoring.
+                Book a paid strategy call, or start with a free 30-minute fit call for mentoring and website work. No pressure, no hard sell.
               </p>
             </div>
 
@@ -273,7 +276,6 @@ const Courses = () => {
                   <p className="mt-3 flex-grow text-sm leading-relaxed text-primary-foreground/70">
                     {service.description}
                   </p>
-                  <p className="mt-3 text-xs text-primary-foreground/50">{service.note}</p>
                   <a
                     href={service.buttonUrl}
                     target="_blank"
@@ -294,6 +296,9 @@ const Courses = () => {
                       {service.buttonText}
                     </Button>
                   </a>
+                  <p className="mt-2 text-center text-[11px] leading-snug text-primary-foreground/70 sm:text-xs">
+                    {service.footnote}
+                  </p>
                 </div>
               ))}
             </div>
