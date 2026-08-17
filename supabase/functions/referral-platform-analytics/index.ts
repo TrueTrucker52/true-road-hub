@@ -76,10 +76,15 @@ Deno.serve(async (req) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data: isAdmin, error: roleError } = await adminClient.rpc("has_role", {
-    _user_id: claimsData.claims.sub,
-    _role: "admin",
-  });
+  const { data: roleRow, error: roleError } = await adminClient
+    .from("user_roles")
+    .select("id")
+    .eq("user_id", claimsData.claims.sub)
+    .eq("role", "admin")
+    .maybeSingle();
+
+  const isAdmin = Boolean(roleRow);
+
 
   if (roleError || !isAdmin) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
