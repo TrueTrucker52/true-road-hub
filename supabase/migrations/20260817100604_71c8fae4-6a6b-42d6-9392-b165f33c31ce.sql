@@ -1,0 +1,1 @@
+DELETE FROM public.course_clicks WHERE session_id IS NOT NULL;
