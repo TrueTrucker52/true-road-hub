@@ -176,11 +176,6 @@ const Courses = () => {
                         : "border-border bg-card"
                     }`}
                   >
-                    {course.flagship && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-red px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
-                        Available Now
-                      </span>
-                    )}
                     <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${course.flagship ? "bg-brand-red text-primary-foreground" : "bg-secondary text-primary-foreground"}`}>
                       <Icon className="h-6 w-6" />
                     </div>
@@ -188,6 +183,8 @@ const Courses = () => {
                       {course.title}
                     </h3>
                     <p className="mt-2 text-sm font-bold text-brand-red">{course.price}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna, Afterpay, or Affirm at checkout.</p>
+
                     <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
                       {course.description}
                     </p>
