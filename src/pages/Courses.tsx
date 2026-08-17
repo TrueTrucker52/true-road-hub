@@ -1,12 +1,11 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Star, CheckCircle, Truck, BookOpen, Clock, Building2, DollarSign, CreditCard, Shield, Users, Phone } from "lucide-react";
 import { trackCourseClick } from "@/lib/trackCourseClick";
-import { supabase } from "@/integrations/supabase/client";
-import CourseWaitlistDialog, { type WaitlistOffer } from "@/components/CourseWaitlistDialog";
+
 
 const slugify = (value: string) =>
   value
@@ -148,35 +147,7 @@ const Courses = () => {
     document.title = "Courses | True Trucking TV";
   }, []);
 
-  const [waitlistOffer, setWaitlistOffer] = useState<WaitlistOffer | null>(null);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
-  const [waitlistCounts, setWaitlistCounts] = useState<{ total: number; byOffer: Record<string, number> }>({
-    total: 0,
-    byOffer: {},
-  });
 
-  useEffect(() => {
-    let active = true;
-
-    void supabase.functions
-      .invoke("join-course-waitlist", { method: "GET" })
-      .then(({ data, error }) => {
-        if (!active || error || !data) return;
-        setWaitlistCounts({ total: data.total ?? 0, byOffer: data.byOffer ?? {} });
-      })
-      .catch(() => {
-        // no-op: counts are non-critical
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const openWaitlist = useCallback((offer: WaitlistOffer) => {
-    setWaitlistOffer(offer);
-    setWaitlistOpen(true);
-  }, []);
 
   const heroRef = useScrollReveal();
   const gridRef = useScrollReveal();
@@ -322,24 +293,6 @@ const Courses = () => {
                       {service.buttonText}
                     </Button>
                   </a>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openWaitlist({
-                        slug: slugify(service.title),
-                        name: service.title,
-                        type: "service",
-                        price: service.price,
-                        sectionId: "work-with-me",
-                      })
-                    }
-                    className="mt-3 text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground/50 underline-offset-4 transition-colors hover:text-brand-red hover:underline"
-                  >
-                    Join the waitlist
-                    {waitlistCounts.byOffer[slugify(service.title)]
-                      ? ` · ${waitlistCounts.byOffer[slugify(service.title)]} joined`
-                      : ""}
-                  </button>
                 </div>
               ))}
             </div>
@@ -442,12 +395,6 @@ const Courses = () => {
           </div>
         </section>
       </main>
-      <CourseWaitlistDialog
-        offer={waitlistOffer}
-        open={waitlistOpen}
-        onOpenChange={setWaitlistOpen}
-        onJoined={setWaitlistCounts}
-      />
       <Footer />
     </>
 
