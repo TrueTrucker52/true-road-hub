@@ -448,8 +448,15 @@ const Courses = () => {
           </div>
         </section>
       </main>
+      <CourseWaitlistDialog
+        offer={waitlistOffer}
+        open={waitlistOpen}
+        onOpenChange={setWaitlistOpen}
+        onJoined={setWaitlistCounts}
+      />
       <Footer />
     </>
+
   );
 };
 
