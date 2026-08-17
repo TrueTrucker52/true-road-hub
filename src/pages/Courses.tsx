@@ -65,7 +65,7 @@ const courses = [
     available: true,
     description: "Learn how to find freight, vet brokers, negotiate rates, and make sure the money actually hits your account.",
     buttonText: "Get the Course",
-    buttonUrl: "https://stan.store/True1Trucker/p/load-boards-brokers-getting-paid",
+    buttonUrl: "https://stan.store/True1Trucker/p/load-boards-brokers--getting-paid",
     icon: DollarSign,
   },
   {
