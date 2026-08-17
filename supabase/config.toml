@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.track-affiliate-product-click]
 verify_jwt = false
+
+[functions.track-course-click]
+verify_jwt = false
