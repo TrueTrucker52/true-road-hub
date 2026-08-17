@@ -140,12 +140,44 @@ const Courses = () => {
   useEffect(() => {
     document.title = "Courses | True Trucking TV";
   }, []);
+
+  const [waitlistOffer, setWaitlistOffer] = useState<WaitlistOffer | null>(null);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [waitlistCounts, setWaitlistCounts] = useState<{ total: number; byOffer: Record<string, number> }>({
+    total: 0,
+    byOffer: {},
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    void supabase.functions
+      .invoke("join-course-waitlist", { method: "GET" })
+      .then(({ data, error }) => {
+        if (!active || error || !data) return;
+        setWaitlistCounts({ total: data.total ?? 0, byOffer: data.byOffer ?? {} });
+      })
+      .catch(() => {
+        // no-op: counts are non-critical
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const openWaitlist = useCallback((offer: WaitlistOffer) => {
+    setWaitlistOffer(offer);
+    setWaitlistOpen(true);
+  }, []);
+
   const heroRef = useScrollReveal();
   const gridRef = useScrollReveal();
   const servicesRef = useScrollReveal();
   const appRef = useScrollReveal();
   const bookRef = useScrollReveal();
   const noteRef = useScrollReveal();
+
 
   return (
     <>
