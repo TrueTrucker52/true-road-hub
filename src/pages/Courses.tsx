@@ -258,7 +258,22 @@ const Courses = () => {
                   <p className="mt-4 text-primary-foreground/70">
                     Free 7-day trial. Quarterly IFTA filed in 10 minutes, GPS mileage, and ELD integration.
                   </p>
-                  <a href="https://true-trucker-ifta-pro.com" target="_blank" rel="noopener noreferrer" className="mt-6 inline-block">
+                  <a
+                    href="https://true-trucker-ifta-pro.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-block"
+                    onClick={() =>
+                      trackCourseClick({
+                        itemName: "TrueTrucker IFTA Pro",
+                        itemSlug: "truetrucker-ifta-pro",
+                        itemType: "app",
+                        price: "$39/month",
+                        sectionId: "app",
+                        targetUrl: "https://true-trucker-ifta-pro.com",
+                      })
+                    }
+                  >
                     <Button variant="hero" size="lg">Start the Free Trial</Button>
                   </a>
                 </div>
