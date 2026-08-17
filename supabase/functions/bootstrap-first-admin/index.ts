@@ -51,14 +51,29 @@ Deno.serve(async (req) => {
   });
 
   // The user id is always taken from the verified JWT, never from the request body.
-  const { data: granted, error: bootstrapError } = await adminClient
-    .schema("private")
-    .rpc("bootstrap_first_admin", { _user_id: userId });
+  const { count, error: countError } = await adminClient
+    .from("user_roles")
+    .select("id", { count: "exact", head: true })
+    .eq("role", "admin");
 
-  if (bootstrapError) {
-    console.error("bootstrap-first-admin failed", bootstrapError.message);
+  if (countError) {
+    console.error("bootstrap-first-admin count failed", countError.message);
     return json({ error: "Unable to complete admin setup" }, 500);
   }
 
-  return json({ granted: Boolean(granted) });
+  if ((count ?? 0) > 0) {
+    return json({ granted: false });
+  }
+
+  const { error: insertError } = await adminClient
+    .from("user_roles")
+    .insert({ user_id: userId, role: "admin" });
+
+  if (insertError) {
+    console.error("bootstrap-first-admin insert failed", insertError.message);
+    return json({ error: "Unable to complete admin setup" }, 500);
+  }
+
+  return json({ granted: true });
 });
+
