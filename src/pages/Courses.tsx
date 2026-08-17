@@ -36,6 +36,7 @@ const courses = [
     description: "Everything a new driver needs to pick the right CDL school, pass the tests, and avoid predatory contracts.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-rookie-roadmap",
+    split: "24.25",
     icon: BookOpen,
   },
   {
@@ -46,6 +47,7 @@ const courses = [
     description: "Survive and thrive in your first three months with the routines, safety habits, and pay strategies that matter.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/first-90-days-behind-the-wheel",
+    split: "36.75",
     icon: Clock,
   },
   {
@@ -56,6 +58,7 @@ const courses = [
     description: "Step-by-step guidance on getting your own authority, DOT numbers, and the paperwork that keeps you legal.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/your-authority-start-your-trucking-company",
+    split: "74.25",
     icon: Building2,
   },
   {
@@ -66,6 +69,7 @@ const courses = [
     description: "Learn how to find freight, vet brokers, negotiate rates, and make sure the money actually hits your account.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/load-boards-brokers--getting-paid",
+    split: "49.25",
     icon: DollarSign,
   },
   {
@@ -76,6 +80,7 @@ const courses = [
     description: "Includes cost-per-mile, fuel/IFTA, and tax calculators so you know your real profit on every load.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-owneroperator-money-system",
+    split: "36.75",
     icon: CreditCard,
   },
   {
@@ -86,6 +91,7 @@ const courses = [
     description: "Decode trucking insurance, avoid overpaying, and make sure you are covered when something goes wrong.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-insurance-playbook",
+    split: "36.75",
     icon: Shield,
   },
   {
@@ -96,6 +102,7 @@ const courses = [
     description: "The systems, hiring, and scaling plan to grow from a single owner-operator to a five-truck operation.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/fleet-builder-from-one-truck-to-five",
+    split: "74.25",
     icon: Users,
   },
 ];
