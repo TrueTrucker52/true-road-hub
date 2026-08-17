@@ -25,7 +25,9 @@ const courses = [
     description: "Current company list by basin with phone numbers, recruiter phone script word for word, no-experience resume, and a monthly live call.",
     buttonText: "Get the Course",
     buttonUrl: "https://buy.stripe.com/fZucN62G12To7tmgUt6c003",
+    split: "74.25",
     icon: Truck,
+
   },
   {
     id: 2,
@@ -207,9 +209,8 @@ const Courses = () => {
                       {course.title}
                     </h3>
                     <p className="mt-2 text-sm font-bold text-brand-red">{course.price}</p>
-                    {!course.split && (
-                      <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna or Afterpay at checkout.</p>
-                    )}
+
+
 
                     <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
                       {course.description}
