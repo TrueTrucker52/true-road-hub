@@ -211,7 +211,10 @@ const Courses = () => {
           <div className="container mx-auto px-4" ref={gridRef}>
             <div className="mb-12 text-center">
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Trucking Courses</p>
-              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Next Move</h2>
+              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Course. Pay Over Time.</h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+                Every course can be split into 4 interest-free payments with Klarna or Afterpay. Choose it at checkout — no credit check, no interest.
+              </p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
