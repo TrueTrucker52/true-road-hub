@@ -259,6 +259,24 @@ const Courses = () => {
                         {course.buttonText}
                       </Button>
                     </a>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openWaitlist({
+                          slug: slugify(course.title),
+                          name: course.title,
+                          type: "course",
+                          price: course.price,
+                          sectionId: "courses",
+                        })
+                      }
+                      className="mt-3 text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground underline-offset-4 transition-colors hover:text-brand-red hover:underline"
+                    >
+                      Join the waitlist
+                      {waitlistCounts.byOffer[slugify(course.title)]
+                        ? ` · ${waitlistCounts.byOffer[slugify(course.title)]} joined`
+                        : ""}
+                    </button>
                   </div>
                 );
               })}
