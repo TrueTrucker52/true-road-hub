@@ -266,6 +266,11 @@ const Courses = () => {
                         {course.buttonText}
                       </Button>
                     </a>
+                    {course.split && (
+                      <p className="mt-2 text-center text-[11px] leading-snug text-foreground/70 sm:text-xs">
+                        or 4 payments of ${course.split} with Klarna or Afterpay
+                      </p>
+                    )}
                   </div>
                 );
               })}
