@@ -33,7 +33,10 @@ const AdminSetup = () => {
     setSubmitting(true);
     setMessage(null);
 
-    const { data, error } = await supabase.rpc("bootstrap_first_admin", { _user_id: user.id });
+    const { data, error } = await supabase.functions.invoke<{ granted: boolean }>(
+      "bootstrap-first-admin",
+      { body: {} },
+    );
 
     setSubmitting(false);
 
@@ -42,11 +45,12 @@ const AdminSetup = () => {
       return;
     }
 
-    if (!data) {
+    if (!data?.granted) {
       setMessage("An admin already exists, so bootstrap is no longer available.");
       await queryClient.invalidateQueries({ queryKey: ["admin-count"] });
       return;
     }
+
 
     await queryClient.invalidateQueries({ queryKey: ["admin-count"] });
     setMessage("Admin access granted. Redirecting to dashboard...");
