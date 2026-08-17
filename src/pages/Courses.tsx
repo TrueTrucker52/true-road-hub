@@ -292,7 +292,22 @@ const Courses = () => {
               <p className="mt-4 text-lg text-primary-foreground/70">
                 Oilfield Trucking: How To Get Hired With No Experience — <span className="font-bold text-brand-red">$6.99 on Amazon</span>
               </p>
-              <a href="https://www.amazon.com/dp/B0HDK97XF8" target="_blank" rel="noopener noreferrer" className="mt-6 inline-block">
+              <a
+                href="https://www.amazon.com/dp/B0HDK97XF8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-block"
+                onClick={() =>
+                  trackCourseClick({
+                    itemName: "Oilfield Trucking: How To Get Hired With No Experience",
+                    itemSlug: "oilfield-trucking-book",
+                    itemType: "book",
+                    price: "$6.99",
+                    sectionId: "book",
+                    targetUrl: "https://www.amazon.com/dp/B0HDK97XF8",
+                  })
+                }
+              >
                 <Button variant="hero-outline" size="lg">Buy on Amazon</Button>
               </a>
             </div>
