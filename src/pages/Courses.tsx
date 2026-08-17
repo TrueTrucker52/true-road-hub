@@ -4,6 +4,15 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Star, CheckCircle, Truck, BookOpen, Clock, Building2, DollarSign, CreditCard, Shield, Users, Phone } from "lucide-react";
+import { trackCourseClick } from "@/lib/trackCourseClick";
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+
 
 const courses = [
   {
