@@ -232,7 +232,22 @@ const Courses = () => {
                     {service.description}
                   </p>
                   <p className="mt-3 text-xs text-primary-foreground/50">{service.note}</p>
-                  <a href={service.buttonUrl} target="_blank" rel="noopener noreferrer" className="mt-6">
+                  <a
+                    href={service.buttonUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6"
+                    onClick={() =>
+                      trackCourseClick({
+                        itemName: service.title,
+                        itemSlug: slugify(service.title),
+                        itemType: "service",
+                        price: service.price,
+                        sectionId: "work-with-me",
+                        targetUrl: service.buttonUrl,
+                      })
+                    }
+                  >
                     <Button variant="hero" className="w-full">
                       {service.buttonText}
                     </Button>
