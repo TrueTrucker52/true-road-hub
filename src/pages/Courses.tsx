@@ -259,7 +259,7 @@ const Courses = () => {
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Work With Me</p>
               <h2 className="font-display text-3xl font-bold text-primary-foreground md:text-4xl">Done-With-You Help</h2>
               <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/70">
-                Live offers for drivers who want direct access. Book a call or apply for mentoring.
+                Book a paid strategy call, or start with a free 30-minute fit call for mentoring and website work. No pressure, no hard sell.
               </p>
             </div>
 
