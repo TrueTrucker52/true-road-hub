@@ -196,11 +196,6 @@ const Courses = () => {
               <p className="mx-auto mt-6 max-w-2xl text-lg text-primary-foreground/70 md:text-xl">
                 Real courses from a driver with 25 years out there. No theory from a cubicle. Just hard-won lessons, scripts, systems, and shortcuts that work on the road today.
               </p>
-              {waitlistCounts.total > 0 && (
-                <p className="mt-6 text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground/60">
-                  {waitlistCounts.total.toLocaleString()} {waitlistCounts.total === 1 ? "driver" : "drivers"} on the waitlist
-                </p>
-              )}
             </div>
           </div>
         </section>
