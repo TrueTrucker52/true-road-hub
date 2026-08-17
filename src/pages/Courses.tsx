@@ -110,13 +110,13 @@ const courses = [
 
 
 const FIT_CALL_URL = "https://stan.store/True1Trucker/p/free-mentoring-fit-call";
-const FIT_CALL_NOTE = "Free 30-minute call first. Nothing to pay until we both agree it's a fit.";
+const FIT_CALL_NOTE = "Free 30-minute phone call first. Nothing to pay until we both agree it's a fit.";
 
 const services = [
   {
     title: "1-on-1 Strategy Call",
     price: "$250",
-    description: "Pick your time, then pay. 60 minutes on video, one on one. Mon-Fri, 9:00 AM - 5:00 PM Eastern.",
+    description: "Pick your time, then pay. 60 minutes on the phone, one on one. No app, no video - I call you. Mon-Fri, 9:00 AM - 5:00 PM Eastern.",
     footnote: "or 4 interest-free payments of $62.50 with Klarna or Afterpay",
     buttonText: "Book a Call",
     buttonUrl: "https://stan.store/True1Trucker/p/1on1-strategy-call-th5osm1a",
@@ -243,7 +243,8 @@ const Courses = () => {
                     </a>
                     {course.split && (
                       <p className="mt-2 text-center text-[11px] leading-snug text-foreground/70 sm:text-xs">
-                        or 4 interest-free payments of ${course.split} with Klarna or Afterpay
+                        or 4 interest-free payments of ${course.split} with Klarna
+                        {course.flagship ? ", Afterpay or Affirm" : " or Afterpay"}
                       </p>
                     )}
                   </div>
@@ -259,7 +260,7 @@ const Courses = () => {
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Work With Me</p>
               <h2 className="font-display text-3xl font-bold text-primary-foreground md:text-4xl">Done-With-You Help</h2>
               <p className="mx-auto mt-4 max-w-2xl text-primary-foreground/70">
-                Book a paid strategy call, or start with a free 30-minute fit call for mentoring and website work. No pressure, no hard sell.
+                Book a paid strategy call, or start with a free 30-minute fit call for mentoring and website work. All phone calls - no app, no video, I call you. No pressure, no hard sell.
               </p>
             </div>
 
