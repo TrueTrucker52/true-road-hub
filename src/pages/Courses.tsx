@@ -193,6 +193,16 @@ const Courses = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-6"
+                      onClick={() =>
+                        trackCourseClick({
+                          itemName: course.title,
+                          itemSlug: slugify(course.title),
+                          itemType: "course",
+                          price: course.price,
+                          sectionId: "courses",
+                          targetUrl: course.buttonUrl,
+                        })
+                      }
                     >
                       <Button
                         variant={course.available ? "hero" : "outline"}
