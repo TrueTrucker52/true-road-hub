@@ -1,12 +1,11 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Star, CheckCircle, Truck, BookOpen, Clock, Building2, DollarSign, CreditCard, Shield, Users, Phone } from "lucide-react";
 import { trackCourseClick } from "@/lib/trackCourseClick";
-import { supabase } from "@/integrations/supabase/client";
-import CourseWaitlistDialog, { type WaitlistOffer } from "@/components/CourseWaitlistDialog";
+
 
 const slugify = (value: string) =>
   value
