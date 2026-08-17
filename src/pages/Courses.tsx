@@ -276,7 +276,6 @@ const Courses = () => {
                   <p className="mt-3 flex-grow text-sm leading-relaxed text-primary-foreground/70">
                     {service.description}
                   </p>
-                  <p className="mt-3 text-xs text-primary-foreground/50">{service.note}</p>
                   <a
                     href={service.buttonUrl}
                     target="_blank"
@@ -297,6 +296,9 @@ const Courses = () => {
                       {service.buttonText}
                     </Button>
                   </a>
+                  <p className="mt-2 text-center text-[11px] leading-snug text-primary-foreground/70 sm:text-xs">
+                    {service.footnote}
+                  </p>
                 </div>
               ))}
             </div>
