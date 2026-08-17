@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import CourseClicksCard from "@/components/admin/CourseClicksCard";
+import CourseWaitlistCard from "@/components/admin/CourseWaitlistCard";
 
 type Platform = "youtube" | "tiktok" | "facebook" | "instagram";
 type Placement = "hero" | "navbar" | "gear" | "footer" | "unknown";
@@ -2245,6 +2246,8 @@ const AdminAnalytics = () => {
         </section>
 
         <CourseClicksCard days={days} />
+
+        <CourseWaitlistCard days={days} />
       </div>
     </main>
   );

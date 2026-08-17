@@ -149,6 +149,63 @@ export type Database = {
         }
         Relationships: []
       }
+      course_waitlist_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notified_at: string | null
+          offer_name: string
+          offer_slug: string
+          offer_type: string
+          page_path: string
+          phone: string | null
+          platform: string
+          price: string | null
+          referrer: string | null
+          section_id: string
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notified_at?: string | null
+          offer_name: string
+          offer_slug: string
+          offer_type?: string
+          page_path?: string
+          phone?: string | null
+          platform?: string
+          price?: string | null
+          referrer?: string | null
+          section_id?: string
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notified_at?: string | null
+          offer_name?: string
+          offer_slug?: string
+          offer_type?: string
+          page_path?: string
+          phone?: string | null
+          platform?: string
+          price?: string | null
+          referrer?: string | null
+          section_id?: string
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       media_kit_downloads: {
         Row: {
           downloaded_at: string
