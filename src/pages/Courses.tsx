@@ -20,74 +20,75 @@ const courses = [
   {
     id: 2,
     title: "The Rookie Roadmap: Get Your CDL Without Getting Robbed",
-    price: "$97 launch price",
-    available: false,
+    price: "$97",
+    available: true,
     description: "Everything a new driver needs to pick the right CDL school, pass the tests, and avoid predatory contracts.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/the-rookie-roadmap",
     icon: BookOpen,
   },
   {
     id: 3,
     title: "First 90 Days Behind the Wheel",
-    price: "$147 launch price",
-    available: false,
+    price: "$147",
+    available: true,
     description: "Survive and thrive in your first three months with the routines, safety habits, and pay strategies that matter.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/first-90-days-behind-the-wheel",
     icon: Clock,
   },
   {
     id: 4,
     title: "Your Authority: Start Your Trucking Company From the Ground Up",
-    price: "$297 launch price",
-    available: false,
+    price: "$297",
+    available: true,
     description: "Step-by-step guidance on getting your own authority, DOT numbers, and the paperwork that keeps you legal.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/your-authority-start-your-trucking-company",
     icon: Building2,
   },
   {
     id: 5,
     title: "Load Boards, Brokers & Getting Paid",
-    price: "$197 launch price",
-    available: false,
+    price: "$197",
+    available: true,
     description: "Learn how to find freight, vet brokers, negotiate rates, and make sure the money actually hits your account.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/load-boards-brokers-getting-paid",
     icon: DollarSign,
   },
   {
     id: 6,
     title: "The Owner-Operator Money System",
-    price: "$147 launch price",
-    available: false,
+    price: "$147",
+    available: true,
     description: "Includes cost-per-mile, fuel/IFTA, and tax calculators so you know your real profit on every load.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/the-owneroperator-money-system",
     icon: CreditCard,
   },
   {
     id: 7,
     title: "The Insurance Playbook: Get Covered Without Getting Killed",
-    price: "$147 launch price",
-    available: false,
+    price: "$147",
+    available: true,
     description: "Decode trucking insurance, avoid overpaying, and make sure you are covered when something goes wrong.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/the-insurance-playbook",
     icon: Shield,
   },
   {
     id: 8,
     title: "Fleet Builder: From One Truck to Five",
-    price: "$297 launch price",
-    available: false,
+    price: "$297",
+    available: true,
     description: "The systems, hiring, and scaling plan to grow from a single owner-operator to a five-truck operation.",
-    buttonText: "Join the Waitlist",
-    buttonUrl: "https://stan.store/True1Trucker",
+    buttonText: "Get the Course",
+    buttonUrl: "https://stan.store/True1Trucker/p/fleet-builder-from-one-truck-to-five",
     icon: Users,
   },
 ];
+
 
 const services = [
   {
@@ -175,11 +176,6 @@ const Courses = () => {
                         : "border-border bg-card"
                     }`}
                   >
-                    {course.flagship && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-red px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
-                        Available Now
-                      </span>
-                    )}
                     <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${course.flagship ? "bg-brand-red text-primary-foreground" : "bg-secondary text-primary-foreground"}`}>
                       <Icon className="h-6 w-6" />
                     </div>
@@ -187,6 +183,8 @@ const Courses = () => {
                       {course.title}
                     </h3>
                     <p className="mt-2 text-sm font-bold text-brand-red">{course.price}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna, Afterpay, or Affirm at checkout.</p>
+
                     <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
                       {course.description}
                     </p>
