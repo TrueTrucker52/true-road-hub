@@ -25,7 +25,9 @@ const courses = [
     description: "Current company list by basin with phone numbers, recruiter phone script word for word, no-experience resume, and a monthly live call.",
     buttonText: "Get the Course",
     buttonUrl: "https://buy.stripe.com/fZucN62G12To7tmgUt6c003",
+    split: "74.25",
     icon: Truck,
+
   },
   {
     id: 2,
@@ -112,7 +114,7 @@ const services = [
     title: "1-on-1 Strategy Call",
     price: "$250",
     description: "One focused call to solve the biggest bottleneck in your trucking career or business.",
-    note: "Pay over time with Klarna, Afterpay, or Affirm at checkout.",
+    note: "Pay over time with Klarna or Afterpay at checkout.",
     buttonText: "Book a Call",
     buttonUrl: "https://buy.stripe.com/9B65kE4O9gKebJCeMl6c007",
   },
@@ -120,7 +122,7 @@ const services = [
     title: "Personal Mentoring — 30 Days",
     price: "$750",
     description: "Direct access to George for 30 days. Application only.",
-    note: "Pay over time with Klarna, Afterpay, or Affirm at checkout.",
+    note: "Pay over time with Klarna or Afterpay at checkout.",
     buttonText: "Apply Now",
     buttonUrl: "https://buy.stripe.com/bJeeVedkF8dI5lefQp6c005",
   },
@@ -128,7 +130,7 @@ const services = [
     title: "Personal Mentoring — 90 Days",
     price: "$1,500",
     description: "Three months of hands-on mentorship for serious drivers and owners. Application only.",
-    note: "Pay over time with Klarna, Afterpay, or Affirm at checkout.",
+    note: "Pay over time with Klarna or Afterpay at checkout.",
     buttonText: "Apply Now",
     buttonUrl: "https://buy.stripe.com/fZu28sfsN65A6pigUt6c006",
   },
@@ -136,7 +138,7 @@ const services = [
     title: "Done-With-You: Your Trucking Company Website & Landing Page",
     price: "$497",
     description: "A professional website and landing page built for your trucking company.",
-    note: "Pay over time with Klarna, Afterpay, or Affirm at checkout.",
+    note: "Pay over time with Klarna or Afterpay at checkout.",
     buttonText: "Get Your Site",
     buttonUrl: "https://buy.stripe.com/4gM3cweoJ79E14Y8nX6c004",
   },
@@ -207,9 +209,8 @@ const Courses = () => {
                       {course.title}
                     </h3>
                     <p className="mt-2 text-sm font-bold text-brand-red">{course.price}</p>
-                    {!course.split && (
-                      <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna or Afterpay at checkout.</p>
-                    )}
+
+
 
                     <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
                       {course.description}
