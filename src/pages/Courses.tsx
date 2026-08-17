@@ -36,6 +36,7 @@ const courses = [
     description: "Everything a new driver needs to pick the right CDL school, pass the tests, and avoid predatory contracts.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-rookie-roadmap",
+    split: "24.25",
     icon: BookOpen,
   },
   {
@@ -46,6 +47,7 @@ const courses = [
     description: "Survive and thrive in your first three months with the routines, safety habits, and pay strategies that matter.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/first-90-days-behind-the-wheel",
+    split: "36.75",
     icon: Clock,
   },
   {
@@ -56,6 +58,7 @@ const courses = [
     description: "Step-by-step guidance on getting your own authority, DOT numbers, and the paperwork that keeps you legal.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/your-authority-start-your-trucking-company",
+    split: "74.25",
     icon: Building2,
   },
   {
@@ -66,6 +69,7 @@ const courses = [
     description: "Learn how to find freight, vet brokers, negotiate rates, and make sure the money actually hits your account.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/load-boards-brokers--getting-paid",
+    split: "49.25",
     icon: DollarSign,
   },
   {
@@ -76,6 +80,7 @@ const courses = [
     description: "Includes cost-per-mile, fuel/IFTA, and tax calculators so you know your real profit on every load.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-owneroperator-money-system",
+    split: "36.75",
     icon: CreditCard,
   },
   {
@@ -86,6 +91,7 @@ const courses = [
     description: "Decode trucking insurance, avoid overpaying, and make sure you are covered when something goes wrong.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/the-insurance-playbook",
+    split: "36.75",
     icon: Shield,
   },
   {
@@ -96,6 +102,7 @@ const courses = [
     description: "The systems, hiring, and scaling plan to grow from a single owner-operator to a five-truck operation.",
     buttonText: "Get the Course",
     buttonUrl: "https://stan.store/True1Trucker/p/fleet-builder-from-one-truck-to-five",
+    split: "74.25",
     icon: Users,
   },
 ];
@@ -204,7 +211,10 @@ const Courses = () => {
           <div className="container mx-auto px-4" ref={gridRef}>
             <div className="mb-12 text-center">
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Trucking Courses</p>
-              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Next Move</h2>
+              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Course. Pay Over Time.</h2>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+                Every course can be split into 4 interest-free payments with Klarna or Afterpay. Choose it at checkout — no credit check, no interest.
+              </p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -226,7 +236,9 @@ const Courses = () => {
                       {course.title}
                     </h3>
                     <p className="mt-2 text-sm font-bold text-brand-red">{course.price}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna, Afterpay, or Affirm at checkout.</p>
+                    {!course.split && (
+                      <p className="mt-1 text-xs text-muted-foreground">Pay over time with Klarna or Afterpay at checkout.</p>
+                    )}
 
                     <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
                       {course.description}
@@ -254,6 +266,11 @@ const Courses = () => {
                         {course.buttonText}
                       </Button>
                     </a>
+                    {course.split && (
+                      <p className="mt-2 text-center text-[11px] leading-snug text-foreground/70 sm:text-xs">
+                        or 4 payments of ${course.split} with Klarna or Afterpay
+                      </p>
+                    )}
                   </div>
                 );
               })}
