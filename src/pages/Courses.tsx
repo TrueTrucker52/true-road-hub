@@ -213,7 +213,7 @@ const Courses = () => {
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Trucking Courses</p>
               <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Course. Pay Over Time.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-                Every course can be split into 4 interest-free payments with Klarna or Afterpay. Choose it at checkout — no credit check, no interest.
+                Split any course into 4 interest-free payments with Klarna or Afterpay. Pick it at checkout.
               </p>
             </div>
 
@@ -268,7 +268,7 @@ const Courses = () => {
                     </a>
                     {course.split && (
                       <p className="mt-2 text-center text-[11px] leading-snug text-foreground/70 sm:text-xs">
-                        or 4 payments of ${course.split} with Klarna or Afterpay
+                        or 4 interest-free payments of ${course.split} with Klarna or Afterpay
                       </p>
                     )}
                   </div>
