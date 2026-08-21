@@ -187,9 +187,9 @@ const Courses = () => {
           <div className="container mx-auto px-4" ref={gridRef}>
             <div className="mb-12 text-center">
               <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-brand-red">Trucking Courses</p>
-              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Course. Pay Over Time.</h2>
+              <h2 className="font-display text-3xl font-bold text-foreground md:text-4xl">Pick Your Course.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-                Split any course into 4 interest-free payments with Klarna or Afterpay. Pick it at checkout.
+                Every course is a one-time payment. No subscription, no upsell ladder. Yours for good.
               </p>
             </div>
 
@@ -241,10 +241,9 @@ const Courses = () => {
                         {course.buttonText}
                       </Button>
                     </a>
-                    {course.split && (
+                    {course.flagship && (
                       <p className="mt-2 text-center text-[11px] leading-snug text-foreground/70 sm:text-xs">
-                        or 4 interest-free payments of ${course.split} with Klarna
-                        {course.flagship ? ", Afterpay or Affirm" : " or Afterpay"}
+                        Pay in 4 with Afterpay or Klarna at checkout
                       </p>
                     )}
                   </div>
