@@ -1,3 +1,4 @@
+import { VANTRUE_URL } from "@/config/affiliate";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AffiliateProductCard from "@/components/affiliate/AffiliateProductCard";
@@ -251,7 +252,7 @@ const truckingEssentials: Product[] = [
     ],
     bestFor: "Drivers who want road evidence, parking protection, and extra peace of mind on every haul.",
     comparisonBadge: "Safety Pick",
-    affiliateUrl: "https://a.co/d/036B6pdj",
+    affiliateUrl: VANTRUE_URL,
     image: "https://m.media-amazon.com/images/I/716nD7WzzbL._AC_SY300_SX300_QL70_ML2_.jpg",
     imageAlt: "Amazon product image for a truck dash camera.",
   },

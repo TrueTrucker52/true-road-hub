@@ -1,3 +1,4 @@
+import { VANTRUE_URL } from "@/config/affiliate";
 import type { Category } from "@/components/gear/types";
 
 export const affiliatePlaceholderUrl = "#";
@@ -65,7 +66,7 @@ export const categories: Category[] = [
         bestFor: "Drivers who want a faster, clearer safety setup during roadside breakdowns.",
         slug: "vantrue-n4-pro-s-dash-cam",
         comparisonBadge: "Safety Essential",
-        affiliateUrl: "https://a.co/d/036B6pdj",
+        affiliateUrl: VANTRUE_URL,
         name: "Vantrue N4 Pro S 4K 3 Channel Dash Cam w/Triple STARVIS 2, 4K+1080P+2.5K Front Inside Rear Dash Camera, 4+2.5K Dual Channel, HDR IR Night Vision, Voice Control, Parking Mode, GPS, Wi-Fi, Support 1TB",
         priceRange: "$39 to $79",
         description: [
