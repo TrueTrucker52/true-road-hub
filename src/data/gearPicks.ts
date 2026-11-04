@@ -27,7 +27,7 @@ export type GearPick = {
 
 export const gearPicks: GearPick[] = [
   // Safety & Cameras
-  { name: "Vantrue N4 Pro 3-Channel Dash Cam", category: "Safety & Cameras", oneLineWhy: "Front, cab and rear on camera. When it's your word against a four-wheeler, footage wins.", url: VANTRUE_URL, badge: "George Uses", image: gearPhotos.dashCam, imageAlt: "Three-lens dash camera mounted on a semi truck windshield" },
+  { name: "Vantrue N4 Pro 3-Channel Dash Cam", category: "Safety & Cameras", oneLineWhy: "Front, cab and rear on camera. When it's your word against a four-wheeler, footage wins.", url: VANTRUE_URL, badge: "George's Pick", image: gearPhotos.dashCam, imageAlt: "Three-lens dash camera mounted on a semi truck windshield" },
   { name: "Class 2 Hi-Vis Safety Vest", category: "Safety & Cameras", oneLineWhy: "Most shippers and every shoulder at night demand it. Keep one by the door.", url: amazonSearch("class 2 hi vis safety vest"), image: gearPhotos.hiVisVest, imageAlt: "Yellow hi-vis safety vest with reflective stripes" },
   { name: "Rechargeable LED Headlamp", category: "Safety & Cameras", oneLineWhy: "Both hands free for pre-trips, chains and dark docks. No more flashlight in your teeth.", url: amazonSearch("rechargeable led headlamp"), image: gearPhotos.headlamp, imageAlt: "Rechargeable LED headlamp with the beam on" },
   { name: "Dual-Foot Truck Tire Pressure Gauge", category: "Safety & Cameras", oneLineWhy: "Check inside duals without a fight. Low tires cost you fuel and blowouts.", url: amazonSearch("truck tire pressure gauge dual foot"), image: gearPhotos.tireGauge, imageAlt: "Chrome dual-foot truck tire pressure gauge" },
