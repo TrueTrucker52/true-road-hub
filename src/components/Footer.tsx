@@ -47,7 +47,6 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li><a href="#videos" onClick={(e) => handleHashClick(e, "#videos")} className="hover:text-primary-foreground transition-colors cursor-pointer">Videos</a></li>
               <li><a href="#gear" onClick={(e) => handleHashClick(e, "#gear")} className="hover:text-primary-foreground transition-colors cursor-pointer">Gear Store</a></li>
-              <li><ReferralIFTAButton placement="footer" className="hover:text-primary-foreground transition-colors">IFTA App</ReferralIFTAButton></li>
               <li><a href="#about" onClick={(e) => handleHashClick(e, "#about")} className="hover:text-primary-foreground transition-colors cursor-pointer">About</a></li>
               <li><Link to="/courses" className="hover:text-primary-foreground transition-colors">Courses</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
@@ -69,21 +68,9 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">Contact</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><a href="mailto:george@true-trucker-ifta-pro.com" className="hover:text-primary-foreground transition-colors">george@true-trucker-ifta-pro.com</a></li>
+              <li><a href="mailto:gwilliams2995@gmail.com" className="hover:text-primary-foreground transition-colors">gwilliams2995@gmail.com</a></li>
               <li><a href="tel:3213959957" className="hover:text-primary-foreground transition-colors">321-395-9957</a></li>
             </ul>
-          </div>
-
-          {/* IFTA App */}
-          <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider mb-4 text-brand-red">IFTA App</h4>
-            <ReferralIFTAButton placement="footer">
-              <Button variant="hero" className="w-full">Get the IFTA App</Button>
-            </ReferralIFTAButton>
-            <p className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground/60">
-              Use code {referralCode} for 20% off
-              <span className="ml-2 text-primary-foreground/45">Offer unlocked from {referralPlatform}</span>
-            </p>
           </div>
         </div>
 

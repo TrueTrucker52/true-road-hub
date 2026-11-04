@@ -14,7 +14,7 @@ const isValidBrandBudgetTier = (value: string): value is BrandBudgetTier =>
   brandBudgetTiers.includes(value as BrandBudgetTier);
 
 const buildMailtoLink = (subject: string, body: string) =>
-  `mailto:george@true-trucker-ifta-pro.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  `mailto:gwilliams2995@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
 const openMailtoWithDelay = (mailtoUrl: string) => {
   window.requestAnimationFrame(() => {
