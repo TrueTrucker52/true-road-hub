@@ -22,7 +22,7 @@ const Gear = () => {
         <section className="relative overflow-hidden bg-secondary py-16 md:py-24">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-red/10 via-transparent to-transparent" />
           <div className="container relative z-10 mx-auto px-4 text-center">
-            <h1 className="font-display text-4xl font-bold text-foreground md:text-6xl">
+            <h1 className="font-display text-4xl font-bold text-secondary-foreground md:text-6xl">
               George's <span className="text-brand-red">Gear Picks</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-muted-foreground md:text-lg">
@@ -54,6 +54,9 @@ const Gear = () => {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((g) => (
                 <article key={g.name} className="flex flex-col rounded-xl border border-border bg-card p-6">
+                  <a href={g.url} target="_blank" rel="sponsored noopener" className="mb-4 block aspect-[4/3] overflow-hidden rounded-lg bg-muted">
+                    <img src={g.image} alt={g.imageAlt} loading="lazy" decoding="async" width={800} height={600} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+                  </a>
                   <div className="mb-3 flex flex-wrap items-center gap-2">
                     <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{g.category}</span>
                     {g.badge && (

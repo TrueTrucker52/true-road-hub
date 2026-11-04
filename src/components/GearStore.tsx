@@ -1,3 +1,4 @@
+import { gearPhotos } from "@/assets/gear-photos";
 import { VANTRUE_URL, amazonDp } from "@/config/affiliate";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -253,8 +254,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers who want road evidence, parking protection, and extra peace of mind on every haul.",
     comparisonBadge: "Safety Pick",
     affiliateUrl: VANTRUE_URL,
-    image: "https://m.media-amazon.com/images/I/716nD7WzzbL._AC_SY300_SX300_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a truck dash camera.",
+    image: gearPhotos.dashCam,
+    imageAlt: "Photo of a truck dash camera.",
   },
   {
     slug: "trucking-essentials-garmin-dezl-gps",
@@ -278,8 +279,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers needing truck-safe routes and better visibility on unfamiliar roads.",
     comparisonBadge: "Editors Choice",
     affiliateUrl: amazonDp("B0CBL84JZS"),
-    image: "https://m.media-amazon.com/images/I/71KrldruMbL._AC_SY300_SX300_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a Garmin dezl truck GPS.",
+    image: gearPhotos.truckGps,
+    imageAlt: "Photo of a Garmin dezl truck GPS.",
   },
   {
     slug: "trucking-essentials-cobra-cb-radio",
@@ -303,8 +304,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers who want constant road chatter, hazard updates, and backup communication.",
     comparisonBadge: "Trucker Essential",
     affiliateUrl: amazonDp("B0BVGTZCLB"),
-    image: "https://m.media-amazon.com/images/I/714+DRSwCrL._AC_SY300_SX300_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a Cobra CB radio for truckers.",
+    image: gearPhotos.cbRadio,
+    imageAlt: "Photo of a Cobra CB radio for truckers.",
   },
   {
     slug: "trucking-essentials-pro-trucker-headset",
@@ -328,8 +329,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers taking dispatch and family calls all day without pulling over.",
     comparisonBadge: "Most Popular",
     affiliateUrl: amazonDp("B0CP76B4FD"),
-    image: "https://m.media-amazon.com/images/I/61vK3WAD3LL._AC_SY300_SX300_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a professional trucker headset.",
+    image: gearPhotos.headset,
+    imageAlt: "Photo of a professional trucker headset.",
   },
   {
     slug: "trucking-essentials-heavy-duty-flashlight",
@@ -353,8 +354,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers doing nighttime inspections, roadside checks, and emergency stops.",
     comparisonBadge: "Safety Pick",
     affiliateUrl: amazonDp("B0DJQF83C2"),
-    image: "https://m.media-amazon.com/images/I/91H2HARjx0L._AC_SX342_SY445_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a heavy duty trucker flashlight.",
+    image: gearPhotos.flashlight,
+    imageAlt: "Photo of a heavy duty trucker flashlight.",
   },
   {
     slug: "trucking-essentials-heavy-duty-phone-mount",
@@ -378,7 +379,7 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers who depend on navigation apps and need a stable, visible phone position.",
     comparisonBadge: "Trucker Essential",
     affiliateUrl: amazonDp("B00LVTEJTW"),
-    image: "https://m.media-amazon.com/images/I/61slLuzO3FL._AC_SY300_SX300_QL70_ML2_.jpg",
+    image: gearPhotos.powerInverter,
     imageAlt: "Amazon product image used for the heavy duty truck phone mount card.",
   },
   {
@@ -403,7 +404,7 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers running laptops, chargers, and electronics from the cab between stops.",
     comparisonBadge: "Power Pick",
     affiliateUrl: amazonDp("B0DF53SYNT"),
-    image: "https://m.media-amazon.com/images/I/61HZASgrvuL._AC_SY300_SX300_QL70_ML2_.jpg",
+    image: gearPhotos.phoneMount,
     imageAlt: "Amazon product image used for the truck power inverter card.",
   },
   {
@@ -428,8 +429,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Long-haul drivers who want drinks, snacks, and meal prep within reach in the cab.",
     comparisonBadge: "Long Haul Pick",
     affiliateUrl: amazonDp("B0D4Q8W2S7"),
-    image: "https://m.media-amazon.com/images/I/71Tn-81fR0L._AC_SX342_SY445_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for an AstroAI truck cab mini fridge.",
+    image: gearPhotos.portableFridge,
+    imageAlt: "Photo of an AstroAI truck cab mini fridge.",
   },
   {
     slug: "trucking-essentials-attcl-sunglasses",
@@ -453,8 +454,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers spending long hours in bright daylight who want less glare and eye fatigue.",
     comparisonBadge: "Driver Favorite",
     affiliateUrl: amazonDp("B01AXUCB8K"),
-    image: "https://m.media-amazon.com/images/I/71UjG2dprWL._AC_SX342_SY445_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for ATTCL polarized driving sunglasses.",
+    image: gearPhotos.sunglasses,
+    imageAlt: "Photo of ATTCL polarized driving sunglasses.",
   },
   {
     slug: "trucking-essentials-log-book-organizer",
@@ -478,8 +479,8 @@ const truckingEssentials: Product[] = [
     bestFor: "Drivers who want cleaner paperwork storage and faster access during inspections or stops.",
     comparisonBadge: "Organization Pick",
     affiliateUrl: amazonDp("B0GC5SBQG4"),
-    image: "https://m.media-amazon.com/images/I/717Z66l-WcL._AC_SY300_SX300_QL70_ML2_.jpg",
-    imageAlt: "Amazon product image for a trucker log book organizer.",
+    image: gearPhotos.logBinder,
+    imageAlt: "Photo of a trucker log book organizer.",
   },
 ];
 
