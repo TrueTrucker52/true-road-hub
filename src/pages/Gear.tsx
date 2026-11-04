@@ -10,7 +10,7 @@ type Filter = (typeof GEAR_CATEGORIES)[number];
 const Gear = () => {
   usePageMeta(
     "George's Gear Picks | True Trucking TV",
-    "Trucking gear George Williams uses or trusts after 25 years as a driver, owner-operator and broker: dash cams, GPS, cab comfort, tools and more."
+    "Trucking gear George Williams trusts and recommends after 25 years as a driver, owner-operator and broker: dash cams, GPS, cab comfort, tools and more."
   );
   const [filter, setFilter] = useState<Filter>("All");
   const items = filter === "All" ? gearPicks : gearPicks.filter((g) => g.category === filter);
@@ -26,7 +26,7 @@ const Gear = () => {
               George's <span className="text-brand-red">Gear Picks</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-muted-foreground md:text-lg">
-              The gear I use or trust after 25 years as a driver, owner-operator and broker. Some links are affiliate links, which means I may earn a small commission at no extra cost to you.
+              The gear I trust and recommend after 25 years as a driver, owner-operator and broker. Some links are affiliate links, which means I may earn a small commission at no extra cost to you.
             </p>
           </div>
         </section>
