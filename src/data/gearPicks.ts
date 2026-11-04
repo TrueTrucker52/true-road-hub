@@ -1,4 +1,4 @@
-import { amazonSearch, BOOK_URL } from "@/config/affiliate";
+import { amazonSearch, BOOK_URL, VANTRUE_URL } from "@/config/affiliate";
 
 export const GEAR_CATEGORIES = [
   "All",
@@ -23,7 +23,7 @@ export type GearPick = {
 
 export const gearPicks: GearPick[] = [
   // Safety & Cameras
-  { name: "Vantrue N4 Pro 3-Channel Dash Cam", category: "Safety & Cameras", oneLineWhy: "Front, cab and rear on camera. When it's your word against a four-wheeler, footage wins.", url: "https://a.co/d/036B6pdj", badge: "George Uses" },
+  { name: "Vantrue N4 Pro 3-Channel Dash Cam", category: "Safety & Cameras", oneLineWhy: "Front, cab and rear on camera. When it's your word against a four-wheeler, footage wins.", url: VANTRUE_URL, badge: "George Uses" },
   { name: "Class 2 Hi-Vis Safety Vest", category: "Safety & Cameras", oneLineWhy: "Most shippers and every shoulder at night demand it. Keep one by the door.", url: amazonSearch("class 2 hi vis safety vest") },
   { name: "Rechargeable LED Headlamp", category: "Safety & Cameras", oneLineWhy: "Both hands free for pre-trips, chains and dark docks. No more flashlight in your teeth.", url: amazonSearch("rechargeable led headlamp") },
   { name: "Dual-Foot Truck Tire Pressure Gauge", category: "Safety & Cameras", oneLineWhy: "Check inside duals without a fight. Low tires cost you fuel and blowouts.", url: amazonSearch("truck tire pressure gauge dual foot") },

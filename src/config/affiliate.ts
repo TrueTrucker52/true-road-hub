@@ -14,3 +14,5 @@ export const amazonSearch = (terms: string) =>
   withAmazonTag(`https://www.amazon.com/s?k=${terms.trim().split(/\s+/).map(encodeURIComponent).join("+")}`);
 
 export const BOOK_URL = withAmazonTag("https://www.amazon.com/dp/B0H1JP4S5S");
+
+export const VANTRUE_URL = withAmazonTag("https://www.amazon.com/dp/B0F8BQW4TR");
