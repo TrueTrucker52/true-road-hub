@@ -1,5 +1,5 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useEffect } from "react";
+import { usePageMeta } from "@/lib/usePageMeta";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -148,16 +148,16 @@ const services = [
 ];
 
 const Courses = () => {
-  useEffect(() => {
-    document.title = "Courses | True Trucking TV";
-  }, []);
+  usePageMeta(
+    "Courses | True Trucking TV",
+    "Trucking courses from George Williams, a 25-year driver, owner-operator and broker: oilfield hiring, CDL, authority, load boards, insurance and fleet building."
+  );
 
 
 
   const heroRef = useScrollReveal();
   const gridRef = useScrollReveal();
   const servicesRef = useScrollReveal();
-  const appRef = useScrollReveal();
   const bookRef = useScrollReveal();
   const noteRef = useScrollReveal();
 
@@ -305,59 +305,6 @@ const Courses = () => {
           </div>
         </section>
 
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-4" ref={appRef}>
-            <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-border bg-card">
-              <div className="grid gap-0 md:grid-cols-2">
-                <div className="bg-brand-dark p-8 md:p-10">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-red">
-                    <Phone className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  <h2 className="mt-4 font-display text-2xl font-bold text-primary-foreground md:text-3xl">
-                    TrueTrucker IFTA Pro
-                  </h2>
-                  <p className="mt-2 text-3xl font-bold text-brand-red">$39<span className="text-lg font-medium text-primary-foreground/60">/month</span></p>
-                  <p className="mt-4 text-primary-foreground/70">
-                    Free 7-day trial. Quarterly IFTA filed in 10 minutes, GPS mileage, and ELD integration.
-                  </p>
-                  <a
-                    href="https://true-trucker-ifta-pro.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-6 inline-block"
-                    onClick={() =>
-                      trackCourseClick({
-                        itemName: "TrueTrucker IFTA Pro",
-                        itemSlug: "truetrucker-ifta-pro",
-                        itemType: "app",
-                        price: "$39/month",
-                        sectionId: "app",
-                        targetUrl: "https://true-trucker-ifta-pro.com",
-                      })
-                    }
-                  >
-                    <Button variant="hero" size="lg">Start the Free Trial</Button>
-                  </a>
-                </div>
-                <div className="flex flex-col justify-center bg-muted p-8 md:p-10">
-                  <ul className="space-y-4">
-                    {[
-                      "Quarterly IFTA filed in 10 minutes",
-                      "GPS mileage tracking",
-                      "ELD integration",
-                      "7-day free trial",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-3 text-foreground">
-                        <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand-red" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         <section className="bg-secondary py-20 md:py-28">
           <div className="container mx-auto px-4" ref={bookRef}>

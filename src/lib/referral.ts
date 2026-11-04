@@ -1,6 +1,5 @@
 export type ReferralPlatform = "youtube" | "tiktok" | "facebook" | "instagram";
 
-const IFTA_APP_URL = "https://true-trucker-ifta-pro.com";
 const REFERRAL_PLATFORM_STORAGE_KEY = "tttv-referral-platform";
 
 const PLATFORM_HOSTS: Record<ReferralPlatform, string[]> = {
@@ -71,19 +70,6 @@ export const getReferralPlatform = (): ReferralPlatform | null => {
 export const getReferralDiscountCode = () => DISCOUNT_CODES[getReferralPlatform() ?? "youtube"];
 
 export const getReferralPlatformLabel = () => PLATFORM_LABELS[getReferralPlatform() ?? "youtube"];
-
-export const getReferralAwareIFTAUrl = () => {
-  if (typeof window === "undefined") return IFTA_APP_URL;
-
-  const url = new URL(IFTA_APP_URL);
-  const platform = getReferralPlatform();
-
-  if (platform) {
-    url.searchParams.set("src", platform);
-  }
-
-  return url.toString();
-};
 
 export const getReferralSessionId = () => {
   if (typeof window === "undefined") return null;

@@ -1,5 +1,4 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import ReferralIFTAButton from "@/components/ReferralIFTAButton";
 import { Button } from "@/components/ui/button";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 import { useCallback } from "react";

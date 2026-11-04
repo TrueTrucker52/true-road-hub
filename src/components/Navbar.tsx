@@ -1,12 +1,11 @@
 import { useState, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import ReferralIFTAButton from "@/components/ReferralIFTAButton";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { label: "Videos", href: "#videos" },
-  { label: "Gear", href: "#gear" },
+  { label: "Gear", href: "/gear", isRoute: true },
   { label: "Brand Deals", href: "#brand-deals" },
   { label: "Partner Program", href: "https://partner.truetruckingtv.com", external: true },
   { label: "About", href: "#about" },
@@ -60,10 +59,6 @@ const Navbar = () => {
               <Link key={link.label} to={link.href} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
               </Link>
-            ) : link.label === "IFTA App" ? (
-              <ReferralIFTAButton key={link.label} placement="navbar" className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-                {link.label}
-              </ReferralIFTAButton>
             ) : link.external ? (
               <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
@@ -93,10 +88,6 @@ const Navbar = () => {
               <Link key={link.label} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}
               </Link>
-            ) : link.label === "IFTA App" ? (
-              <ReferralIFTAButton key={link.label} placement="navbar" className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
-                {link.label}
-              </ReferralIFTAButton>
             ) : link.external ? (
               <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}

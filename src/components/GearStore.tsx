@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AffiliateProductCard from "@/components/affiliate/AffiliateProductCard";
-import ReferralIFTAButton from "@/components/ReferralIFTAButton";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ArrowRight,
@@ -764,6 +764,11 @@ const GearStore = () => {
               ))}
             </div>
           </div>
+        </div>
+        <div className="mt-12 text-center">
+          <Link to="/gear">
+            <Button variant="hero" size="lg">See All Gear Picks</Button>
+          </Link>
         </div>
       </div>
     </section>
