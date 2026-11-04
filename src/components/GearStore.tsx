@@ -9,11 +9,11 @@ import {
   Eye,
   ShoppingBag,
   Shirt,
-  Smartphone,
+
   Sparkles,
   Ruler,
   Truck,
-  Timer,
+
 } from "lucide-react";
 import {
   Dialog,
@@ -493,26 +493,6 @@ const MerchSpotlight = () => {
     const id = setInterval(next, 4500);
     return () => clearInterval(id);
   }, [next]);
-
-  // Countdown: rolling 72-hour window from nearest Monday midnight
-  const getTimeLeft = useCallback(() => {
-    const now = new Date();
-    const day = now.getDay();
-    const sinceMon = ((day + 6) % 7) * 86400000 + now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000;
-    const windowMs = 72 * 3600000;
-    const remaining = windowMs - (sinceMon % windowMs);
-    const h = Math.floor(remaining / 3600000);
-    const m = Math.floor((remaining % 3600000) / 60000);
-    const s = Math.floor((remaining % 60000) / 1000);
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  }, []);
-
-  const [countdown, setCountdown] = useState(getTimeLeft);
-
-  useEffect(() => {
-    const id = setInterval(() => setCountdown(getTimeLeft()), 1000);
-    return () => clearInterval(id);
-  }, [getTimeLeft]);
 
   const item = merch[active];
 
