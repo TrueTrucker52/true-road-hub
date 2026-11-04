@@ -1,5 +1,5 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useEffect } from "react";
+import { usePageMeta } from "@/lib/usePageMeta";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -148,9 +148,10 @@ const services = [
 ];
 
 const Courses = () => {
-  useEffect(() => {
-    document.title = "Courses | True Trucking TV";
-  }, []);
+  usePageMeta(
+    "Courses | True Trucking TV",
+    "Trucking courses from George Williams, a 25-year driver, owner-operator and broker: oilfield hiring, CDL, authority, load boards, insurance and fleet building."
+  );
 
 
 
