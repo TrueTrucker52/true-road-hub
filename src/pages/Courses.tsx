@@ -1,3 +1,4 @@
+import { amazonDp } from "@/config/affiliate";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { usePageMeta } from "@/lib/usePageMeta";
 import { Button } from "@/components/ui/button";
@@ -146,6 +147,8 @@ const services = [
     buttonUrl: FIT_CALL_URL,
   },
 ];
+
+const OILFIELD_BOOK_URL = amazonDp("B0HDK97XF8");
 
 const Courses = () => {
   usePageMeta(
@@ -317,7 +320,7 @@ const Courses = () => {
                 Oilfield Trucking: How To Get Hired With No Experience — <span className="font-bold text-brand-red">$6.99 on Amazon</span>
               </p>
               <a
-                href="https://www.amazon.com/dp/B0HDK97XF8"
+                href={OILFIELD_BOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 inline-block"
@@ -328,7 +331,7 @@ const Courses = () => {
                     itemType: "book",
                     price: "$6.99",
                     sectionId: "book",
-                    targetUrl: "https://www.amazon.com/dp/B0HDK97XF8",
+                    targetUrl: OILFIELD_BOOK_URL,
                   })
                 }
               >

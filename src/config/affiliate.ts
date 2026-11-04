@@ -16,3 +16,5 @@ export const amazonSearch = (terms: string) =>
 export const BOOK_URL = withAmazonTag("https://www.amazon.com/dp/B0H1JP4S5S");
 
 export const VANTRUE_URL = withAmazonTag("https://www.amazon.com/dp/B0F8BQW4TR");
+
+export const amazonDp = (asin: string) => withAmazonTag(`https://www.amazon.com/dp/${asin}`);

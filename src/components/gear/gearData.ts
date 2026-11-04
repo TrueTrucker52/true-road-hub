@@ -1,4 +1,4 @@
-import { VANTRUE_URL } from "@/config/affiliate";
+import { VANTRUE_URL, amazonDp } from "@/config/affiliate";
 import type { Category } from "@/components/gear/types";
 
 export const affiliatePlaceholderUrl = "#";
@@ -12,7 +12,7 @@ export const categories: Category[] = [
         bestFor: "Drivers taking back-to-back calls who need clear audio without pulling over.",
         slug: "trucker-bluetooth-headset",
         comparisonBadge: "Long-Haul Pick",
-        affiliateUrl: "https://a.co/d/097DJd2d",
+        affiliateUrl: amazonDp("B0CP76B4FD"),
         name: "Trucker Bluetooth Headset, Wireless Headset with Mic, Bluetooth Headsets with Dual Noise Cancelling Microphone & Mute Button, 55Hrs Working Time PC Headsets for Cell Phones, Computer, Truck Driver",
         priceRange: "$79 to $299",
         description: [
@@ -28,7 +28,7 @@ export const categories: Category[] = [
         bestFor: "Owner-operators and team drivers who still rely on road chatter and hazard callouts.",
         slug: "cobra-cb-radio",
         comparisonBadge: "Best Value",
-        affiliateUrl: "https://a.co/d/0869GBch",
+        affiliateUrl: amazonDp("B0BVGTZCLB"),
         name: "Cobra 29 LTD Classic AM/FM Professional CB Radio - Easy to Operate, Emergency Radio, Instant Channel 9, 4-Watt Output, Full 40 Channels, Adjustable Receiver and SWR Calibration, Black",
         priceRange: "$89 to $189",
         description: [
@@ -50,7 +50,7 @@ export const categories: Category[] = [
         bestFor: "Drivers handling night inspections, trailer checks, and roadside stops.",
         slug: "rechargeable-flashlights-two-pack",
         comparisonBadge: "Safety Essential",
-        affiliateUrl: "https://a.co/d/04ynevEg",
+        affiliateUrl: amazonDp("B0DJQF83C2"),
         name: "Rechargeable Flashlights 2 Pack, Super Bright High Lumens Flash Light, 5 Modes Zoomable Linternas with LCD Digital Display, Powerful Handheld LED Flashlights for Home Emergencies Camping",
         priceRange: "$29 to $89",
         description: [
@@ -88,7 +88,7 @@ export const categories: Category[] = [
         bestFor: "Drivers who need truck-safe routing and fewer surprises on unfamiliar lanes.",
         slug: "garmin-dezl-otr710",
         comparisonBadge: "Long-Haul Pick",
-        affiliateUrl: "https://a.co/d/09QjIemm",
+        affiliateUrl: amazonDp("B0CBL84JZS"),
         name: "Garmin dezl OTR710, Large, Easy-to-Read 7 inch GPS Truck Navigator, Custom Routing, High-Resolution Birdseye Satellite Imagery, Directory of Trucking & Trailer Services (Renewed)",
         priceRange: "$249 to $399",
         description: [
@@ -104,7 +104,7 @@ export const categories: Category[] = [
         bestFor: "Drivers wanting incident protection, insurance evidence, and peace of mind on every run.",
         slug: "ram-mounts-x-grip-phone-mount",
         comparisonBadge: "Safety Essential",
-        affiliateUrl: "https://a.co/d/00UmSqVC",
+        affiliateUrl: amazonDp("B0DF53SYNT"),
         name: "RAM Mounts X-Grip Phone Mount with Twist-Lock Suction Cup Base RAP-B-166-UN7U with Medium Arm for Vehicle Windshields",
         priceRange: "$89 to $299",
         description: [
@@ -126,7 +126,7 @@ export const categories: Category[] = [
         bestFor: "Long-haul drivers who want cold drinks and meal prep access inside the sleeper.",
         slug: "astroai-mini-fridge",
         comparisonBadge: "Long-Haul Pick",
-        affiliateUrl: "https://a.co/d/0cvt0dA7",
+        affiliateUrl: amazonDp("B0D4Q8W2S7"),
         name: "AstroAI Mini Fridge 2.0 Gen, 6 Liter/8 Cans Makeup Skincare Fridge 110V AC/ 12V DC Portable Thermoelectric Cooler and Warmer Little Tiny Fridge for Bedroom, Cosmetics (Dark Grey)",
         priceRange: "$49 to $149",
         description: [
@@ -142,7 +142,7 @@ export const categories: Category[] = [
         bestFor: "Drivers sleeping through daylight who need quicker, deeper rest between hauls.",
         slug: "attcl-polarized-sunglasses",
         comparisonBadge: "Long-Haul Pick",
-        affiliateUrl: "https://a.co/d/0caDcPX2",
+        affiliateUrl: amazonDp("B01AXUCB8K"),
         name: "ATTCL Polarized Sunglasses Men Sports: UV Protection Anti Glare Wrap Around Lightweight Metal Driving Fishing Golf Running",
         priceRange: "$29 to $79",
         description: [
@@ -164,7 +164,7 @@ export const categories: Category[] = [
         bestFor: "Drivers powering laptops, chargers, and small electronics from the cab.",
         slug: "bestek-200w-power-inverter",
         comparisonBadge: "Best Value",
-        affiliateUrl: "https://a.co/d/0g7k57Us",
+        affiliateUrl: amazonDp("B00LVTEJTW"),
         name: "BESTEK 200W Power Inverter, 12V DC to 110V AC Car Plug Adapter Outlet Converter with [30W USB-C]/USB-Fast Charger(18W) / Dual AC Outlets/car Charger for Laptop",
         priceRange: "$39 to $129",
         description: [
@@ -180,7 +180,7 @@ export const categories: Category[] = [
         bestFor: "Drivers using navigation and dispatch apps who need the phone visible without wobble.",
         slug: "log-book-binder",
         comparisonBadge: "Best Value",
-        affiliateUrl: "https://a.co/d/0g4i8YiU",
+        affiliateUrl: amazonDp("B0GC5SBQG4"),
         name: "2 Pcs Log Book Binder for Truck Drivers 3 Ring Zipper Loose Leaf Log for Storing and Transporting Receipts and Important Documents in Trucks 11.4 x 8.5 Inches",
         priceRange: "$19 to $59",
         description: [
