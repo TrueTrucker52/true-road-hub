@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
-import ReferralIFTAButton from "@/components/ReferralIFTAButton";
 import heroBg from "@/assets/hero-bg.jpg";
 import georgeStudioImg from "@/assets/george-williams-news-studio.png";
 import { getReferralDiscountCode, getReferralPlatformLabel } from "@/lib/referral";
 
 const stats = [
   { value: "25+", label: "Years Experience" },
-  { value: "500K+", label: "Views" },
-  { value: "10,000+", label: "Truckers Nationwide" },
+  { value: "460K+", label: "Views" },
+  { value: "3,100+", label: "YouTube Subscribers" },
+  { value: "39K+", label: "TikTok Followers" },
 ];
 
 const HeroSection = () => {
@@ -27,7 +27,7 @@ const HeroSection = () => {
               TRUE TRUCKING TV
             </h1>
             <h2 className="mt-4 font-display text-xl sm:text-2xl md:text-3xl font-semibold text-brand-red uppercase tracking-wider animate-reveal animate-reveal-delay-1">
-              #1 Channel For Logistics Worldwide
+              Real Trucking From A 25-Year Driver, Owner-Operator & Broker
             </h2>
             <p className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-xl animate-reveal animate-reveal-delay-2">
               Real trucking. Real talk. Real money. 25 years on the road. Built for drivers, by a driver.
@@ -37,17 +37,9 @@ const HeroSection = () => {
               <a href="https://www.youtube.com/@truetrucking5301" target="_blank" rel="noopener noreferrer">
                 <Button variant="hero" size="lg">Watch Latest Videos</Button>
               </a>
-              <ReferralIFTAButton placement="hero">
-                <Button variant="hero-outline" size="lg">Get the IFTA App Free</Button>
-              </ReferralIFTAButton>
             </div>
 
-            <p className="mt-4 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground/80 animate-reveal animate-reveal-delay-4">
-              <span>Use code {referralCode} for 20% off</span>
-              <span className="text-primary-foreground/55">Offer unlocked from {referralPlatform}</span>
-            </p>
-
-            <div className="mt-14 grid grid-cols-3 gap-6 max-w-lg animate-reveal animate-reveal-delay-4">
+            <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl animate-reveal animate-reveal-delay-4">
               {stats.map((s) => (
                 <div key={s.label} className="text-center md:text-left">
                   <div className="font-display text-3xl md:text-4xl font-bold text-brand-red">{s.value}</div>

@@ -9,11 +9,11 @@ import {
   Eye,
   ShoppingBag,
   Shirt,
-  Smartphone,
+
   Sparkles,
   Ruler,
   Truck,
-  Timer,
+
 } from "lucide-react";
 import {
   Dialog,
@@ -494,39 +494,10 @@ const MerchSpotlight = () => {
     return () => clearInterval(id);
   }, [next]);
 
-  // Countdown: rolling 72-hour window from nearest Monday midnight
-  const getTimeLeft = useCallback(() => {
-    const now = new Date();
-    const day = now.getDay();
-    const sinceMon = ((day + 6) % 7) * 86400000 + now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000;
-    const windowMs = 72 * 3600000;
-    const remaining = windowMs - (sinceMon % windowMs);
-    const h = Math.floor(remaining / 3600000);
-    const m = Math.floor((remaining % 3600000) / 60000);
-    const s = Math.floor((remaining % 60000) / 1000);
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  }, []);
-
-  const [countdown, setCountdown] = useState(getTimeLeft);
-
-  useEffect(() => {
-    const id = setInterval(() => setCountdown(getTimeLeft()), 1000);
-    return () => clearInterval(id);
-  }, [getTimeLeft]);
-
   const item = merch[active];
 
   return (
     <div className="relative mb-6 overflow-hidden rounded-2xl border border-brand-red/20 bg-gradient-to-br from-brand-red/10 via-background to-brand-orange/10 p-5">
-      {/* Promo Banner */}
-      <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-brand-red/10 border border-brand-red/20 px-3 py-2.5">
-        <Timer className="h-4 w-4 text-brand-red animate-pulse" aria-hidden="true" />
-        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-red">Limited Drop</span>
-        <span className="text-xs font-semibold text-card-foreground">Free shipping ends in</span>
-        <span className="ml-auto inline-flex items-center gap-0.5 rounded-md bg-brand-red px-2 py-0.5 font-mono text-xs font-extrabold tabular-nums text-primary-foreground">
-          {countdown}
-        </span>
-      </div>
 
       <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-brand-red">
         ★ Featured Merch
@@ -756,11 +727,6 @@ const GearStore = () => {
               <ShoppingBag className="text-brand-red" size={24} />
               <h3 className="font-display text-xl font-bold">True Trucking Merch</h3>
             </div>
-            <div className="mb-5 flex items-center justify-center gap-4 rounded-lg bg-brand-orange/10 px-4 py-2.5 text-[11px] font-semibold text-brand-orange">
-              <span>🛒 161+ orders</span>
-              <span className="text-brand-orange/40">•</span>
-              <span>🚛 500+ happy truckers</span>
-            </div>
             <MerchSpotlight />
             <div className="grid gap-5">
               {merch.map((m) => (
@@ -797,26 +763,6 @@ const GearStore = () => {
                 />
               ))}
             </div>
-          </div>
-
-          {/* IFTA App */}
-          <div className="bg-brand-orange rounded-xl p-6 text-primary-foreground animate-reveal animate-reveal-delay-3">
-            <div className="flex items-center gap-3 mb-6">
-              <Smartphone size={24} />
-              <h3 className="font-display text-xl font-bold">TrueTrucker IFTA App</h3>
-            </div>
-            <p className="text-sm opacity-90 mb-4">The #1 IFTA fuel tax reporting app built for truckers. Track miles, calculate taxes, file quarterly — all from your phone.</p>
-            <div className="text-center mb-6">
-              <span className="font-display text-4xl font-bold">$39</span>
-              <span className="text-sm opacity-80">/month</span>
-            </div>
-            <ReferralIFTAButton placement="gear">
-              <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold uppercase tracking-wider active:scale-[0.97]">Try FREE 7 Days</Button>
-            </ReferralIFTAButton>
-            <p className="mt-3 text-center text-xs opacity-80">
-              Use code <strong>{referralCode}</strong> for 20% off
-              <span className="ml-2 opacity-70">Offer unlocked from {referralPlatform}</span>
-            </p>
           </div>
         </div>
       </div>

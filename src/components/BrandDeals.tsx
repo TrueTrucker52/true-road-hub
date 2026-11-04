@@ -7,17 +7,13 @@ import { trackMediaKitDownload } from "@/lib/trackMediaKitDownload";
 
 const audience = ["Owner operators", "Fleet owners", "CDL drivers", "Logistics professionals"];
 const stats = [
-  { value: "15+", label: "Years Experience" },
+  { value: "25+", label: "Years Experience" },
   { value: "Nationwide", label: "Driver Reach" },
   { value: "Weekly", label: "New Content" },
   { value: "100%", label: "Real Truckers Only" },
 ];
 
 const partnerProof = [
-  {
-    quote: "George speaks to professional drivers in a voice brands can trust because he lives the industry every day.",
-    label: "Authentic audience fit",
-  },
   {
     quote: "From freight talk to road reports, True Trucking TV gives sponsors a direct line to working truckers across the country.",
     label: "Nationwide visibility",
@@ -35,7 +31,7 @@ const mediaKitSummary = [
   },
   {
     title: "Contact",
-    details: "Reach George directly at george@true-trucker-ifta-pro.com or call 321-395-9957 for partnership inquiries.",
+    details: "Reach George directly at gwilliams2995@gmail.com or call 321-395-9957 for partnership inquiries.",
   },
 ];
 
@@ -102,7 +98,7 @@ const BrandDeals = () => {
           Partner With <span className="text-brand-red">True Trucking TV</span>
         </h2>
         <p className="text-center text-primary-foreground/70 max-w-2xl mx-auto mb-10 animate-reveal animate-reveal-delay-1">
-          True Trucking TV reaches thousands of professional truck drivers across the United States every week.
+          True Trucking TV reaches professional truck drivers, owner-operators and logistics pros across the United States.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-12 animate-reveal animate-reveal-delay-2">
