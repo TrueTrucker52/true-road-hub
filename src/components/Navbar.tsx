@@ -59,7 +59,7 @@ const Navbar = () => {
               <Link key={link.label} to={link.href} className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
               </Link>
-            ) : ) : link.external ? (
+            ) : link.external ? (
               <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors">
                 {link.label}
               </a>
@@ -88,7 +88,7 @@ const Navbar = () => {
               <Link key={link.label} to={link.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}
               </Link>
-            ) : ) : link.external ? (
+            ) : link.external ? (
               <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="block text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground py-2">
                 {link.label}
               </a>
