@@ -60,5 +60,5 @@ export const gearPicks: GearPick[] = [
   { name: "The New Authority Survival Guide by George Williams", category: "Books", oneLineWhy: "What I wish somebody told me before I opened my own authority.", url: BOOK_URL, badge: "My Book", image: gearPhotos.bookCoverPlaceholder, imageAlt: "Book cover: The New Authority Survival Guide by George Williams" },
 
   // Clothing
-  { name: "True Trucking Merch", category: "Clothing", oneLineWhy: "Shirts, hoodies and hats for drivers who rep the road.", url: "https://shop.truetruckingtv.com", badge: "Official Merch", image: gearPhotos.merchTshirt, imageAlt: "True Trucking classic t-shirt" },
+  { name: "True Trucking Merch", category: "Clothing", oneLineWhy: "Shirts, hoodies and hats for drivers who rep the road.", url: "https://truetrucker.printify.me", badge: "Official Merch", image: gearPhotos.merchTshirt, imageAlt: "True Trucking classic t-shirt" },
 ];
