@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
+  { label: "Shop Kits", href: "https://shop.truetruckingtv.com/#trucking", external: true },
   { label: "Videos", href: "#videos" },
   { label: "Gear", href: "/gear", isRoute: true },
   { label: "Brand Deals", href: "#brand-deals" },
